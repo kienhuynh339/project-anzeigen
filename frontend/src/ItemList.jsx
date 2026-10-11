@@ -83,7 +83,7 @@ const items = [
 
 export default function ItemList() {
   return (
-    <>
+    <div className="p-2">
       <div
         className="d-flex justify-content-between
                       align-items-center mb-1"
@@ -99,14 +99,14 @@ export default function ItemList() {
           <ItemCard key={item.id} item={item} />
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
 function ItemCard({ item }) {
   return (
     <a className="col-3 text-decoration-none" href="#">
-      <div className="card h-100 shadow-sm">
+      <div className="card h-100 shadow-sm ">
         <img src={item.image} className="card-img-top" alt={item.name} />
 
         <div className="card-body d-flex flex-column justify-content-between pt-0">

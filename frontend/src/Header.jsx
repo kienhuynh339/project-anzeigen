@@ -2,7 +2,7 @@ import logo from "./assets/logo.svg";
 
 export default function Header() {
   return (
-    <div className="container-fluid pb-2">
+    <div className="container-fluid pb-2 bg-success-subtle border border-dark-subtle">
       <header className="row align-items-center justify-content-between gap-3 ">
         <a href="#" className="col-auto ps-1 pe-0">
           <img

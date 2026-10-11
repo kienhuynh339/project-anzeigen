@@ -6,13 +6,16 @@ export default function SearchBar() {
           <div className="col-4">
             <input
               type="text"
-              className="form-control"
+              className="form-control border-dark-subtle"
               placeholder="Suchbegriff"
             />
           </div>
 
           <div className="col-2">
-            <select className="form-select" defaultValue="all">
+            <select
+              className="form-select border-dark-subtle"
+              defaultValue="all"
+            >
               <option value="all">Alle Kategorien</option>
               <option value="technik">Technik</option>
               <option value="kleidung">Kleidung</option>
@@ -21,14 +24,18 @@ export default function SearchBar() {
 
           {/* Ort */}
           <div className="col-2">
-            <input type="text" className="form-control" placeholder="Ort" />
+            <input
+              type="text"
+              className="form-control border-dark-subtle"
+              placeholder="Ort"
+            />
           </div>
 
           {/* Ort */}
           <div className="col-2">
             <input
               type="text"
-              className="form-control"
+              className="form-control border-dark-subtle"
               placeholder="Ganzer Ort"
             />
           </div>
@@ -56,7 +63,10 @@ export default function SearchBar() {
             </button>
           </div>
 
-          <button type="submit" className="col-1 btn btn-primary">
+          <button
+            type="submit"
+            className="col-1 btn btn-primary border-dark-subtle"
+          >
             Finden
           </button>
         </div>
@@ -64,11 +74,19 @@ export default function SearchBar() {
           <div className="row g-2 align-items-center">
             <span className="col-auto">Preis: </span>
             <div className="col-2">
-              <input type="number" className="form-control" placeholder="von" />
+              <input
+                type="number"
+                className="form-control border-dark-subtle"
+                placeholder="von"
+              />
             </div>
             <span className="col-auto">-</span>
             <div className="col-2">
-              <input type="number" className="form-control" placeholder="bis" />
+              <input
+                type="number"
+                className="form-control border-dark-subtle"
+                placeholder="bis"
+              />
             </div>
           </div>
         </div>
