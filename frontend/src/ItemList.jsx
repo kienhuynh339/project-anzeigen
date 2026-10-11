@@ -1,4 +1,4 @@
-const products = [
+const items = [
   {
     id: 1,
     name: "Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer Wireless Kopfhörer",
@@ -57,44 +57,42 @@ export default function ItemList() {
                       align-items-center mb-1"
       >
         <span className="mb-0">
-          {products.length} Ergebnisse für „...“ in der Kategorie „...“ in
+          {items.length} Ergebnisse für „...“ in der Kategorie „...“ in
           "..ort.." gefunden.
         </span>
       </div>
 
       <div className="row g-2">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {items.map((item) => (
+          <ItemCard key={item.id} item={item} />
         ))}
       </div>
     </>
   );
 }
 
-function ProductCard({ product }) {
+function ItemCard({ item }) {
   return (
     <a className="col-3 text-decoration-none" href="#">
       <div className="card h-100 shadow-sm">
-        <img src={product.image} className="card-img-top" alt={product.name} />
+        <img src={item.image} className="card-img-top" alt={item.name} />
 
         <div className="card-body d-flex flex-column justify-content-between">
           <h5 className="card-title">
-            {product.name.length > 80
-              ? product.name.slice(0, 80) + "..."
-              : product.name}
+            {item.name.length > 80 ? item.name.slice(0, 80) + "..." : item.name}
           </h5>
 
           <div className="container-fluid p-0 m-0">
-            <p className="card-text text-secondary m-0">{product.location}</p>
+            <p className="card-text text-secondary m-0">{item.location}</p>
 
             <div className="d-flex justify-content-between">
               <p className="fs-5 fw-bold m-0">
-                {product.price.toLocaleString("de-DE", {
+                {item.price.toLocaleString("de-DE", {
                   style: "currency",
                   currency: "EUR",
                 })}
               </p>
-              <p className="text-secondary m-0">{product.timestamp}</p>
+              <p className="text-secondary m-0">{item.timestamp}</p>
             </div>
           </div>
         </div>
