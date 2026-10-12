@@ -84,7 +84,7 @@ export default function Settings() {
             <span className="text-secondary ps-5 col">{data[field.key]}</span>
             <div className="col text-end">
               <button
-                className="btn btn-outline-primary border-0"
+                className="btn btn-outline-success border-0"
                 type="button"
                 onClick={() => openDialog(field)}
               >
@@ -123,7 +123,7 @@ export default function Settings() {
                 >
                   Abbrechen
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-success">
                   Bestätigen
                 </button>
               </div>

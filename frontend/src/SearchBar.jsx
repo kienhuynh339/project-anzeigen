@@ -65,7 +65,7 @@ export default function SearchBar() {
 
           <button
             type="submit"
-            className="col-1 btn btn-primary border-dark-subtle"
+            className="col-1 btn btn-success border-dark-subtle"
           >
             Finden
           </button>

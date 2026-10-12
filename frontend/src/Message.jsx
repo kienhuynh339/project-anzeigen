@@ -60,7 +60,7 @@ export default function Message() {
                   style={{ maxWidth: "80%" }}
                 >
                   <div
-                    className={`rounded p-2 ${message.sender_id === user_id ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
+                    className={`rounded p-2 ${message.sender_id === user_id ? "align-self-end bg-success-subtle" : "align-self-start bg-secondary-subtle"}`}
                   >
                     {message.content}
                   </div>
@@ -91,7 +91,7 @@ export default function Message() {
 
                   <button
                     type="submit"
-                    className="btn btn-primary border-dark-subtle"
+                    className="btn btn-success border-dark-subtle"
                   >
                     Senden
                   </button>
