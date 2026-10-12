@@ -13,8 +13,8 @@ function App() {
       <Header />
       <SearchBar />
       <main className="d-flex flex-column" style={{ minHeight: "90vh" }}>
-        {/* <ItemList /> */}
-        <Message />
+        <ItemList />
+        {/* <Message /> */}
       </main>
       <Footer />
     </div>
