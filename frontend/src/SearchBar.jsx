@@ -52,7 +52,7 @@ export default function SearchBar() {
             </div> */}
           <div className="col-auto">
             <button
-              className="btn btn-outline-dark"
+              className="btn btn-outline-success"
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#advancedFilters"

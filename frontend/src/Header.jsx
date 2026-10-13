@@ -16,6 +16,11 @@ export default function Header() {
           <div className="col-auto pe-0 ps-0">
             <div className="d-flex flex-nowrap align-items-center gap-2">
               <div className="">Hallo ...!</div>
+              <div>
+                <button type="button" className="btn btn-outline-success">
+                  <i className="bi bi-plus-circle"></i> Anzeige erstellen
+                </button>
+              </div>
               <div className="ps-0 pe-1">
                 <HamburgerMenu />
               </div>
@@ -40,7 +45,7 @@ function HamburgerMenu() {
     <div className="btn-group">
       <button
         type="button"
-        className="btn btn-outline-dark rounded-2"
+        className="btn btn-outline-success rounded-2"
         data-bs-toggle="dropdown"
       >
         <i className="bi bi-list-ul"></i>

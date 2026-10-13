@@ -5,8 +5,7 @@ import Footer from "./Footer";
 import Message from "./Message";
 import Settings from "./Settings";
 import ItemView from "./ItemView";
-
-// Item merken in der Itemansicht
+import CreateItem from "./CreateItem";
 
 function App() {
   return (
@@ -15,8 +14,9 @@ function App() {
       <main className="d-flex flex-column" style={{ minHeight: "90vh" }}>
         {/* <ItemList /> */}
         {/* <Message /> */}
-        <Settings />
+        {/* <Settings /> */}
         {/* <ItemView /> */}
+        <CreateItem />
       </main>
       <Footer />
     </div>

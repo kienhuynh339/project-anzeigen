@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DialogWindow from "./DialogWindow";
 
 const userData = {
   profilname: "Sarah",
@@ -6,7 +7,7 @@ const userData = {
 
 const item = {
   id: 10,
-  name: "Reihenhaus",
+  name: "Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus",
   description: `
 Objektbeschreibung:
 Dieses attraktive Reihenhaus bietet ein angenehmes Wohnambiente und vielfältige Möglichkeiten zur individuellen Gestaltung. Es eignet sich ideal für Paare, Familien oder Menschen, die sich den Traum vom eigenen Zuhause erfüllen möchten. Die durchdachte Raumaufteilung ermöglicht eine komfortable Nutzung der Wohnbereiche und schafft eine angenehme Atmosphäre für den Alltag.
@@ -38,6 +39,20 @@ Das Reihenhaus verbindet die Vorteile einer eigenständigen Wohnimmobilie mit ei
 
 export default function ItemView() {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
+  };
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+  const handleSend = (event) => {
+    event.preventDefault();
+
+    setIsDialogOpen(false);
+  };
+
   return (
     <>
       <div className="container-fluid">
@@ -87,9 +102,54 @@ export default function ItemView() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Nachricht schreiben */}
-              <button type="button" className="btn btn-outline-success">
+              <button
+                type="button"
+                className="btn btn-outline-success"
+                onClick={handleDialogOpen}
+              >
                 <i className="bi bi-chat-dots"></i> Nachricht schreiben
               </button>
+              <DialogWindow
+                isOpen={isDialogOpen}
+                dialogWidth={"70ch"}
+                dialogContent={
+                  <>
+                    <form
+                      className="d-flex flex-column p-2"
+                      onSubmit={handleSend}
+                    >
+                      <h4 className="mt-2 ">Nachricht schreiben</h4>
+                      <span className=" mb-3">
+                        {item.name.length > 50
+                          ? item.name.slice(0, 50) + "..."
+                          : item.name}{" "}
+                        •{" "}
+                        {item.price.toLocaleString("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
+                        })}
+                      </span>
+                      <textarea
+                        className="form-control"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        rows={4}
+                      />
+                      <div className="d-flex gap-3 justify-content-end mt-3 mb-2">
+                        <button
+                          className="btn btn-secondary"
+                          onClick={handleDialogClose}
+                        >
+                          Abbrechen
+                        </button>
+                        <button type="submit" className="btn btn-success">
+                          Senden
+                        </button>
+                      </div>
+                    </form>
+                  </>
+                }
+              />
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
               <button
                 type="button"
