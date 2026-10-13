@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DialogWindow from "./DialogWindow";
 
 const userData = {
   profilname: "Max Mustermann",
@@ -34,13 +35,15 @@ export default function Settings() {
   const [data, setData] = useState(userData);
   const [activeField, setActiveField] = useState(null);
   const [fieldValue, setFieldValue] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const openDialog = (field) => {
+  const handleDialogOpen = (field) => {
     setActiveField(field);
     setFieldValue(data[field.key]);
+    setIsDialogOpen(true);
   };
 
-  const saveChanges = (event) => {
+  const handleChange = (event) => {
     event.preventDefault();
 
     setData((prev) => ({
@@ -49,22 +52,13 @@ export default function Settings() {
     }));
 
     setActiveField(null);
+    setIsDialogOpen(false);
   };
 
-  const closeDialog = () => {
+  const handleDialogClose = () => {
     setActiveField(null);
+    setIsDialogOpen(false);
   };
-
-  // Scrollen im Hintergrund deaktivieren beim Öffnen des Dialogfensters und aktivieren beim Schließen
-  useEffect(() => {
-    // hidden verhindert das Scrollen des <body>
-    // "" stellt den ursprünglichen CSS-Zustand wieder her
-    document.body.style.overflow = activeField ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [activeField]);
 
   return (
     <div className="container-fluid">
@@ -86,7 +80,7 @@ export default function Settings() {
               <button
                 className="btn btn-outline-success border-0"
                 type="button"
-                onClick={() => openDialog(field)}
+                onClick={() => handleDialogOpen(field)}
               >
                 Ändern
               </button>
@@ -96,18 +90,11 @@ export default function Settings() {
       </div>
       {/* Dialogfenster*/}
       {activeField && (
-        <>
-          {/* Hintergrund-Overlay */}
-          <div
-            className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
-            style={{ zIndex: 1040 }}
-            // onClick={closeDialog}
-          ></div>
-          <div
-            className="container border-dark-subtle border rounded mx-auto mt-3 shadow-sm position-fixed top-50 start-50 translate-middle bg-white"
-            style={{ width: "50ch", zIndex: 1050 }}
-          >
-            <form className="d-flex flex-column" onSubmit={saveChanges}>
+        <DialogWindow
+          isOpen={isDialogOpen}
+          dialogWidth={"50ch"}
+          dialogContent={
+            <form className="d-flex flex-column" onSubmit={handleChange}>
               <span className="fw-bold py-4">{activeField.label} ändern</span>
               <input
                 className="form-control border-dark-subtle"
@@ -119,7 +106,7 @@ export default function Settings() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeDialog}
+                  onClick={handleDialogClose}
                 >
                   Abbrechen
                 </button>
@@ -128,9 +115,59 @@ export default function Settings() {
                 </button>
               </div>
             </form>
-          </div>
-        </>
+          }
+        />
       )}
     </div>
   );
 }
+
+// // Scrollen im Hintergrund deaktivieren beim Öffnen des Dialogfensters und aktivieren beim Schließen
+// useEffect(() => {
+//   // hidden verhindert das Scrollen des <body>
+//   // "" stellt den ursprünglichen CSS-Zustand wieder her
+//   document.body.style.overflow = activeField ? "hidden" : "";
+
+//   return () => {
+//     document.body.style.overflow = "";
+//   };
+// }, [activeField]);
+
+// {/* Dialogfenster*/}
+//       {activeField && (
+//         <>
+//           {/* Hintergrund-Overlay */}
+//           <div
+//             className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
+//             style={{ zIndex: 1040 }}
+//             // onClick={closeDialog}
+//           ></div>
+//           <div
+//             className="container border-dark-subtle border rounded mx-auto mt-3 shadow-sm position-fixed top-50 start-50 translate-middle bg-white"
+//             style={{ width: "50ch", zIndex: 1050 }}
+//           >
+//             {/* Dialogfenster-Inhalt */}
+//             <form className="d-flex flex-column" onSubmit={handleChange}>
+//               <span className="fw-bold py-4">{activeField.label} ändern</span>
+//               <input
+//                 className="form-control border-dark-subtle"
+//                 type={activeField.type}
+//                 value={fieldValue}
+//                 onChange={(e) => setFieldValue(e.target.value)}
+//               ></input>
+//               <div className="d-flex justify-content-end gap-3 py-4">
+//                 <button
+//                   type="button"
+//                   className="btn btn-secondary"
+//                   onClick={handleDialogClose}
+//                 >
+//                   Abbrechen
+//                 </button>
+//                 <button type="submit" className="btn btn-success">
+//                   Bestätigen
+//                 </button>
+//               </div>
+//             </form>
+//           </div>
+//         </>
+//       )}
