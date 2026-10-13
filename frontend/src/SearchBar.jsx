@@ -1,21 +1,19 @@
+import "./inputWhiteFocus.css";
 export default function SearchBar() {
   return (
-    <div className="container-fluid bg-success-subtle pb-2">
+    <div className="container-fluid bg-dark pb-2">
       <form>
         <div className="row g-2 align-items-center justify-content-between">
           <div className="col-4">
             <input
               type="text"
-              className="form-control border-dark-subtle"
+              className="form-control white-focus"
               placeholder="Suchbegriff"
             />
           </div>
 
           <div className="col-2">
-            <select
-              className="form-select border-dark-subtle"
-              defaultValue="all"
-            >
+            <select className="form-select white-focus" defaultValue="all">
               <option value="all">Alle Kategorien</option>
               <option value="technik">Technik</option>
               <option value="kleidung">Kleidung</option>
@@ -26,7 +24,7 @@ export default function SearchBar() {
           <div className="col-2">
             <input
               type="text"
-              className="form-control border-dark-subtle"
+              className="form-control white-focus"
               placeholder="Ort"
             />
           </div>
@@ -35,7 +33,7 @@ export default function SearchBar() {
           <div className="col-2">
             <input
               type="text"
-              className="form-control border-dark-subtle"
+              className="form-control white-focus"
               placeholder="Ganzer Ort"
             />
           </div>
@@ -52,7 +50,7 @@ export default function SearchBar() {
             </div> */}
           <div className="col-auto">
             <button
-              className="btn btn-outline-success"
+              className="btn btn-outline-light"
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#advancedFilters"
@@ -63,20 +61,17 @@ export default function SearchBar() {
             </button>
           </div>
 
-          <button
-            type="submit"
-            className="col-1 btn btn-success border-dark-subtle"
-          >
+          <button type="submit" className="col-1 btn btn-outline-light ">
             Finden
           </button>
         </div>
-        <div className="collapse mt-2" id="advancedFilters">
+        <div className="collapse mt-2  text-light" id="advancedFilters">
           <div className="row g-2 align-items-center">
             <span className="col-auto">Preis: </span>
             <div className="col-2">
               <input
                 type="number"
-                className="form-control border-dark-subtle"
+                className="form-control white-focus"
                 placeholder="von"
               />
             </div>
@@ -84,7 +79,7 @@ export default function SearchBar() {
             <div className="col-2">
               <input
                 type="number"
-                className="form-control border-dark-subtle"
+                className="form-control white-focus"
                 placeholder="bis"
               />
             </div>

@@ -4,7 +4,7 @@ import SearchBar from "./SearchBar";
 export default function Header() {
   return (
     <header>
-      <div className="container-fluid pb-2 bg-success-subtle border border-dark-subtle">
+      <div className="container-fluid pb-2 bg-dark">
         <div className="row align-items-center justify-content-between gap-3">
           <a href="#" className="col-auto ps-1 pe-0">
             <img
@@ -17,7 +17,7 @@ export default function Header() {
             <div className="d-flex flex-nowrap align-items-center gap-2">
               <div className="">Hallo ...!</div>
               <div>
-                <button type="button" className="btn btn-outline-success">
+                <button type="button" className="btn btn-outline-light">
                   <i className="bi bi-plus-circle"></i> Anzeige erstellen
                 </button>
               </div>
@@ -45,7 +45,7 @@ function HamburgerMenu() {
     <div className="btn-group">
       <button
         type="button"
-        className="btn btn-outline-success rounded-2"
+        className="btn btn-outline-light rounded-2"
         data-bs-toggle="dropdown"
       >
         <i className="bi bi-list-ul"></i>
