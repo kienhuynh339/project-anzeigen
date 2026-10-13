@@ -1,43 +1,5 @@
 import React from "react";
-
-const categories = [
-  "Alle Kategorien",
-  "Antiquitäten & Kunst",
-  "Auto & Motorrad: Fahrzeuge",
-  "Auto & Motorrad: Teile",
-  "Baby",
-  "Bastel- & Künstlerbedarf",
-  "Beauty & Gesundheit",
-  "Briefmarken",
-  "Bücher",
-  "Büro & Schreibwaren",
-  "Business & Industrie",
-  "Computer, Tablets & Netzwerk",
-  "Feinschmecker",
-  "Filme & DVDs",
-  "Foto & Camcorder",
-  "Garten & Terrasse",
-  "Handys & Kommunikation",
-  "Haushaltsgeräte",
-  "Haustierbedarf",
-  "Heimwerker",
-  "Immobilien",
-  "Kleidung & Accessoires",
-  "Modellbau",
-  "Möbel & Wohnen",
-  "Münzen",
-  "Musik",
-  "Musikinstrumente",
-  "PC- & Videospiele",
-  "Reisen",
-  "Sammeln & Seltenes",
-  "Spielzeug",
-  "Sport",
-  "Tickets",
-  "TV, Video & Audio",
-  "Uhren & Schmuck",
-  "Verschiedenes",
-];
+import { categories } from "./categories";
 
 export default function CreateItem() {
   const [images, setImages] = React.useState([]);

@@ -104,7 +104,7 @@ export default function ItemView() {
               {/* Nachricht schreiben */}
               <button
                 type="button"
-                className="btn btn-outline-success"
+                className="btn btn-outline-primary"
                 onClick={handleDialogOpen}
               >
                 <i className="bi bi-chat-dots"></i> Nachricht schreiben
@@ -142,7 +142,7 @@ export default function ItemView() {
                         >
                           Abbrechen
                         </button>
-                        <button type="submit" className="btn btn-success">
+                        <button type="submit" className="btn btn-primary">
                           Senden
                         </button>
                       </div>
@@ -153,7 +153,7 @@ export default function ItemView() {
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
               <button
                 type="button"
-                className="btn btn-outline-success"
+                className="btn btn-outline-primary"
                 onClick={() => setIsFavorite(!isFavorite)}
               >
                 {isFavorite ? (

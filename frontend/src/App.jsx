@@ -15,8 +15,8 @@ function App() {
         {/* <ItemList /> */}
         {/* <Message /> */}
         {/* <Settings /> */}
-        {/* <ItemView /> */}
-        <CreateItem />
+        <ItemView />
+        {/* <CreateItem /> */}
       </main>
       <Footer />
     </div>

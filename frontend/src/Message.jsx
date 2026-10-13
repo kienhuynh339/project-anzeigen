@@ -25,7 +25,11 @@ export default function Message() {
           <div className="h-100 list-group list-group-flush overflow-auto">
             {conversations.map((conversation) => (
               <button
-                className="list-group-item list-group-item-action border-bottom border-dark-subtle"
+                className={`list-group-item list-group-item-action border-bottom border-dark-subtle ${
+                  currentConversation.id === conversation.id
+                    ? "bg-primary-subtle"
+                    : ""
+                }`}
                 // style={{ height: "150px", flexShrink: 0 }}
                 type="button"
                 onClick={() => handleClickConversation(conversation)}
@@ -45,7 +49,7 @@ export default function Message() {
           <div className="h-100 d-flex flex-column">
             {/* Chat-Kopfzeile */}
             <div className="p-3 border-bottom border-dark-subtle">
-              <h5 className="mb-0 text-success-emphasis">
+              <h5 className="mb-0 text-primary">
                 {currentConversation.id === null
                   ? ""
                   : `${currentConversation.item.poster_id} - ${currentConversation.item.name}`}
@@ -60,7 +64,7 @@ export default function Message() {
                   style={{ maxWidth: "80%" }}
                 >
                   <div
-                    className={`rounded p-2 ${message.sender_id === user_id ? "align-self-end bg-success-subtle" : "align-self-start bg-secondary-subtle"}`}
+                    className={`rounded p-2 ${message.sender_id === user_id ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
                   >
                     {message.content}
                   </div>
@@ -91,7 +95,7 @@ export default function Message() {
 
                   <button
                     type="submit"
-                    className="btn btn-success border-dark-subtle"
+                    className="btn btn-primary border-dark-subtle"
                   >
                     Senden
                   </button>

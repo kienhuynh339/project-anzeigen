@@ -1,4 +1,6 @@
 import "./inputWhiteFocus.css";
+import { categories } from "./categories";
+
 export default function SearchBar() {
   return (
     <div className="container-fluid bg-dark pb-2">
@@ -13,10 +15,17 @@ export default function SearchBar() {
           </div>
 
           <div className="col-2">
-            <select className="form-select white-focus" defaultValue="all">
-              <option value="all">Alle Kategorien</option>
-              <option value="technik">Technik</option>
-              <option value="kleidung">Kleidung</option>
+            <select
+              id="category"
+              name="category"
+              className="form-select white-focus"
+              defaultValue="Alle Kategorien"
+            >
+              {categories.map((category) => (
+                <>
+                  <option value={category}>{category}</option>
+                </>
+              ))}
             </select>
           </div>
 
