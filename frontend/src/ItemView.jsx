@@ -37,6 +37,7 @@ Das Reihenhaus verbindet die Vorteile einer eigenständigen Wohnimmobilie mit ei
 };
 
 export default function ItemView() {
+  const [isFavorite, setIsFavorite] = useState(false);
   return (
     <>
       <div className="container-fluid">
@@ -90,9 +91,20 @@ export default function ItemView() {
                 <i className="bi bi-chat-dots"></i> Nachricht schreiben
               </button>
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
-              <button type="button" className="btn btn-outline-success">
-                {/* <i className="bi bi-heart"></i> Zur Merkliste hinzufügen */}
-                <i className="bi bi-heart-fill"></i> Von Merkliste entfernen
+              <button
+                type="button"
+                className="btn btn-outline-success"
+                onClick={() => setIsFavorite(!isFavorite)}
+              >
+                {isFavorite ? (
+                  <>
+                    <i className="bi bi-heart-fill"></i> Von Merkliste entfernen
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-heart"></i> Zur Merkliste hinzufügen
+                  </>
+                )}
               </button>
             </div>
           </div>

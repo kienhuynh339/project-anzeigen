@@ -15,8 +15,8 @@ function App() {
       <main className="d-flex flex-column" style={{ minHeight: "90vh" }}>
         {/* <ItemList /> */}
         {/* <Message /> */}
-        {/* <Settings /> */}
-        <ItemView />
+        <Settings />
+        {/* <ItemView /> */}
       </main>
       <Footer />
     </div>
