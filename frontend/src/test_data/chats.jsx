@@ -1,4 +1,4 @@
-export const conversations = [
+export const chats = [
   {
     id: 1,
     item: { name: "Fahrrad", link: "#", poster_id: "002" },
@@ -319,7 +319,11 @@ export const conversations = [
   },
   {
     id: 5,
-    item: { name: "PlayStation 5", link: "#", poster_id: "031" },
+    item: {
+      name: "PlayStation 5 PlayStation 5 PlayStation 5 PlayStation 5 PlayStation 5 PlayStation 5 PlayStation 5 PlayStation 5",
+      link: "#",
+      poster_id: "031",
+    },
     messages: [
       {
         sender_id: "002",
