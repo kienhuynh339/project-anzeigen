@@ -77,13 +77,19 @@ export default function Message() {
                 </>
               ) : (
                 <>
-                  {/* "Chat löschen" aktivieren */}
-                  <button
-                    className="btn btn-outline-danger"
-                    onClick={handleActivateChatDelete}
-                  >
-                    <i className="bi bi-trash"></i>
-                  </button>
+                  {chats.length > 0 ? (
+                    <>
+                      {/* "Chat löschen" aktivieren */}
+                      <button
+                        className="btn btn-outline-danger"
+                        onClick={handleActivateChatDelete}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </>
               )}
 
