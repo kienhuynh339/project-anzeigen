@@ -128,45 +128,32 @@ export default function Message() {
                 }
               />
             </div>
-            {isChatDeleteActive ? (
-              <>
-                {chats.map((chat) => (
-                  <button
-                    className={`list-group-item list-group-item-action border-bottom border-dark-subtle ${
-                      deleteList.includes(chat.id) ? "bg-danger-subtle" : ""
-                    }`}
-                    // style={{ height: "150px", flexShrink: 0 }}
-                    type="button"
-                    onClick={() => handleClickChatToDelete(chat)}
-                  >
-                    <div className="text-dark">
-                      {chat.item.poster_id === user_id
-                        ? truncateText(chat.item.name, 50)
-                        : `${chat.item.poster_id} - ${truncateText(chat.item.name, 50)}`}
-                    </div>
-                  </button>
-                ))}
-              </>
-            ) : (
-              <>
-                {chats.map((chat) => (
-                  <button
-                    className={`list-group-item list-group-item-action border-bottom border-dark-subtle ${
-                      currentChat.id === chat.id ? "bg-primary-subtle" : ""
-                    }`}
-                    // style={{ height: "150px", flexShrink: 0 }}
-                    type="button"
-                    onClick={() => handleClickChat(chat)}
-                  >
-                    <div className="text-dark">
-                      {chat.item.poster_id === user_id
-                        ? truncateText(chat.item.name, 50)
-                        : `${chat.item.poster_id} - ${truncateText(chat.item.name, 50)}`}
-                    </div>
-                  </button>
-                ))}
-              </>
-            )}
+            {chats.map((chat) => (
+              <button
+                className={`list-group-item list-group-item-action border-bottom border-dark-subtle ${
+                  isChatDeleteActive
+                    ? deleteList.includes(chat.id)
+                      ? "bg-danger-subtle"
+                      : ""
+                    : currentChat.id === chat.id
+                      ? "bg-primary-subtle"
+                      : ""
+                }`}
+                // style={{ height: "150px", flexShrink: 0 }}
+                type="button"
+                onClick={() =>
+                  isChatDeleteActive
+                    ? handleClickChatToDelete(chat)
+                    : handleClickChat(chat)
+                }
+              >
+                <div className="text-dark">
+                  {chat.item.poster_id === user_id
+                    ? truncateText(chat.item.name, 50)
+                    : `${chat.item.poster_id} - ${truncateText(chat.item.name, 50)}`}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
