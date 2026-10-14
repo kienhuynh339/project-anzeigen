@@ -56,7 +56,7 @@ export default function Message() {
         className="row border border-dark-subtle shadow-sm"
         style={{ height: "80vh" }}
       >
-        {/* Linke Hälfte: Konversationsliste */}
+        {/* Linke Hälfte: Chatliste */}
         <div className="h-100 col-5 p-0 border-end border-dark-subtle">
           <div className="h-100 list-group list-group-flush overflow-auto">
             {/* Aktionleiste */}
@@ -128,6 +128,7 @@ export default function Message() {
                 }
               />
             </div>
+            {/* Chatliste */}
             {chats.map((chat) => (
               <button
                 className={`list-group-item list-group-item-action border-bottom border-dark-subtle ${
