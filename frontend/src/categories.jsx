@@ -1,8 +1,8 @@
 export const categories = [
   "Alle Kategorien",
   "Antiquitäten & Kunst",
-  "Auto & Motorrad: Fahrzeuge",
-  "Auto & Motorrad: Teile",
+  "Fahrzeuge",
+  "Fahrzeuge: Teile",
   "Baby",
   "Bastel- & Künstlerbedarf",
   "Beauty & Gesundheit",

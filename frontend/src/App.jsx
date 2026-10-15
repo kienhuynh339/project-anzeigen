@@ -12,8 +12,8 @@ function App() {
     <div>
       <Header />
       <main className="d-flex flex-column" style={{ minHeight: "90vh" }}>
-        {/* <ItemList /> */}
-        <Message />
+        <ItemList />
+        {/* <Message /> */}
         {/* <Settings /> */}
         {/* <ItemView /> */}
         {/* <CreateItem /> */}
