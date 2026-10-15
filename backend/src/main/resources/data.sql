@@ -1,2 +1,180 @@
 -- Damit Default-Werte verwendet werden, müssen andere Spalten explizit angegeben werden
-INSERT INTO users (profile_name, account_name, password_hash) VALUES('haawdawda','hawdawdaa','awdawdwad')
+INSERT INTO users (id, profile_name, account_name, password_hash, created_at)
+VALUES (1, 'MaxPower', 'maxpower', '123456789', '2020-01-01 01:01:00+02:00'),
+       (2, 'MaxSpeed', 'maxspeed', '234567890', '2022-02-02 02:02:00+02:00'),
+       (3, 'MaxAlles', 'maxeverything', '3456789012', '2024-04-04 04:04:00+02:00'),
+       (4, 'Frodo', 'frodobaggins', '1212121212', '2025-05-05 05:05:00+02:00');
+
+INSERT INTO item_statuses
+VALUES (1, 'DRAFT'),
+       (2, 'ACTIVE'),
+       (3, 'RESERVED'),
+       (4, 'DELETED');
+
+INSERT INTO item_categories(id, name)
+VALUES (1, 'Alle Kategorien'),
+       (2, 'Antiquitäten & Kunst'),
+       (3, 'Fahrzeuge'),
+       (4, 'Fahrzeuge: Teile'),
+       (5, 'Baby'),
+       (6, 'Bastel- & Künstlerbedarf'),
+       (7, 'Beauty & Gesundheit'),
+       (8, 'Briefmarken'),
+       (9, 'Bücher'),
+       (10, 'Büro & Schreibwaren'),
+       (11, 'Business & Industrie'),
+       (12, 'Computer, Tablets & Netzwerk'),
+       (13, 'Feinschmecker'),
+       (14, 'Filme & DVDs'),
+       (15, 'Foto & Camcorder'),
+       (16, 'Garten & Terrasse'),
+       (17, 'Handys & Kommunikation'),
+       (18, 'Haushaltsgeräte'),
+       (19, 'Haustierbedarf'),
+       (20, 'Heimwerker'),
+       (21, 'Immobilien'),
+       (22, 'Kleidung & Accessoires'),
+       (23, 'Modellbau'),
+       (24, 'Möbel & Wohnen'),
+       (25, 'Münzen'),
+       (26, 'Musik'),
+       (27, 'Musikinstrumente'),
+       (28, 'PC- & Videospiele'),
+       (29, 'Reisen'),
+       (30, 'Sammeln & Seltenes'),
+       (31, 'Spielzeug'),
+       (32, 'Sport'),
+       (33, 'Tickets'),
+       (34, 'TV, Video & Audio'),
+       (35, 'Uhren & Schmuck'),
+       (36, 'Verschiedenes');
+
+INSERT INTO items(id, poster_id, title, category_id, description, price, location_id, status_id, created_at)
+VALUES (1, 1, 'Nintendo switch 2', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 100, 26488, 2,
+    '2026-09-01 08:00:00+02'),
+    (2, 1, 'Gaming Headset', 34, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 101, 26488, 2,
+    '2026-09-01 08:15:00+02'),
+    (3, 1, 'sony headset weiß', 34, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 102, 26488, 2,
+    '2026-09-01 08:30:00+02'),
+    (4, 1, 'sony headset schwarz', 34, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 103, 26488, 2,
+    '2026-09-01 08:45:00+02'),
+    (5, 1, 'headset schwarz', 34, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 104, 26488, 2,
+    '2026-09-01 09:00:00+02'),
+    (6, 1, '2 weiße Tastaturen', 12, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 105, 26488, 2,
+    '2026-09-01 09:15:00+02'),
+    (7, 1, 'logitech Tastatur schwarz', 12, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 106, 26488, 2,
+    '2026-09-01 09:45:00+02'),
+    (8, 1, 'tastatur schwarz', 12, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 107, 26488, 2,
+    '2026-09-01 10:00:00+02'),
+    (9, 1, 'tastatur schwarz', 12, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 108, 26488, 2,
+    '2026-09-01 10:15:00+02'),
+    (10, 1, 'tastatur wireless', 12, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 109, 26488, 2,
+    '2026-09-01 10:30:00+02'),
+    (11, 1, 'tastatur kabellos schwarz weiß', 12, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 110, 26488, 2,
+    '2026-09-01 10:45:00+02'),
+    (12, 1, 'Gaming Controller Schwarz', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 111, 26488, 2,
+    '2026-09-01 11:00:00+02'),
+    (13, 1, 'Xbox Controller', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 112, 26488, 2,
+    '2026-09-01 11:15:00+02'),
+    (14, 1, 'SONY Controller Weiß', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 113, 26488, 2,
+    '2026-09-01 11:30:00+02'),
+    (15, 1, 'Nintendo Gameboy', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 114, 26488, 2,
+    '2026-09-01 11:45:00+02'),
+    (16, 2, 'rolex Uhr', 35, 'Privatverkauf unter Ausschluss jeglicher Sachmängelhaftung. Keine Rücknahme.', 200, 15879, 2,
+    '2026-08-01 12:00:00+02'),
+    (17, 2, 'fossil Uhr', 35, 'Privatverkauf unter Ausschluss jeglicher Sachmängelhaftung. Keine Rücknahme.', 201, 15879, 2,
+    '2026-08-01 12:15:00+02'),
+    (18, 2, 'omega Uhr', 35, 'Privatverkauf unter Ausschluss jeglicher Sachmängelhaftung. Keine Rücknahme.', 202, 15879, 2,
+    '2026-08-01 12:30:00+02'),
+    (19, 3, 'mobike Fahrrad', 3, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 300, 19511, 2, '2026-07-01 08:00:00+02'),
+    (20, 3, 'HERCULES Fahrrad', 3, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 301, 19511, 2, '2026-07-01 08:15:00+02'),
+    (21, 3, 'Fahrrad', 3, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 302, 19511, 2, '2026-08-01 08:30:00+02'),
+    (22, 3, 'Fabricbike Fahrrad', 3, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 303, 19511, 2, '2026-07-01 08:45:00+02'),
+    (23, 3, 'BTWIN Fahrrad 28 Zoll', 3, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 304, 19511, 2, '2026-07-01 09:00:00+02'),
+    (24, 3, 'peogeot Fahrrad 26 Zoll', 3, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 305, 19511, 2, '2026-07-01 09:15:00+02'),
+    (25, 3, 'Holzstuhl', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 306, 19511, 2, '2026-07-01 09:30:00+02'),
+    (26, 3, 'Stuhl Weiß', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 307, 19511, 2, '2026-07-01 09:45:00+02'),
+    (27, 3, 'Stuhl zu verschenken', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 0, 19511, 2, '2026-07-01 10:00:00+02'),
+    (28, 3, 'Holzstuhl Gebraucht', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 309, 19511, 2, '2026-07-01 10:15:00+02'),
+    (29, 3, 'Gartenstuhl Weiß', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 310, 19511, 2, '2026-07-01 10:30:00+02'),
+    (30, 3, 'Sofa grau', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 311, 19511, 2, '2026-07-01 10:45:00+02'),
+    (31, 3, 'Sofa gebraucht', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 312, 19511, 2, '2026-07-01 11:00:00+02'),
+    (32, 3, 'Sofa gelb gebraucht', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 313, 19511, 2, '2026-07-01 11:15:00+02'),
+    (33, 3, 'Sofa Leder Braun', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 314, 19511, 2, '2026-07-01 11:30:00+02'),
+    (34, 3, 'Sofa Orange', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 315, 19511, 2, '2026-07-01 11:45:00+02'),
+    (35, 3, 'Sofa zu verschenken', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 0, 19511, 2, '2026-07-01 12:00:00+02'),
+    (36, 3, 'Sofa Samtstoff Smaragdgrün', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 317, 19511, 2, '2026-07-01 12:15:00+02');
+
+
+INSERT INTO item_images (image, item_id, display_order)
+VALUES
+    (FILE_READ('src/main/resources/images/user_1_pc_videospiele_nintendoswitch2.jpg'), 1, 0),
+    (FILE_READ('src/main/resources/images/user1_audio_headset (1).jpg'), 2, 0),
+    (FILE_READ('src/main/resources/images/user1_audio_headset (2).jpg'), 3, 0),
+    (FILE_READ('src/main/resources/images/user1_audio_headset (3).jpg'), 4, 0),
+    (FILE_READ('src/main/resources/images/user1_audio_headset (4).jpg'), 5, 0),
+    (FILE_READ('src/main/resources/images/user1_computer_2_weiße_tastaturen (1).jpg'), 6, 0),
+    (FILE_READ('src/main/resources/images/user1_computer_2_weiße_tastaturen (2).jpg'), 6, 1),
+    (FILE_READ('src/main/resources/images/user1_computer_tastatur (1).jpg'), 7, 0),
+    (FILE_READ('src/main/resources/images/user1_computer_tastatur (2).jpg'), 8, 0),
+    (FILE_READ('src/main/resources/images/user1_computer_tastatur (3).jpg'), 9, 0),
+    (FILE_READ('src/main/resources/images/user1_computer_tastatur (4).jpg'), 10, 0),
+    (FILE_READ('src/main/resources/images/user1_computer_tastatur (5).jpg'), 11, 0),
+    (FILE_READ('src/main/resources/images/user1_pc_videospiele_controller (1).jpg'), 12, 0),
+    (FILE_READ('src/main/resources/images/user1_pc_videospiele_controller (2).jpg'), 13, 0),
+    (FILE_READ('src/main/resources/images/user1_pc_videospiele_controller (3).jpg'), 14, 0),
+    (FILE_READ('src/main/resources/images/user1_pc_videospiele_gameboy.jpg'), 15, 0),
+    (FILE_READ('src/main/resources/images/user2_Uhren_3_Uhren (1).jpg'), 16, 0),
+    (FILE_READ('src/main/resources/images/user2_Uhren_3_Uhren (2).jpg'), 17, 0),
+    (FILE_READ('src/main/resources/images/user2_Uhren_3_Uhren (3).jpg'), 18, 0),
+    (FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 19, 0),
+    (FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 20, 0),
+    (FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (4).jpg'), 21, 0),
+    (FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (5).jpg'), 22, 0),
+    (FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (6).jpg'), 23, 0),
+    (FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (7).jpg'), 24, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_ stuhl (1).jpg'), 25, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_ stuhl (2).jpg'), 26, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_ stuhl (3).jpg'), 27, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_ stuhl (4).jpg'), 28, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_ stuhl (5).jpg'), 29, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (1).jpg'), 30, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (2).jpg'), 31, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (3).jpg'), 32, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (4).jpg'), 33, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (5).jpg'), 34, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (6).jpg'), 35, 0),
+    (FILE_READ('src/main/resources/images/user3_möbel_sofa (7).jpg'), 36, 0);
+
+-- CREATE TABLE item_images(
+--                             id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+--                             image BLOB NOT NULL,
+--                             item_id BIGINT REFERENCES items(id) NOT NULL,
+--                             display_order SMALLINT NOT NULL DEFAULT 0
+-- );
+--
+-- CREATE TABLE item_favorites(
+--                                user_id BIGINT REFERENCES users(id),
+--                                item_id BIGINT REFERENCES items(id),
+--                                created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--
+--                                PRIMARY KEY (user_id, item_id)
+-- );
+--
+-- CREATE TABLE chats(
+--                       id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY ,
+--                       item_id BIGINT REFERENCES items(id) NOT NULL,
+--                       poster_id BIGINT REFERENCES users(id) NOT NULL,
+--                       interested_user_id BIGINT REFERENCES users(id) NOT NULL,
+--                       first_deleted_by_user_id BIGINT REFERENCES  users(id),
+--                       created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- );
+--
+-- CREATE TABLE messages(
+--                          id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY ,
+--                          chat_id BIGINT REFERENCES chats(id) NOT NULL,
+--                          sender_id BIGINT REFERENCES users(id) NOT NULL,
+--                          content TEXT NOT NULL CHECK(CHAR_LENGTH(TRIM(content))>0),
+--                          is_read BOOLEAN NOT NULL DEFAULT FALSE,
+--                          created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- );
