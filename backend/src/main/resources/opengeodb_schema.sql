@@ -106,8 +106,9 @@ CREATE INDEX idx_locations_adm3
 CREATE TABLE geodb_areacodes (
   id                   integer NOT NULL,
   plz                  varchar(5),
+    PRIMARY KEY (id, plz)
   --UNIQUE KEY idp (id,plz),
-  CONSTRAINT uq_geodb_areacodes_id_plz UNIQUE (id, plz)
+--   CONSTRAINT uq_geodb_areacodes_id_plz UNIQUE (id, plz)
   --KEY plz (plz)
 ); --TYPE=InnoDB CHARACTER SET utf8;
 CREATE INDEX idx_geodb_areacodes_plz
