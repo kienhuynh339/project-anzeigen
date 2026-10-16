@@ -39,6 +39,93 @@ public class Item {
     private OffsetDateTime createdAt;
 
     protected Item(){}
+
+    public Item(User poster, String title, Category category,
+                String description, Integer price,
+                GeodbLocation location, ItemStatus status) {
+        this.poster = poster;
+        this.title = title;
+        this.category = category;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.status = status;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
+        }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getPoster() {
+        return poster;
+    }
+
+    public void setPoster(User poster) {
+        this.poster = poster;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public GeodbLocation getLocation() {
+        return location;
+    }
+
+    public void setLocationId(GeodbLocation location) {
+        this.location = location;
+    }
+
+    public ItemStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ItemStatus status) {
+        this.status = status;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
 
 

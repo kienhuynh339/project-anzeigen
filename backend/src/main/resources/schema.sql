@@ -41,6 +41,8 @@ CREATE TABLE item_images(
     display_order SMALLINT NOT NULL DEFAULT 0
 );
 
+-- TODO ---
+
 CREATE TABLE item_favorites(
     user_id BIGINT REFERENCES users(id),
     item_id BIGINT REFERENCES items(id),
