@@ -112,35 +112,35 @@ CREATE TABLE geodb_areacodes (
 ); --TYPE=InnoDB CHARACTER SET utf8;
 CREATE INDEX idx_geodb_areacodes_plz
     ON geodb_areacodes(plz);
-/*
- * Table structure for table 'geodb_population'
- */
-
-CREATE TABLE geodb_population (
-  id                   integer NOT NULL default '0',
-  population_min       integer default NULL,
-  population_max       integer default NULL,
-  due_date             date default NULL,
---   UNIQUE KEY id_due_date (id,due_date),
-  CONSTRAINT uq_geodb_population_id_due_date
-      UNIQUE (id, due_date)
---   KEY id (id),
---   KEY population_min (population_min),
---   KEY population_max (population_max),
---   KEY due_date (due_date)
-); --TYPE=InnoDB CHARACTER SET utf8;
-CREATE INDEX idx_geodb_population_id
-    ON geodb_population(id);
-
-CREATE INDEX idx_geodb_population_min
-    ON geodb_population(population_min);
-
-CREATE INDEX idx_geodb_population_max
-    ON geodb_population(population_max);
-
-CREATE INDEX idx_geodb_population_due_date
-    ON geodb_population(due_date);
---COMMIT;
-
+-- /*
+--  * Table structure for table 'geodb_population'
+--  */
+--
+-- CREATE TABLE geodb_population (
+--   id                   integer NOT NULL default '0',
+--   population_min       integer default NULL,
+--   population_max       integer default NULL,
+--   due_date             date default NULL,
+-- --   UNIQUE KEY id_due_date (id,due_date),
+--   CONSTRAINT uq_geodb_population_id_due_date
+--       UNIQUE (id, due_date)
+-- --   KEY id (id),
+-- --   KEY population_min (population_min),
+-- --   KEY population_max (population_max),
+-- --   KEY due_date (due_date)
+-- ); --TYPE=InnoDB CHARACTER SET utf8;
+-- CREATE INDEX idx_geodb_population_id
+--     ON geodb_population(id);
+--
+-- CREATE INDEX idx_geodb_population_min
+--     ON geodb_population(population_min);
+--
+-- CREATE INDEX idx_geodb_population_max
+--     ON geodb_population(population_max);
+--
+-- CREATE INDEX idx_geodb_population_due_date
+--     ON geodb_population(due_date);
+-- --COMMIT;
+--
 
 

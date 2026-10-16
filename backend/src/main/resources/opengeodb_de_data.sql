@@ -30958,6 +30958,7 @@ INSERT INTO geodb_locations VALUES (26698,6,'Zwönitz','Zwoenitz','14188260','DE
 INSERT INTO geodb_areacodes VALUES(26698,'08297');
 INSERT INTO geodb_locations VALUES (26699,6,'Zwota','Zwota','14178750','DE','SN','Chemnitz','Vogtlandkreis','Verwaltungsgemeinschaft Klingenthal','Zwota',NULL,NULL,NULL,50.357,12.4333,'V','08267');
 INSERT INTO geodb_areacodes VALUES(26699,'08267');
+/*
 INSERT INTO geodb_population VALUES('14334','7025','7025',null);
 INSERT INTO geodb_population VALUES('16382','1688','1688',null);
 INSERT INTO geodb_population VALUES('20478','640','640',null);
@@ -34902,3 +34903,4 @@ INSERT INTO geodb_population VALUES('22604','15816','15816',null);
 INSERT INTO geodb_population VALUES('18507','2171','2171',null);
 INSERT INTO geodb_population VALUES('20555','38236','38443',null);
 INSERT INTO geodb_population VALUES('22603','1138','1138',null);
+*/
