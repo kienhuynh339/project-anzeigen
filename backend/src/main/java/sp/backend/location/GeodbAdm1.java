@@ -8,13 +8,14 @@ import jakarta.persistence.*;
 public class GeodbAdm1 {
 
     @Id
-    @Column(name="adm0")
+    @Column(name="adm0", columnDefinition = "char(2)")
     private String adm0;
 
     @Id
-    @Column(name="adm1")
+    @Column(name="adm1", columnDefinition = "char(2)")
     private String adm1;
 
+    @Column(columnDefinition = "char(2)")
     private String gs;
 
     private String name;

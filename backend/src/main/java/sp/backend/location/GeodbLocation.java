@@ -20,8 +20,10 @@ public class GeodbLocation {
 
     private String gs;
 
+    @Column(columnDefinition = "char(2)")
     private String adm0;
 
+    @Column(columnDefinition = "char(2)")
     private String adm1;
 
     private String adm2;
@@ -42,6 +44,7 @@ public class GeodbLocation {
 
     private Float laenge;
 
+    @Column(columnDefinition = "char(3)")
     private String kfz;
 
     private String plz;

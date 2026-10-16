@@ -7,7 +7,15 @@ import jakarta.persistence.*;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Short id;
 
     private String name;
+
+    protected Category(){};
+
+    public String getName(){
+        return name;
+    }
+
+    public void setName(String name){this.name=name;}
 }

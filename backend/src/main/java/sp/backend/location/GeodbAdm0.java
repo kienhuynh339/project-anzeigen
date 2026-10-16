@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 @Table(name="geodb_adm0")
 public class GeodbAdm0 {
     @Id
-    @Column(name="adm0")
+    @Column(name="adm0", columnDefinition = "char(2)")
     private String adm0;
 
     private String name;
