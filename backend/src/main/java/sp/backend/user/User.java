@@ -13,17 +13,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "profile_name", nullable = false, length=20)
+    @Column(name = "profile_name")
     private String profileName;
 
 
-    @Column(name="account_name", nullable=false, unique = true, length = 20)
+    @Column(name="account_name")
     private String accountName;
 
-    @Column(name="password_hash", nullable = false)
+    @Column(name="password_hash")
     private String passwordHash;
 
-    @Column(name="created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name="created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 
     // JPA braucht einen parameterlosen Konstruktor mit mindestens protected-Sichtbarkeit, um einen Datensatz in ein Objekt zu verwandeln
