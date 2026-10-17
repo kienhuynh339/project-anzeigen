@@ -1,46 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router";
 import DialogWindow from "./DialogWindow";
-
-const userData = {
-  profilname: "Sarah",
-};
-
-const item = {
-  id: 10,
-  name: "Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus Reihenhaus",
-  description: `
-Objektbeschreibung:
-Dieses attraktive Reihenhaus bietet ein angenehmes Wohnambiente und vielfältige Möglichkeiten zur individuellen Gestaltung. Es eignet sich ideal für Paare, Familien oder Menschen, die sich den Traum vom eigenen Zuhause erfüllen möchten. Die durchdachte Raumaufteilung ermöglicht eine komfortable Nutzung der Wohnbereiche und schafft eine angenehme Atmosphäre für den Alltag.
-
-Lage und Umgebung:
-Das Reihenhaus befindet sich in Aachen-Brand, einem beliebten Stadtteil im Südosten von Aachen. Die Umgebung zeichnet sich durch eine angenehme Wohnatmosphäre und eine gute Infrastruktur aus. Einkaufsmöglichkeiten, Bäckereien, Restaurants, Schulen und Kindergärten sind je nach genauer Lage gut erreichbar. Öffentliche Verkehrsmittel bieten eine Anbindung an die Aachener Innenstadt und das Umland.
-
-Raumaufteilung:
-Die Wohnfläche bietet Platz für unterschiedliche Nutzungsmöglichkeiten. Ein großzügiger Wohn- und Essbereich kann als zentraler Treffpunkt dienen. Ergänzend kommen eine Küche, mehrere Schlaf- oder Arbeitszimmer sowie ein Badezimmer infrage. Weitere Räume können abhängig von der tatsächlichen Immobilie als Gästezimmer, Büro oder Hobbyraum genutzt werden.
-
-Ausstattung:
-Die konkrete Ausstattung hängt vom Zustand und den individuellen Merkmalen des Hauses ab. Für eine vollständige Objektbeschreibung sollten Angaben zu Heizung, Fenstern, Bodenbelägen, Badezimmer, Küche, Dämmung und möglichen Modernisierungen ergänzt werden. Auch Informationen zu Baujahr und Energieeffizienz sind für Interessenten hilfreich.
-
-Garten und Außenbereich:
-Ein möglicher Garten oder eine Terrasse bietet zusätzlichen Raum zur Erholung und Freizeitgestaltung. Hier lassen sich gemütliche Sitzbereiche, eine kleine Grünfläche oder ein Platz für gemeinsame Aktivitäten im Freien gestalten. Die tatsächliche Größe und Ausstattung des Außenbereichs sind noch zu ergänzen.
-
-Besondere Merkmale:
-Das Reihenhaus verbindet die Vorteile einer eigenständigen Wohnimmobilie mit einer häufig platzsparenden Grundstücksnutzung. Es bietet Potenzial für individuelle Einrichtungsideen und unterschiedliche Lebenskonzepte. Je nach Objekt können zusätzliche Nutzflächen wie ein Keller, ein Dachboden oder ein Stellplatz vorhanden sein.
-  `,
-  price: 29.99,
-  images: [
-    "https://placehold.co/600x400?text=Bild+1",
-    "https://placehold.co/600x400?text=Bild+2",
-    "https://placehold.co/600x400?text=Bild+3",
-  ],
-  location: "52076 Aachen-Brand (...km)",
-  timestamp: "08.10.2026",
-};
 
 export default function ItemView() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const { itemId } = useParams();
+  const [item, setItem] = useState({
+    id: "",
+    poster: { profileName: "" },
+    title: "",
+    description: "",
+    location: { ort: "" },
+    price: 0,
+    createdAt: "",
+  });
+  const [imageIds, setImageIds] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/api/anzeigen/${itemId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden der Anzeige");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setItem(data);
+      });
+
+    fetch(`http://localhost:8080/api/anzeigen/${itemId}/bilder`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden von Bilderids");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setImageIds(data);
+      });
+  }, []);
+
   const handleDialogOpen = () => {
     setIsDialogOpen(true);
   };
@@ -60,27 +61,32 @@ export default function ItemView() {
           {/* Linke Seite */}
           <div className="col-7">
             {/* Galerie */}
-            <ImageGallery item={item} />
+            <ImageGallery imageIds={imageIds} />
             {/* Beschreibung */}
             <h4 className="mt-3 fw-bold">Beschreibung</h4>
-            <p style={{ whiteSpace: "pre-line" }}>{item.description}</p>
+            <p style={{ whiteSpace: "pre-line" }}>
+              {item.description.replace(
+                /\\n/g /*"\\n" funktioniert nur für das erste Vorkommen*/,
+                "\n",
+              )}
+            </p>
           </div>
           {/* Rechte Seite */}
           <div className="col-5">
             {/* Angebotstitel */}
-            <h4 className="fw-bold">{item.name}</h4>
+            <h4 className="fw-bold">{item.title}</h4>
             <div className="border-top"></div>
             {/* Anbieter */}
             <div className="align-items-center">
               <a className="text-decoration-none text-dark" href="#">
                 <img
-                  src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${userData.profilname.charAt(0)}`}
+                  src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${item.poster.profileName.charAt(0)}`}
                   className="rounded-circle my-2"
                   width="50"
                   height="50"
                   style={{ objectFit: "cover" }}
                 />
-                <span className="fw-bold ms-2">{userData.profilname}</span>
+                <span className="fw-bold ms-2">{item.poster.profileName}</span>
               </a>
             </div>
             <div className="border-top"></div>
@@ -94,11 +100,13 @@ export default function ItemView() {
             {/* Ort, Datum */}
             <div className="d-flex align-items-center gap-1">
               <i className="bi bi-geo-alt-fill text-body-tertiary"></i>
-              <p className="card-text text-secondary m-0">{item.location}</p>
+              <p className="card-text text-secondary m-0">
+                {item.location.ort}
+              </p>
             </div>
             <div className="d-flex align-items-center gap-1">
               <i className="bi bi-calendar3 text-body-tertiary"></i>
-              <p className="text-secondary m-0">{item.timestamp}</p>
+              <p className="text-secondary m-0">{item.createdAt}</p>
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Nachricht schreiben */}
@@ -120,9 +128,9 @@ export default function ItemView() {
                     >
                       <h4 className="mt-2 ">Nachricht schreiben</h4>
                       <span className=" mb-3">
-                        {item.name.length > 50
-                          ? item.name.slice(0, 50) + "..."
-                          : item.name}{" "}
+                        {item.title.length > 50
+                          ? item.title.slice(0, 50) + "..."
+                          : item.title}{" "}
                         •{" "}
                         {item.price.toLocaleString("de-DE", {
                           style: "currency",
@@ -174,28 +182,30 @@ export default function ItemView() {
   );
 }
 
-function ImageGallery({ item }) {
+function ImageGallery({ imageIds }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const images = item.images ?? [];
-  const hasImages = images.length > 0;
+  const hasImages = imageIds.length > 0;
 
   const previousImage = () => {
-    setCurrentIndex((index) => (index - 1 + images.length) % images.length);
+    setCurrentIndex((index) => (index - 1 + imageIds.length) % imageIds.length);
   };
   const nextImage = () => {
-    setCurrentIndex((currentIndex + 1) % images.length);
+    setCurrentIndex((currentIndex + 1) % imageIds.length);
   };
 
   return (
     <div
-      className="container-fluid position-relative bg-dark text-center"
+      className="container-fluid position-relative bg-dark text-center p-0"
       style={{ height: "55ch" }}
     >
       {hasImages ? (
         <>
-          <img className="h-100" src={images[currentIndex]} />
-          {images.length > 1 && (
+          <img
+            src={`http://localhost:8080/api/anzeige-bilder/${imageIds[currentIndex]}`}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
+          {imageIds.length > 1 && (
             <>
               <button
                 className="btn btn-dark position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle"
@@ -212,7 +222,7 @@ function ImageGallery({ item }) {
                 &#10095;
               </button>
               <span className="badge bg-dark position-absolute bottom-0 end-0 m-2">
-                {currentIndex + 1} / {images.length}
+                {currentIndex + 1} / {imageIds.length}
               </span>
             </>
           )}
