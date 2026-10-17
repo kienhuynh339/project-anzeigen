@@ -42,7 +42,7 @@ function ItemCard({ item }) {
   return (
     <a
       className="text-decoration-none hover-effect p-0"
-      href="#"
+      href={`/anzeigen/${item.id}`}
       style={{ width: "24%" }}
     >
       <div className="card shadow-sm ">
