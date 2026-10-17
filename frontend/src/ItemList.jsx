@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "./hoverEffect.css";
 
 export default function ItemList() {
   const [items, setItems] = useState([]);
@@ -28,7 +29,7 @@ export default function ItemList() {
         </span>
       </div>
 
-      <div className="row g-2">
+      <div className="d-flex gap-3 flex-wrap justify-content-center">
         {items.map((item) => (
           <ItemCard key={item.id} item={item} />
         ))}
@@ -39,13 +40,18 @@ export default function ItemList() {
 
 function ItemCard({ item }) {
   return (
-    <a className="col-3 text-decoration-none" href="#">
-      <div className="card h-100 shadow-sm ">
+    <a
+      className="text-decoration-none hover-effect p-0"
+      href="#"
+      style={{ width: "24%" }}
+    >
+      <div className="card shadow-sm ">
         <img
           src={`http://localhost:8080/api/anzeigen/${item.id}/bilder/erstes`}
           className="card-img-top"
           alt={`item-${item.id}-image`}
           loading="lazy"
+          style={{ objectFit: "cover", height: "40ch" }}
         />
 
         <div className="card-body d-flex flex-column justify-content-between pt-0">

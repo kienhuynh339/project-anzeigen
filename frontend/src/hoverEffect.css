@@ -1,0 +1,8 @@
+.hover-effect {
+  border: 4px solid transparent;
+  border-radius: 10px;
+}
+
+.hover-effect:hover {
+  border-color: rgb(1, 1, 1);
+}
