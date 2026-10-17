@@ -10,44 +10,44 @@
  * Table structure for table 'geodb_typ'
  */
 
-CREATE TABLE geodb_typ (
-  type                 integer not null primary key,
-  fld                  varchar(10) not null default '',
-  name                 varchar(250) not null default ''
-); --TYPE=InnoDB CHARACTER SET utf8;
+-- CREATE TABLE geodb_typ (
+--   type                 integer not null primary key,
+--   fld                  varchar(10) not null default '',
+--   name                 varchar(250) not null default ''
+-- ); --TYPE=InnoDB CHARACTER SET utf8;
+--
+-- INSERT INTO geodb_typ VALUES (1,'adm0','Staat');
+-- INSERT INTO geodb_typ VALUES (2,'adm1','Bundesland / Kanton');
+-- INSERT INTO geodb_typ VALUES (3,'adm2','Regierungsbezirk / Bezirk');
+-- INSERT INTO geodb_typ VALUES (4,'adm3','Landkreis');
+-- INSERT INTO geodb_typ VALUES (5,'adm4','Verwaltungszusammenschluss');
+-- INSERT INTO geodb_typ VALUES (6,'ort','Stadt / Gemeinde');
+-- INSERT INTO geodb_typ VALUES (7,'ortsteil','Orts- / Stadtteil');
+-- INSERT INTO geodb_typ VALUES (8,'gemteil','unspezifizierter Gemeindeteil');
+-- INSERT INTO geodb_typ VALUES (9,'wohnplatz','Wohnplatz');
 
-INSERT INTO geodb_typ VALUES (1,'adm0','Staat');
-INSERT INTO geodb_typ VALUES (2,'adm1','Bundesland / Kanton');
-INSERT INTO geodb_typ VALUES (3,'adm2','Regierungsbezirk / Bezirk');
-INSERT INTO geodb_typ VALUES (4,'adm3','Landkreis');
-INSERT INTO geodb_typ VALUES (5,'adm4','Verwaltungszusammenschluss');
-INSERT INTO geodb_typ VALUES (6,'ort','Stadt / Gemeinde');
-INSERT INTO geodb_typ VALUES (7,'ortsteil','Orts- / Stadtteil');
-INSERT INTO geodb_typ VALUES (8,'gemteil','unspezifizierter Gemeindeteil');
-INSERT INTO geodb_typ VALUES (9,'wohnplatz','Wohnplatz');
+-- /*
+--  * Table structure for table 'geodb_adm0'
+--  */
+--
+-- CREATE TABLE geodb_adm0 (
+--   adm0                 char(2) NOT NULL default '',
+--   name                 varchar(50) NOT NULL default '',
+--   PRIMARY KEY (adm0)
+-- );--TYPE=InnoDB CHARACTER SET utf8;
 
-/*
- * Table structure for table 'geodb_adm0'
- */
-
-CREATE TABLE geodb_adm0 (
-  adm0                 char(2) NOT NULL default '',
-  name                 varchar(50) NOT NULL default '',
-  PRIMARY KEY (adm0)
-);--TYPE=InnoDB CHARACTER SET utf8;
-
-/*
- * Table structure for table 'geodb_adm1'
- */
-
-CREATE TABLE geodb_adm1 (
-  adm0                 char(2) NOT NULL default '',
-  adm1                 char(2) NOT NULL default '',
-  gs                   char(2) NOT NULL default '',
-  name                 varchar(50) NOT NULL default '',
-  PRIMARY KEY (adm0,adm1)
- -- UNIQUE KEY adm0 (adm0,adm1)
-); --TYPE=InnoDB CHARACTER SET utf8;
+-- /*
+--  * Table structure for table 'geodb_adm1'
+--  */
+--
+-- CREATE TABLE geodb_adm1 (
+--   adm0                 char(2) NOT NULL default '',
+--   adm1                 char(2) NOT NULL default '',
+--   gs                   char(2) NOT NULL default '',
+--   name                 varchar(50) NOT NULL default '',
+--   PRIMARY KEY (adm0,adm1)
+--  -- UNIQUE KEY adm0 (adm0,adm1)
+-- ); --TYPE=InnoDB CHARACTER SET utf8;
 
 /*
  * Table structure for table 'geodb_locations'
@@ -107,6 +107,7 @@ CREATE TABLE geodb_areacodes (
   id                   integer NOT NULL,
   plz                  varchar(5),
     PRIMARY KEY (id, plz)
+--       PRIMARY KEY (id, plz)
   --UNIQUE KEY idp (id,plz),
 --   CONSTRAINT uq_geodb_areacodes_id_plz UNIQUE (id, plz)
   --KEY plz (plz)
