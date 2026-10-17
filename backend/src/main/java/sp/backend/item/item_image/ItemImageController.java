@@ -15,8 +15,7 @@ public class ItemImageController {
     private ItemImageController(ItemImageRepository itemImageRepository){
         this.itemImageRepository = itemImageRepository;
     }
-
-    // ist dies nötig?
+    
     @GetMapping("/anzeige-bilder/{imageId}")
     private ResponseEntity<byte[]> findById(@PathVariable Long imageId){
         Optional<ItemImage> itemImage = itemImageRepository.findById(imageId);
