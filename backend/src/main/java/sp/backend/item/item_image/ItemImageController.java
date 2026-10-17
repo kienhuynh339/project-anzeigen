@@ -19,7 +19,7 @@ public class ItemImageController {
 
     // ist dies nötig?
     @GetMapping("/anzeige-bilder/{imageId}")
-    private ResponseEntity<ItemImage> findById(@PathVariable Long imageId){
+    private ResponseEntity<ItemImage> getById(@PathVariable Long imageId){
         Optional<ItemImage> itemImage =itemImageRepository.findById(imageId);
         if(itemImage.isPresent()){
             return ResponseEntity.ok(itemImage.get());
@@ -29,7 +29,7 @@ public class ItemImageController {
     }
 
     @GetMapping("/anzeigen/{itemId}/bilder/erstes")
-    private ResponseEntity<ItemImage> findFirstByItemId(@PathVariable Long itemId){
+    private ResponseEntity<ItemImage> getFirstByItemId(@PathVariable Long itemId){
         ItemImage itemImage = itemImageRepository.findFirstByItemIdOrderByDisplayOrderAsc(itemId);
         if(itemImage != null){
             return ResponseEntity.ok(itemImage);
@@ -39,7 +39,7 @@ public class ItemImageController {
     }
 
     @GetMapping("/anzeigen/{itemId}/bilder")
-    private ResponseEntity<List<ItemImage>> findByItemId(@PathVariable Long itemId){
+    private ResponseEntity<List<ItemImage>> getByItemId(@PathVariable Long itemId){
         List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
 
         return ResponseEntity.ok(itemImages);
