@@ -2,15 +2,13 @@ package sp.backend.item;
 
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/anzeigen")
+@RequestMapping("api/anzeigen")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ItemController {
 
@@ -25,4 +23,35 @@ public class ItemController {
         return ResponseEntity.ok(itemRepository.findAll());
     }
 
+    @GetMapping("/{itemId}")
+    private ResponseEntity<Item> findById(@PathVariable Long itemId){
+        Optional<Item> item = itemRepository.findById(itemId);
+        if(item.isPresent()){
+            return ResponseEntity.ok(item.get());
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
