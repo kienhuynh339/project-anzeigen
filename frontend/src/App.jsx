@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router";
 import Header from "./Header";
 import ItemList from "./ItemList";
 import Footer from "./Footer";
@@ -12,7 +13,13 @@ function App() {
     <div>
       <Header />
       <main className="d-flex flex-column" style={{ minHeight: "90vh" }}>
-        <ItemList />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ItemList />} />
+            <Route path="/anzeigen/:itemId" element={<ItemView />} />
+          </Routes>
+        </BrowserRouter>
+
         {/* <Message /> */}
         {/* <Settings /> */}
         {/* <ItemView /> */}
