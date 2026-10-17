@@ -12,6 +12,9 @@ public class ItemImage {
     @Lob
     private byte[] image;
 
+    @Column(name="content_type")
+    private String contentType;
+
     @Column(name="item_id")
     private Long itemId;
 
