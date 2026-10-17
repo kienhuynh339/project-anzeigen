@@ -18,10 +18,11 @@ public class ItemImageController {
 
     // ist dies nötig?
     @GetMapping("/anzeige-bilder/{imageId}")
-    private ResponseEntity<ItemImage> findById(@PathVariable Long imageId){
-        Optional<ItemImage> itemImage =itemImageRepository.findById(imageId);
+    private ResponseEntity<byte[]> findById(@PathVariable Long imageId){
+        Optional<ItemImage> itemImage = itemImageRepository.findById(imageId);
         if(itemImage.isPresent()){
-            return ResponseEntity.ok(itemImage.get());
+            MediaType mediaType = MediaType.parseMediaType(itemImage.get().getContentType());
+            return ResponseEntity.ok().contentType(mediaType).body(itemImage.get().getImage());
         }else{
             return ResponseEntity.notFound().build();
         }
@@ -30,16 +31,19 @@ public class ItemImageController {
     @GetMapping("/anzeigen/{itemId}/bilder/erstes")
     private ResponseEntity<byte[]> findFirstByItemId(@PathVariable Long itemId){
         ItemImage itemImage = itemImageRepository.findFirstByItemIdOrderByDisplayOrderAsc(itemId);
-
-        MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
-
-        return ResponseEntity.ok().contentType(mediaType).body(itemImage.getImage());
+        if(itemImage != null){
+            MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
+            return ResponseEntity.ok().contentType(mediaType).body(itemImage.getImage());
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/anzeigen/{itemId}/bilder")
-    private ResponseEntity<List<ItemImage>> findByItemId(@PathVariable Long itemId){
+    private ResponseEntity<List<Long>> findByItemId(@PathVariable Long itemId){
         List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
+        List<Long> imageIds = itemImages.stream().map(ItemImage::getId).toList();
 
-        return ResponseEntity.ok(itemImages);
+        return ResponseEntity.ok(imageIds);
     }
 }
