@@ -1,4 +1,4 @@
-INSERT INTO geodb_adm0 VALUES ('DE','Deutschland');
+/*INSERT INTO geodb_adm0 VALUES ('DE','Deutschland');
 INSERT INTO geodb_adm1 VALUES('DE','HB','','Bremen');
 INSERT INTO geodb_adm1 VALUES('DE','BW','','Baden-Württemberg');
 INSERT INTO geodb_adm1 VALUES('DE','HE','','Hessen');
@@ -14,7 +14,7 @@ INSERT INTO geodb_adm1 VALUES('DE','RP','','Rheinland-Pfalz');
 INSERT INTO geodb_adm1 VALUES('DE','NI','','Niedersachsen');
 INSERT INTO geodb_adm1 VALUES('DE','MV','','Mecklenburg-Vorpommern');
 INSERT INTO geodb_adm1 VALUES('DE','SN','','Sachsen');
-INSERT INTO geodb_adm1 VALUES('DE','SH','','Schleswig-Holstein');
+INSERT INTO geodb_adm1 VALUES('DE','SH','','Schleswig-Holstein');*/
 INSERT INTO geodb_locations VALUES (13350,6,'Aach','Aach','08335001','DE','BW','Freiburg','Landkreis Konstanz',NULL,'Aach',NULL,NULL,NULL,47.8511,8.85,'KN','78267');
 INSERT INTO geodb_areacodes VALUES(13350,'78267');
 INSERT INTO geodb_locations VALUES (13351,6,'Aach','Aach','07235001','DE','RP',NULL,'Landkreis Trier-Saarburg','Verbandsgemeinde Trier-Land','Aach',NULL,NULL,NULL,49.7833,6.6,'TR','54298');
