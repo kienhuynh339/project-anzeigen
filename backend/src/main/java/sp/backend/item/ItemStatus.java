@@ -8,7 +8,7 @@ public enum ItemStatus {
     RESERVED(3),
     DELETED(4);
 
-    @EnumeratedValue
+    @EnumeratedValue //@EnumeratedValue -> value statt ordinal lesen
     private final int value;
 
     ItemStatus(int value){this.value = value;}
