@@ -13,9 +13,11 @@ import java.util.Optional;
 public class ItemController {
 
     private ItemRepository itemRepository;
+    private ItemService itemService;
 
-    private ItemController(ItemRepository itemRepository){
+    private ItemController(ItemRepository itemRepository, ItemService itemService){
         this.itemRepository = itemRepository;
+        this.itemService = itemService;
     }
 
     @GetMapping
@@ -31,9 +33,13 @@ public class ItemController {
         }else{
             return ResponseEntity.notFound().build();
         }
-
     }
 
+    @GetMapping("/suche")
+    private ResponseEntity<List<ItemWithDistanceDto>> findWithinRadius(@RequestParam Integer locationId, @RequestParam Integer radiusKm){
+        List<ItemWithDistanceDto> itemList = itemService.findWithinRadius(locationId, radiusKm);
+        return ResponseEntity.ok(itemList);
+    }
 }
 
 
