@@ -1,10 +1,9 @@
 package sp.backend.location.areacode;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,9 +13,12 @@ public class GeodbAreaCodeController {
     private final GeodbAreaCodeRepository geodbAreaCodeRepository;
     private GeodbAreaCodeController(GeodbAreaCodeRepository geodbAreaCodeRepository){this.geodbAreaCodeRepository=geodbAreaCodeRepository;}
 
-    @GetMapping("/{plz}")
-    private ResponseEntity<List<GeodbAreacode>> findByPlzStartingWith(@PathVariable String plz){
-        List<GeodbAreacode> areacodeList = geodbAreaCodeRepository.findByPlzStartingWith(plz);
+    @GetMapping
+    private ResponseEntity<List<String>> findByPlzStartingWith(@RequestParam String plzPrefix, @RequestParam(defaultValue = "15") int limit){
+        int pageSize = Math.clamp(limit, 1,100);
+        Pageable pageable = PageRequest.of(0,pageSize);
+
+        List<String> areacodeList = geodbAreaCodeRepository.findDistinctByPlzStartingWithOrderByPlzAsc(plzPrefix, pageable);
         return ResponseEntity.ok(areacodeList);
     }
 
