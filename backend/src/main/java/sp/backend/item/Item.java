@@ -32,7 +32,7 @@ public class Item {
     @JoinColumn(name="location_id")
     private GeodbLocation location;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated
     private ItemStatus status;
 
     @Column(name="created_at", updatable = false, insertable = false)
