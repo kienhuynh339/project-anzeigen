@@ -23,8 +23,8 @@ public class GeodbLocation {
     @Column(columnDefinition = "char(2)")
     private String adm0;
 
-    @Column(columnDefinition = "char(2)")
-    private String adm1;
+    @Column(name="adm1",columnDefinition = "char(2)")
+    private String federalState;
 
     private String adm2;
 
@@ -75,8 +75,8 @@ public class GeodbLocation {
         return adm0;
     }
 
-    public String getAdm1() {
-        return adm1;
+    public String getFederalState() {
+        return federalState;
     }
 
     public String getAdm2() {
