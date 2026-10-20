@@ -2,21 +2,27 @@ package sp.backend.item;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import sp.backend.location.GeodbLocation;
 import sp.backend.location.GeodbLocationRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
     private final GeodbLocationRepository geodbLocationRepository;
-    public ItemService(ItemRepository itemRepository, GeodbLocationRepository geodbLocationRepository){this.itemRepository=itemRepository;this.geodbLocationRepository=geodbLocationRepository;}
 
-    public Page<ItemWithDistance> search(
+    public ItemService(ItemRepository itemRepository, GeodbLocationRepository geodbLocationRepository) {
+        this.itemRepository = itemRepository;
+        this.geodbLocationRepository = geodbLocationRepository;
+    }
+
+    public ItemDto findById(Long id){
+        return itemRepository.findItemById(id);
+    }
+
+    public Page<ItemWithDistanceDto> search(
             String searchTerm,
             Short categoryId,
             Integer minPrice,
@@ -27,14 +33,13 @@ public class ItemService {
 
         Float latitude = null;
         Float longtitude = null;
-        if(locationId != null && radiusKm != null){
+        if (locationId != null && radiusKm != null) {
             Optional<GeodbLocation> location = geodbLocationRepository.findById(locationId);
-            if(location.isPresent()){
+            if (location.isPresent()) {
                 latitude = location.get().getBreite();
                 longtitude = location.get().getLaenge();
             }
         }
-        return itemRepository.search(searchTerm,categoryId,minPrice,maxPrice,locationId,latitude,longtitude,radiusKm,pageable);
-
+        return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, pageable);
     }
 }
