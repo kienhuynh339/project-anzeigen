@@ -1,6 +1,8 @@
 package sp.backend.item;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,10 +37,17 @@ public class ItemController {
         }
     }
 
-    @GetMapping("/suche")
-    private ResponseEntity<List<ItemWithDistanceDto>> findWithinRadius(@RequestParam Integer locationId, @RequestParam Integer radiusKm){
-        List<ItemWithDistanceDto> itemList = itemService.findWithinRadius(locationId, radiusKm);
-        return ResponseEntity.ok(itemList);
+    @GetMapping("/search")
+    public ResponseEntity<Page<ItemWithDistance>> search(
+            @RequestParam(required = false) String searchTerm,
+            @RequestParam(required = false) Short categoryId,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false) Integer locationId,
+            @RequestParam(required = false) Integer radiusKm,
+            Pageable pageable) {
+        Page<ItemWithDistance> page = itemService.search(searchTerm,categoryId,minPrice,maxPrice,locationId,radiusKm,pageable);
+        return ResponseEntity.ok(page);
     }
 }
 
