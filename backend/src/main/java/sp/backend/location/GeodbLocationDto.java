@@ -12,6 +12,9 @@ public class GeodbLocationDto {
     public GeodbLocationDto(GeodbLocation geodbLocation, String extraInfo){
         this.id=geodbLocation.getId();this.name=geodbLocation.getName();this.plz=geodbLocation.getPlz();this.extraInfo=extraInfo;
     }
+    public GeodbLocationDto(Integer id, String name, String plz, String extraInfo){
+        this.id=id;this.name=name;this.plz=plz;this.extraInfo=extraInfo;
+    }
 
     public Integer getId() {
         return id;
