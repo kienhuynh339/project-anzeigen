@@ -95,4 +95,22 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             @Param("radiusKm") Integer radiusKm,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT new sp.backend.item.ItemDto(
+            i.id,
+            new sp.backend.user.UserPublicDto(u),
+            i.title,
+            i.description,
+            i.price,
+            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
+            i.status,
+            i.createdAt
+            )
+            FROM Item i
+            JOIN i.poster u
+            JOIN i.location l
+            WHERE :id = u.id
+            """)
+    Page<ItemDto> findByUserId(Long id, Pageable pageable);
 }
