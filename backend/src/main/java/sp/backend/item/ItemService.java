@@ -42,4 +42,8 @@ public class ItemService {
         }
         return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, pageable);
     }
+
+    public Page<ItemDto> findByUserId(Long id, Pageable pageable){
+        return itemRepository.findByUserId(id,pageable);
+    }
 }
