@@ -13,7 +13,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ItemController {
 
-    private ItemService itemService;
+    private final ItemService itemService;
 
     private ItemController(ItemService itemService){
         this.itemService = itemService;
@@ -39,6 +39,12 @@ public class ItemController {
             @RequestParam(required = false) Integer radiusKm,
             Pageable pageable) {
         Page<ItemWithDistanceDto> page = itemService.search(searchTerm,categoryId,minPrice,maxPrice,locationId,radiusKm,pageable);
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
+        Page<ItemDto> page = itemService.findByUserId(userId, pageable);
         return ResponseEntity.ok(page);
     }
 }
