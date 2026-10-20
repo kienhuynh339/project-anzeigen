@@ -1,51 +1,79 @@
 package sp.backend.item;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    // Standort des Items: "JOIN i.location l" = "JOIN GeodbLocation l ON i.id = l.id"
-    // Ausgangsstandort: JOIN GeodbLocation o ON o.id = :locationId
     @Query("""
-        SELECT new sp.backend.item.ItemWithDistance(i,6371.0 * 2 * ASIN(
-                SQRT(
+    SELECT new sp.backend.item.ItemWithDistance(
+        i.id,
+        i.title,
+        i.description,
+        i.price,
+        new sp.backend.location.GeodbLocationDto(l,''),
+        i.createdAt,
+        CASE
+            WHEN :latitude IS NULL OR :longitude IS NULL OR l.id = :locationId
+            THEN NULL
+            ELSE
+                6371.0 * 2 * ASIN(SQRT(
                     POWER(
-                        SIN(RADIANS(l.breite - o.breite) / 2),
+                        SIN(RADIANS(l.breite - :latitude) / 2),
                         2
                     )
-                    + COS(RADIANS(o.breite))
+                    + COS(RADIANS(:latitude))
                     * COS(RADIANS(l.breite))
                     * POWER(
-                        SIN(RADIANS(l.laenge - o.laenge) / 2),
+                        SIN(RADIANS(l.laenge - :longitude) / 2),
                         2
                     )
+                ))
+        END
+    )
+    FROM Item i
+    JOIN i.location l
+    WHERE
+        (:searchTerm IS NULL OR
+            LOWER(i.title) LIKE
+                LOWER(CONCAT('%', :searchTerm, '%'))
+            OR LOWER(i.description) LIKE
+                LOWER(CONCAT('%', :searchTerm, '%'))
+        )
+    AND (:categoryId IS NULL OR i.category.id = :categoryId)
+    AND (:minPrice IS NULL OR i.price >= :minPrice)
+    AND (:maxPrice IS NULL OR i.price <= :maxPrice)
+    AND (:locationId IS NULL OR (l.id = :locationId AND :radiusKm IS NULL) OR (
+        :radiusKm IS NOT NULL 
+        AND :latitude IS NOT NULL 
+        AND :longitude IS NOT NULL
+        AND 6371.0 * 2 * ASIN(SQRT(
+                POWER(
+                    SIN(RADIANS(l.breite - :latitude) / 2),
+                    2
                 )
-            ))
-        FROM Item i
-        JOIN i.location l
-        JOIN GeodbLocation o ON o.id = :locationId
-        WHERE
-            6371.0 * 2 * ASIN(
-                SQRT(
-                    POWER(
-                        SIN(RADIANS(l.breite - o.breite) / 2),
-                        2
-                    )
-                    + COS(RADIANS(o.breite))
-                    * COS(RADIANS(l.breite))
-                    * POWER(
-                        SIN(RADIANS(l.laenge - o.laenge) / 2),
-                        2
-                    )
+                +
+                COS(RADIANS(:latitude))
+                * COS(RADIANS(l.breite))
+                * POWER(
+                    SIN(RADIANS(l.laenge - :longitude) / 2),
+                    2
                 )
-            ) <= :radiusKm
-        """)
-    List<ItemWithDistance> findWithinRadius(
+            )) <= :radiusKm) 
+        )         
+    """)
+    Page<ItemWithDistance> search(
+            @Param("searchTerm") String searchTerm,
+            @Param("categoryId") Short categoryId,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
             @Param("locationId") Integer locationId,
-            @Param("radiusKm") Integer radiusKm
+            @Param("latitude") Float latitude,
+            @Param("longitude") Float longitude,
+            @Param("radiusKm") Integer radiusKm,
+            Pageable pageable
     );
 }
