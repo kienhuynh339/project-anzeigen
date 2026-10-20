@@ -32,6 +32,11 @@ public class Item {
     @JoinColumn(name="location_id")
     private GeodbLocation location;
 
+    private String plz;
+
+    @Column(name="location_extra_info")
+    private String locationExtraInfo;
+
     @Enumerated
     private ItemStatus status;
 
@@ -42,13 +47,15 @@ public class Item {
 
     public Item(User poster, String title, Category category,
                 String description, Integer price,
-                GeodbLocation location, ItemStatus status) {
+                GeodbLocation location,String plz,String locationExtraInfo, ItemStatus status) {
         this.poster = poster;
         this.title = title;
         this.category = category;
         this.description = description;
         this.price = price;
         this.location = location;
+        this.plz = plz;
+        this.locationExtraInfo=locationExtraInfo;
         this.status = status;
     }
 
@@ -109,6 +116,22 @@ public class Item {
 
     public void setLocationId(GeodbLocation location) {
         this.location = location;
+    }
+
+    public String getPlz() {
+        return plz;
+    }
+
+    public void setPlz(String plz) {
+        this.plz = plz;
+    }
+
+    public String getLocationExtraInfo() {
+        return locationExtraInfo;
+    }
+
+    public void setLocationExtraInfo(String locationExtraInfo) {
+        this.locationExtraInfo = locationExtraInfo;
     }
 
     public ItemStatus getStatus() {
