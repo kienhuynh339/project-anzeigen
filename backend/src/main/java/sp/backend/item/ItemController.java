@@ -30,7 +30,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ItemWithDistanceDto>> search(
+    private ResponseEntity<Page<ItemWithDistanceDto>> search(
             @RequestParam(required = false) String searchTerm,
             @RequestParam(required = false) Short categoryId,
             @RequestParam(required = false) Integer minPrice,
@@ -43,7 +43,7 @@ public class ItemController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
+    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
         Page<ItemDto> page = itemService.findByUserId(userId, pageable);
         return ResponseEntity.ok(page);
     }
