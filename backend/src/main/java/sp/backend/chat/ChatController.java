@@ -12,8 +12,8 @@ public class ChatController {
     private final ChatRepository chatRepository;
     private ChatController(ChatRepository chatRepository){this.chatRepository=chatRepository;}
 
-    @GetMapping("/{userId}")
-    private ResponseEntity<Page<ChatDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
+    @GetMapping
+    private ResponseEntity<Page<ChatDto>> findByUserId(@RequestParam Long userId, Pageable pageable){
         Page<ChatDto> page = chatRepository.findByUserId(userId, pageable);
         return ResponseEntity.ok(page);
     }
