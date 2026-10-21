@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/images")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ItemImageController {
     private final ItemImageRepository itemImageRepository;
@@ -16,7 +16,7 @@ public class ItemImageController {
         this.itemImageRepository = itemImageRepository;
     }
     
-    @GetMapping("/anzeige-bilder/{imageId}")
+    @GetMapping("/{imageId}")
     private ResponseEntity<byte[]> findById(@PathVariable Long imageId){
         Optional<ItemImage> itemImage = itemImageRepository.findById(imageId);
         if(itemImage.isPresent()){
@@ -27,7 +27,7 @@ public class ItemImageController {
         }
     }
 
-    @GetMapping("/anzeigen/{itemId}/bilder/erstes")
+    @GetMapping("/item/{itemId}/first")
     private ResponseEntity<byte[]> findFirstByItemId(@PathVariable Long itemId){
         ItemImage itemImage = itemImageRepository.findFirstByItemIdOrderByDisplayOrderAsc(itemId);
         if(itemImage != null){
@@ -38,7 +38,7 @@ public class ItemImageController {
         }
     }
 
-    @GetMapping("/anzeigen/{itemId}/bilder")
+    @GetMapping("/item/{itemId}")
     private ResponseEntity<List<Long>> findByItemId(@PathVariable Long itemId){
         List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
         List<Long> imageIds = itemImages.stream().map(ItemImage::getId).toList();
