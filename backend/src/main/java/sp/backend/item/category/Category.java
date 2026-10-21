@@ -13,6 +13,10 @@ public class Category {
 
     protected Category(){};
 
+    public Short getId() {
+        return id;
+    }
+
     public String getName(){
         return name;
     }
