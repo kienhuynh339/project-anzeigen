@@ -1,6 +1,6 @@
 import { chats } from "./test_data/chats";
 import React from "react";
-import DialogWindow from "./DialogWindow";
+import DialogWindow from "../../components/DialogWindow";
 
 const user_id = "002";
 

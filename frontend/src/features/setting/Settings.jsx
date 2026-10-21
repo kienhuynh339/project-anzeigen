@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import DialogWindow from "./DialogWindow";
+import DialogWindow from "./components/DialogWindow";
 
 const userData = {
   profilname: "Max Mustermann",

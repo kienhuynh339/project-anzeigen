@@ -1,17 +1,27 @@
-import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router";
-import Header from "./Header";
-import ItemList from "./ItemList";
-import Footer from "./Footer";
-import Message from "./Message";
-import Settings from "./Settings";
-import ItemView from "./ItemView";
-import CreateItem from "./CreateItem";
+import Navbar from "./features/navigation/Navbar";
+import SearchBar from "./features/search/SearchBar";
 
 function App() {
   return (
-    <div>
-      <Header />
+    <>
+      <header>
+        <Navbar></Navbar>
+        <SearchBar></SearchBar>
+      </header>
+      <footer className="bg-dark mt-auto py-3 flex-grow-1">
+        <div className="container">
+          <div className="text-center text-secondary">
+            <small>
+              &copy; {new Date().getFullYear()} anzeigen. Alle Rechte
+              vorbehalten.
+            </small>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+/*
       <main className="d-flex flex-column" style={{ minHeight: "90vh" }}>
         <BrowserRouter>
           <Routes>
@@ -20,14 +30,7 @@ function App() {
           </Routes>
         </BrowserRouter>
 
-        {/* <Message /> */}
-        {/* <Settings /> */}
-        {/* <ItemView /> */}
-        {/* <CreateItem /> */}
       </main>
       <Footer />
-    </div>
-  );
-}
-
+*/
 export default App;

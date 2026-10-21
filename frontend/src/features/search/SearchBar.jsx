@@ -1,7 +1,20 @@
-import "./inputWhiteFocus.css";
-import { categories } from "./categories";
+import "../../styles/inputWhiteFocus.css";
+import { useState, useEffect } from "react";
 
 export default function SearchBar() {
+  const [categories, setCategories] = useState([{ id: "", name: "" }]);
+  useEffect(() => {
+    fetch("http://localhost:8080/api/categories")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden der Kategorien");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setCategories(data);
+      });
+  }, []);
   return (
     <div className="container-fluid bg-dark pb-2">
       <form>
@@ -23,7 +36,7 @@ export default function SearchBar() {
             >
               {categories.map((category) => (
                 <>
-                  <option value={category}>{category}</option>
+                  <option value={category.name}>{category.name}</option>
                 </>
               ))}
             </select>
