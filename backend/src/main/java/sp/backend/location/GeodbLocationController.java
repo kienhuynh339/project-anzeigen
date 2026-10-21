@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ort")
+@CrossOrigin(origins = "http://localhost:5173")
 public class GeodbLocationController {
     private final GeodbLocationService geodbLocationService;
     private GeodbLocationController(GeodbLocationService geodbLocationService){this.geodbLocationService=geodbLocationService;}

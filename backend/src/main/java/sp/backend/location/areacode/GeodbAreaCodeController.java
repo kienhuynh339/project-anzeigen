@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/plz")
+@CrossOrigin(origins = "http://localhost:5173")
 public class GeodbAreaCodeController {
     private final GeodbAreaCodeRepository geodbAreaCodeRepository;
     private GeodbAreaCodeController(GeodbAreaCodeRepository geodbAreaCodeRepository){this.geodbAreaCodeRepository=geodbAreaCodeRepository;}
