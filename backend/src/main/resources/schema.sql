@@ -56,8 +56,8 @@ CREATE TABLE chats(
     item_id BIGINT REFERENCES items(id) NOT NULL,
     poster_id BIGINT REFERENCES users(id) NOT NULL,
     interested_user_id BIGINT REFERENCES users(id) NOT NULL,
-    first_deleted_by_user_id BIGINT REFERENCES  users(id),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    first_deleted_by_user_id BIGINT REFERENCES  users(id)
+--     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE messages(
