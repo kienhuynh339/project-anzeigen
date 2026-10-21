@@ -1,9 +1,9 @@
 -- Damit Default-Werte verwendet werden, müssen andere Spalten explizit angegeben werden
 INSERT INTO users (id, profile_name, account_name, password_hash, created_at)
-VALUES (1, 'MaxPower', 'maxpower', '123456789', '2020-01-01 01:01:00+02:00'),
-       (2, 'MaxSpeed', 'maxspeed', '234567890', '2022-02-02 02:02:00+02:00'),
-       (3, 'MaxAlles', 'maxeverything', '3456789012', '2024-04-04 04:04:00+02:00'),
-       (4, 'Frodo', 'frodobaggins', '1212121212', '2025-05-05 05:05:00+02:00');
+VALUES (1, 'Samwise', 'samwise', '123456789', '2020-01-01 01:01:00+02:00'),
+       (2, 'Merry', 'merryy', '234567890', '2022-02-02 02:02:00+02:00'),
+       (3, 'Pippin', 'pippin', '3456789012', '2024-04-04 04:04:00+02:00'),
+       (4, 'Frodo', 'frodoo', '1212121212', '2025-05-05 05:05:00+02:00');
 
 INSERT INTO item_categories(id, name)
 VALUES (1, 'Alle Kategorien'),
