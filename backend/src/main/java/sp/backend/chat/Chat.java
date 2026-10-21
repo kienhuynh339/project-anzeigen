@@ -29,20 +29,20 @@ public class Chat {
     @JoinColumn(name="first_deleted_by_user_id")
     private User firstDeletedByUser;
 
-    @Column(name="created_at", insertable = false, updatable = false)
-    private OffsetDateTime createdAt;
+//    @Column(name="created_at", insertable = false, updatable = false)
+//    private OffsetDateTime createdAt;
 
     protected Chat(){};
     public Chat(Item item, User poster, User interestedUser,User firstDeletedByUser){
         this.item=item; this.poster=poster; this.interestedUser=interestedUser;this.firstDeletedByUser=firstDeletedByUser;
     }
-
-    @PrePersist
-    protected void onCreate() {
-        if (createdAt == null) {
-            createdAt = OffsetDateTime.now();
-        }
-    }
+//
+//    @PrePersist
+//    protected void onCreate() {
+//        if (createdAt == null) {
+//            createdAt = OffsetDateTime.now();
+//        }
+//    }
 
     public Long getId() {
         return id;
@@ -64,8 +64,8 @@ public class Chat {
         return firstDeletedByUser;
     }
 
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
+//    public OffsetDateTime getCreatedAt() {
+//        return createdAt;
+//    }
 }
 
