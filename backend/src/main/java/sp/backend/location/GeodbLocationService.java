@@ -49,8 +49,8 @@ public class GeodbLocationService {
         this.geodbLocationRepository = geodbLocationRepository;
     }
 
-    public List<GeodbLocationDto> findByPlzAndName(String plz, String name, Pageable pageable) {
-        List<GeodbLocationProjection> locations = geodbLocationRepository.findByPlzAndNameStartingWithOrderByNameAsc(plz, name, pageable);
+    public List<GeodbLocationDto> findByPlz(String plz, Pageable pageable) {
+        List<GeodbLocationProjection> locations = geodbLocationRepository.findByPlzOrderByNameAsc(plz, pageable);
 
         // Anzahl der Treffer pro Kombination aus Name, PLZ und Bundesland ermitteln.
         Map<String, Long> counts = locations.stream()
