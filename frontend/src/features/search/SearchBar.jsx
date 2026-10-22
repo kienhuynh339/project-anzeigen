@@ -78,17 +78,6 @@ export default function SearchBar() {
               style={{ width: "7.5rem" }}
             />
           </div>
-          {/* 
-            <div
-              className="col"
-              style={{ flex: "0 0 12.5%", maxWidth: "12.5%" }}
-            >
-              <select className="form-select" defaultValue="newest">
-                <option value="newest">Neueste</option>
-                <option value="asc">Aufsteigend</option>
-                <option value="desc">Absteigend</option>
-              </select>
-            </div> */}
           <div className="col-auto">
             <button
               className="btn btn-outline-light"
