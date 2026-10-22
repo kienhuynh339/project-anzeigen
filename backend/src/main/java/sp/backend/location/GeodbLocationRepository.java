@@ -11,8 +11,7 @@ public interface GeodbLocationRepository extends JpaRepository<GeodbLocation, In
 SELECT g.id AS id, g.typ AS typ, g.name AS name, g.plz AS plz, g.federalState as federalState
 FROM GeodbLocation g
 WHERE CONCAT(',', g.plz, ',') LIKE CONCAT('%,', :plz, ',%')
-AND g.name LIKE CONCAT(:name,'%')
 ORDER BY g.name ASC
 """)
-    List<GeodbLocationProjection> findByPlzAndNameStartingWithOrderByNameAsc(String plz, String name, Pageable pageable);
+    List<GeodbLocationProjection> findByPlzOrderByNameAsc(String plz, Pageable pageable);
 }
