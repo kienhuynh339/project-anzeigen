@@ -2,30 +2,43 @@ import "../../styles/inputWhiteFocus.css";
 import { useState, useEffect } from "react";
 import PostcodeInput from "../input/PostCodeInput";
 import LocationSelect from "../input/LocationInput";
+import CategorySelect from "../input/CategorySelect";
+import { useFetch } from "../../hooks/useFetch";
+import { useNavigate } from "react-router";
 
-export default function SearchBar() {
-  const [categories, setCategories] = useState([{ id: 1, name: "" }]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryId, setCategoryId] = useState(1);
-  const [postcode, setPostcode] = useState("");
-  const [locationId, setLocationId] = useState(null);
+export default function SearchBar({
+  searchFilters,
+  setSearchFilters,
+  submitState,
+  setSubmitState,
+}) {
+  const navigate = useNavigate();
+  const {
+    searchTerm,
+    categoryId,
+    postcode,
+    locationId,
+    radiusKm,
+    priceMin,
+    priceMax,
+  } = searchFilters;
 
-  // Kategorien laden
-  useEffect(() => {
-    fetch("http://localhost:8080/api/categories")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Fehler beim Laden der Kategorien");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setCategories(data);
-      });
-  }, []);
+  const updateFilter = (key, value) => {
+    setSearchFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSubmitState(!submitState);
+    navigate("/");
+  };
+
   return (
     <div className="container-fluid bg-dark pb-2">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="d-flex gap-2 flex-wrap align-items-center justify-content-center">
           {/*Suchbegriff*/}
           <div
@@ -38,44 +51,49 @@ export default function SearchBar() {
               placeholder="Suchbegriff"
               value={searchTerm}
               onChange={(e) => {
-                setSearchTerm(e.target.value);
+                updateFilter("searchTerm", e.target.value);
               }}
+              autoComplete="off"
             />
           </div>
           {/* Kategorie */}
           <div style={{ width: "17rem" }}>
-            <select
-              id="category"
-              name="category"
-              className="form-select white-focus"
-              value={categoryId}
-              onChange={(e) => {
-                setCategoryId(e.target.value);
+            <CategorySelect
+              categoryId={categoryId}
+              setCategoryId={(value) => {
+                updateFilter("categoryId", value);
               }}
-            >
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
           {/* PLZ */}
           <div className="position-relative" style={{ width: "6rem" }}>
-            <PostcodeInput postcode={postcode} setPostcode={setPostcode} />
+            <PostcodeInput
+              postcode={postcode}
+              setPostcode={(value) => {
+                updateFilter("postcode", value);
+              }}
+            />
           </div>
           {/* Ort */}
           <div className="position-relative" style={{ width: "15rem" }}>
-            <LocationSelect postcode={postcode} setLocationId={setLocationId} />
+            <LocationSelect
+              postcode={postcode}
+              setLocationId={(value) => {
+                updateFilter("locationId", value);
+              }}
+            />
           </div>
 
           {/* Umkreis */}
           <div className="">
             <input
-              type="text"
+              type="number"
               className="form-control white-focus"
               placeholder="Umkreis (km)"
-              style={{ width: "7.5rem" }}
+              style={{ width: "8.3rem" }}
+              value={radiusKm}
+              onChange={(e) => updateFilter("radiusKm", e.target.value)}
+              autoComplete="off"
             />
           </div>
           <div className="col-auto">
@@ -89,18 +107,26 @@ export default function SearchBar() {
             </button>
           </div>
 
-          <button type="submit" className="col-1 btn btn-outline-light ">
+          <button
+            type="submit"
+            className="btn btn-outline-light "
+            style={{ width: "7rem" }}
+          >
             Finden
           </button>
         </div>
         <div className="collapse mt-2  text-light" id="advancedFilters">
           <div className="d-flex flex-wrap gap-2 align-items-center justify-content-center">
+            {/* Preis min/max */}
             <span className="">Preis: </span>
             <div className="" style={{ width: "7rem" }}>
               <input
                 type="number"
                 className="form-control white-focus"
                 placeholder="von"
+                value={priceMin}
+                onChange={(e) => updateFilter("priceMin", e.target.value)}
+                autoComplete="off"
               />
             </div>
             <span className="">-</span>
@@ -109,12 +135,14 @@ export default function SearchBar() {
                 type="number"
                 className="form-control white-focus"
                 placeholder="bis"
+                value={priceMax}
+                onChange={(e) => updateFilter("priceMax", e.target.value)}
+                autoComplete="off"
               />
             </div>
           </div>
         </div>
       </form>
-      <p className="text-white">{locationId}</p>
     </div>
   );
 }
