@@ -62,7 +62,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                     OR LOWER(i.description) LIKE
                         LOWER(CONCAT('%', :searchTerm, '%'))
                 )
-            AND (:categoryId IS NULL OR i.category.id = :categoryId)
+            AND (:categoryId IS NULL OR i.category.id = :categoryId OR :categoryId = 1)
             AND (:minPrice IS NULL OR i.price >= :minPrice)
             AND (:maxPrice IS NULL OR i.price <= :maxPrice)
             AND (:locationId IS NULL OR (l.id = :locationId AND :radiusKm IS NULL) OR (
