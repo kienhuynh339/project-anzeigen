@@ -27,6 +27,7 @@ export default function PostcodeInput({
         }}
         onFocus={() => setShowSuggestions(true)}
         onBlur={() => setShowSuggestions(false)}
+        autoComplete="off"
       />
 
       {showSuggestions && postcodes.length > 0 && (
