@@ -1,8 +1,16 @@
 import "../../styles/inputWhiteFocus.css";
 import { useState, useEffect } from "react";
+import PostcodeInput from "../input/PostCodeInput";
+import LocationSelect from "../input/LocationInput";
 
 export default function SearchBar() {
-  const [categories, setCategories] = useState([{ id: "", name: "" }]);
+  const [categories, setCategories] = useState([{ id: 1, name: "" }]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryId, setCategoryId] = useState(1);
+  const [postcode, setPostcode] = useState("");
+  const [locationId, setLocationId] = useState(null);
+
+  // Kategorien laden
   useEffect(() => {
     fetch("http://localhost:8080/api/categories")
       .then((response) => {
@@ -18,45 +26,56 @@ export default function SearchBar() {
   return (
     <div className="container-fluid bg-dark pb-2">
       <form>
-        <div className="row g-2 align-items-center justify-content-between">
-          <div className="col-4">
+        <div className="d-flex gap-2 flex-wrap align-items-center justify-content-center">
+          {/*Suchbegriff*/}
+          <div
+            className="flex-grow-1"
+            style={{ minWidth: "25rem", width: "auto" }}
+          >
             <input
               type="text"
               className="form-control white-focus"
               placeholder="Suchbegriff"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
             />
           </div>
-
-          <div className="col-2">
+          {/* Kategorie */}
+          <div style={{ width: "17rem" }}>
             <select
               id="category"
               name="category"
               className="form-select white-focus"
-              defaultValue="Alle Kategorien"
+              value={categoryId}
+              onChange={(e) => {
+                setCategoryId(e.target.value);
+              }}
             >
               {categories.map((category) => (
-                <>
-                  <option value={category.name}>{category.name}</option>
-                </>
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
               ))}
             </select>
           </div>
-
+          {/* PLZ */}
+          <div className="position-relative" style={{ width: "6rem" }}>
+            <PostcodeInput postcode={postcode} setPostcode={setPostcode} />
+          </div>
           {/* Ort */}
-          <div className="col-2">
-            <input
-              type="text"
-              className="form-control white-focus"
-              placeholder="Ort"
-            />
+          <div className="position-relative" style={{ width: "15rem" }}>
+            <LocationSelect postcode={postcode} setLocationId={setLocationId} />
           </div>
 
-          {/* Ort */}
-          <div className="col-2">
+          {/* Umkreis */}
+          <div className="">
             <input
               type="text"
               className="form-control white-focus"
-              placeholder="Ganzer Ort"
+              placeholder="Umkreis (km)"
+              style={{ width: "7.5rem" }}
             />
           </div>
           {/* 
@@ -76,8 +95,6 @@ export default function SearchBar() {
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#advancedFilters"
-              aria-expanded="false"
-              aria-controls="advancedFilters"
             >
               <i className="bi bi-sliders"></i>
             </button>
@@ -88,17 +105,17 @@ export default function SearchBar() {
           </button>
         </div>
         <div className="collapse mt-2  text-light" id="advancedFilters">
-          <div className="row g-2 align-items-center">
-            <span className="col-auto">Preis: </span>
-            <div className="col-2">
+          <div className="d-flex flex-wrap gap-2 align-items-center justify-content-center">
+            <span className="">Preis: </span>
+            <div className="" style={{ width: "7rem" }}>
               <input
                 type="number"
                 className="form-control white-focus"
                 placeholder="von"
               />
             </div>
-            <span className="col-auto">-</span>
-            <div className="col-2">
+            <span className="">-</span>
+            <div className="" style={{ width: "7rem" }}>
               <input
                 type="number"
                 className="form-control white-focus"
@@ -108,6 +125,7 @@ export default function SearchBar() {
           </div>
         </div>
       </form>
+      <p className="text-white">{locationId}</p>
     </div>
   );
 }
