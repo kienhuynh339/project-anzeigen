@@ -16,11 +16,11 @@ public class GeodbLocationController {
     private GeodbLocationController(GeodbLocationService geodbLocationService){this.geodbLocationService=geodbLocationService;}
 
     @GetMapping
-    private ResponseEntity<List<GeodbLocationDto>> findByPlzAndNameStartingWith(@RequestParam String postcode, @RequestParam String locationName, @RequestParam(defaultValue="15") int limit){
+    private ResponseEntity<List<GeodbLocationDto>> findByPlz(@RequestParam String postcode, @RequestParam(defaultValue="15") int limit){
         int pageSize = Math.clamp(limit, 1, 100);
         Pageable pageable = PageRequest.of(0,pageSize);
 
-        List<GeodbLocationDto> locationList = geodbLocationService.findByPlzAndName(postcode, locationName, pageable);
+        List<GeodbLocationDto> locationList = geodbLocationService.findByPlz(postcode, pageable);
         return ResponseEntity.ok(locationList);
     }
     
