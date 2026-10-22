@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 
 public class ItemDto {
     private Long id;
-    private UserPublicDto user;
+    private UserPublicDto poster;
     private String title;
     private String description;
     private int price;
@@ -16,18 +16,18 @@ public class ItemDto {
     private OffsetDateTime createdAt;
 
     public ItemDto(Long id,
-                   UserPublicDto user,
+                   UserPublicDto poster,
                    String title,
                    String description,
                    int price,
                    GeodbLocationDto location,
                    ItemStatus status,
                    OffsetDateTime createdAt){
-        this.id=id;this.user=user;this.title=title;this.description=description;this.price=price;this.location=location;this.status=status;this.createdAt=createdAt;
+        this.id=id;this.poster = poster;this.title=title;this.description=description;this.price=price;this.location=location;this.status=status;this.createdAt=createdAt;
     }
     public ItemDto(Item item){
         this.id=item.getId();
-        this.user=new UserPublicDto(item.getPoster());
+        this.poster =new UserPublicDto(item.getPoster());
         this.title= item.getTitle();
         this.description = item.getDescription();
         this.price = item.getPrice();
@@ -40,8 +40,8 @@ public class ItemDto {
         return id;
     }
 
-    public UserPublicDto getUser() {
-        return user;
+    public UserPublicDto getPoster() {
+        return poster;
     }
 
     public String getTitle() {
