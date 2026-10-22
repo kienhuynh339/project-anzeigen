@@ -1,46 +1,27 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import DialogWindow from "./DialogWindow";
+import DialogWindow from "../../components/DialogWindow";
+import { useFetch } from "../../hooks/useFetch";
 
 export default function ItemView() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { itemId } = useParams();
-  const [item, setItem] = useState({
+
+  const item = useFetch(`http://localhost:8080/api/items/${itemId}`, []) ?? {
     id: "",
     poster: { profileName: "" },
     title: "",
     description: "",
-    location: { ort: "" },
+    location: { name: "", plz: "", extraInfo: "" },
     price: 0,
     createdAt: "",
-  });
-  const [imageIds, setImageIds] = useState([]);
+    status: "",
+  };
 
-  useEffect(() => {
-    fetch(`http://localhost:8080/api/anzeigen/${itemId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Fehler beim Laden der Anzeige");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setItem(data);
-      });
-
-    fetch(`http://localhost:8080/api/anzeigen/${itemId}/bilder`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Fehler beim Laden von Bilderids");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setImageIds(data);
-      });
-  }, []);
+  const imageIds =
+    useFetch(`http://localhost:8080/api/images/item/${itemId}`, []) ?? [];
 
   const handleDialogOpen = () => {
     setIsDialogOpen(true);
@@ -101,7 +82,7 @@ export default function ItemView() {
             <div className="d-flex align-items-center gap-1">
               <i className="bi bi-geo-alt-fill text-body-tertiary"></i>
               <p className="card-text text-secondary m-0">
-                {item.location.ort}
+                {item.location.name}
               </p>
             </div>
             <div className="d-flex align-items-center gap-1">
@@ -202,7 +183,7 @@ function ImageGallery({ imageIds }) {
       {hasImages ? (
         <>
           <img
-            src={`http://localhost:8080/api/anzeige-bilder/${imageIds[currentIndex]}`}
+            src={`http://localhost:8080/api/images/${imageIds[currentIndex]}`}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
           {imageIds.length > 1 && (
