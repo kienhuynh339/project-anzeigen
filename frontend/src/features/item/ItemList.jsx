@@ -1,21 +1,23 @@
 import { useState, useEffect } from "react";
-import "./hoverEffect.css";
+import "../../styles/hoverEffect.css";
+import { useFetch } from "../../hooks/useFetch";
+import { Link } from "react-router";
 
-export default function ItemList() {
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:8080/api/anzeigen") // return: ein Response-Objekt
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Fehler beim Laden der Anzeigen");
-        }
-        return response.json(); // JSON in JS-Wert
-      }) // ein Promise???
-      .then((data) => {
-        setItems(data); // data enthält den JS-Wert
-      });
-  }, []);
+export default function ItemList({ searchFilters, submitState }) {
+  const {
+    searchTerm,
+    categoryId,
+    postcode,
+    locationId,
+    radiusKm,
+    priceMin,
+    priceMax,
+  } = searchFilters;
+  const response = useFetch(
+    `http://localhost:8080/api/items?searchTerm=${searchTerm}&categoryId=${categoryId}&minPrice=${priceMin}&maxPrice=${priceMax}&locationId=${locationId}&radiusKm=${radiusKm}`,
+    [submitState],
+  );
+  const items = response?.content ?? [];
 
   return (
     <div className="p-2">
@@ -24,8 +26,8 @@ export default function ItemList() {
                       align-items-center mb-1"
       >
         <span className="mb-0">
-          {items.length} Ergebnisse für „...“ in der Kategorie „...“ in
-          "..ort.." gefunden.
+          {response?.totalElements ?? ""} Ergebnisse für „...“ in der Kategorie
+          „...“ in "..ort.." gefunden.
         </span>
       </div>
 
@@ -40,14 +42,14 @@ export default function ItemList() {
 
 function ItemCard({ item }) {
   return (
-    <a
+    <Link
       className="text-decoration-none hover-effect p-0"
-      href={`/anzeigen/${item.id}`}
+      to={`/anzeigen/${item.id}`}
       style={{ width: "24%" }}
     >
       <div className="card shadow-sm ">
         <img
-          src={`http://localhost:8080/api/anzeigen/${item.id}/bilder/erstes`}
+          src={`http://localhost:8080/api/images/item/${item.id}/first`}
           className="card-img-top"
           alt={`item-${item.id}-image`}
           loading="lazy"
@@ -59,7 +61,7 @@ function ItemCard({ item }) {
             <div className="d-flex align-items-center gap-1">
               <i className="bi bi-geo-alt-fill text-body-tertiary"></i>
               <p className="card-text text-secondary m-0">
-                {item.location.ort}
+                {`${item.location.plz} ${item.location.name} ${item.distance ? `(${item.distance.toFixed(2)} km)` : ""}`}
               </p>
             </div>
             <h5 className="card-title">
@@ -80,6 +82,6 @@ function ItemCard({ item }) {
           </div>
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
