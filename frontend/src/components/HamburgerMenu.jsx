@@ -10,7 +10,7 @@ export default function HamburgerMenu({ options }) {
       </button>
       <ul className="dropdown-menu dropdown-menu-end">
         {options.map((option) => (
-          <li>
+          <li key={option.option}>
             <a className="dropdown-item" href={option.link}>
               {option.option}
             </a>
