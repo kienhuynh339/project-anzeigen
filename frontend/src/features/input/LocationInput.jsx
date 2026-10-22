@@ -27,7 +27,7 @@ export default function LocationInput({
   useEffect(() => {
     setInputValue("");
     setOptions([]);
-    setLocationId(null);
+    setLocationId("");
   }, [postcode]);
 
   // Optionen aktualisieren
@@ -48,7 +48,7 @@ export default function LocationInput({
       (location) =>
         location.name.toLowerCase() === event.target.value.toLowerCase(),
     );
-    setLocationId(location?.id ?? null);
+    setLocationId(location?.id ?? "");
   };
 
   const handleOptionSelect = (location) => {
@@ -68,6 +68,7 @@ export default function LocationInput({
         onChange={handleInputChange}
         onFocus={() => setShowSuggestions(true)}
         onBlur={() => setShowSuggestions(false)}
+        autoComplete="off"
       />
 
       {showSuggestions && locations.length > 0 && (
