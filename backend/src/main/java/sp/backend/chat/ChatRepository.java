@@ -14,10 +14,12 @@ c.item.id,
 c.item.title,
 c.item.status,
 new sp.backend.user.UserPublicDto(c.poster),
-new sp.backend.user.UserPublicDto(c.interestedUser)
+new sp.backend.user.UserPublicDto(c.interestedUser),
+null
 )
 FROM Chat c
-WHERE c.firstDeletedByUser IS NULL AND (:userId = c.poster.id OR :userId = c.interestedUser.id)
+WHERE (c.firstDeletedByUser IS NULL OR (c.firstDeletedByUser.id != 0 AND c.firstDeletedByUser.id != :userId))
+AND (:userId = c.poster.id OR :userId = c.interestedUser.id)
 """)
     Page<ChatDto> findByUserId(Long userId, Pageable pageable);
 }
