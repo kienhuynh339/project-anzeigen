@@ -4,10 +4,10 @@ import { Link } from "react-router";
 
 export default function Navbar() {
   const options = [
-    { option: "Meine Anzeigen", link: "#" },
-    { option: "Nachrichten", link: "#" },
-    { option: "Merkliste", link: "#" },
-    { option: "Einstellungen", link: "#" },
+    { option: "Meine Anzeigen", link: "/" },
+    { option: "Nachrichten", link: "/nachrichten" },
+    { option: "Merkliste", link: "/" },
+    { option: "Einstellungen", link: "/" },
     { option: "Abmelden", link: "#" },
   ];
   return (
