@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 export default function HamburgerMenu({ options }) {
   return (
     <div className="btn-group">
@@ -11,9 +13,9 @@ export default function HamburgerMenu({ options }) {
       <ul className="dropdown-menu dropdown-menu-end">
         {options.map((option) => (
           <li key={option.option}>
-            <a className="dropdown-item" href={option.link}>
+            <Link className="dropdown-item" to={option.link}>
               {option.option}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
