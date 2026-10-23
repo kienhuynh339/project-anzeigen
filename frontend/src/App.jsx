@@ -3,6 +3,7 @@ import Navbar from "./features/navigation/Navbar";
 import SearchBar from "./features/search/SearchBar";
 import ItemView from "./features/item/ItemView";
 import ItemList from "./features/item/ItemList";
+import Chat from "./features/chat/Chat";
 import { useState } from "react";
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
             }
           />
           <Route path="/anzeigen/:itemId" element={<ItemView />} />
+          <Route path="/nachrichten" element={<Chat />} />
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
