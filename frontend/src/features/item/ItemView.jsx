@@ -101,43 +101,38 @@ export default function ItemView() {
               <DialogWindow
                 isOpen={isDialogOpen}
                 dialogWidth={"70ch"}
+                dialogTitle={"Nachricht schreiben"}
                 dialogContent={
-                  <>
-                    <form
-                      className="d-flex flex-column p-2"
-                      onSubmit={handleSend}
-                    >
-                      <h4 className="mt-2 ">Nachricht schreiben</h4>
-                      <span className=" mb-3">
-                        {item.title.length > 50
-                          ? item.title.slice(0, 50) + "..."
-                          : item.title}{" "}
-                        •{" "}
-                        {item.price.toLocaleString("de-DE", {
-                          style: "currency",
-                          currency: "EUR",
-                        })}
-                      </span>
-                      <textarea
-                        className="form-control"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        rows={4}
-                      />
-                      <div className="d-flex gap-3 justify-content-end mt-3 mb-2">
-                        <button
-                          className="btn btn-secondary"
-                          onClick={handleDialogClose}
-                        >
-                          Abbrechen
-                        </button>
-                        <button type="submit" className="btn btn-primary">
-                          Senden
-                        </button>
-                      </div>
-                    </form>
-                  </>
+                  <div>
+                    <span className=" mb-3">
+                      {item.title.length > 50
+                        ? item.title.slice(0, 50) + "..."
+                        : item.title}{" "}
+                      •{" "}
+                      {item.price.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </span>
+                    <textarea
+                      className="form-control"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      rows={4}
+                    />
+                  </div>
                 }
+                dialogButtons={[
+                  <button
+                    className="btn btn-secondary"
+                    onClick={handleDialogClose}
+                  >
+                    Abbrechen
+                  </button>,
+                  <button className="btn btn-primary" onClick={handleSend}>
+                    Senden
+                  </button>,
+                ]}
               />
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
               <button
