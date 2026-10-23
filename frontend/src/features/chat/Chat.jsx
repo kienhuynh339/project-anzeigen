@@ -87,6 +87,9 @@ export default function Chat() {
   };
 
   const handleChatSelect = (chat) => {
+    // message.read auf true setzen (auch die früheren)
+    // Roter Punkt weg
+    chat.lastMessage.read = true; // nur die Letzte
     setCurrentChat(chat);
   };
 
@@ -177,7 +180,7 @@ export default function Chat() {
             {filteredChats.map((chat) => (
               <button
                 key={chat.id}
-                className={`list-group-item list-group-item-action p-0 border-bottom border-dark-subtle ${
+                className={`list-group-item list-group-item-action p-0 border-bottom border-dark-subtle position-relative ${
                   isChatDeleteActive
                     ? deleteList.includes(chat.id)
                       ? "bg-danger-subtle"
@@ -194,6 +197,17 @@ export default function Chat() {
                     : handleChatSelect(chat)
                 }
               >
+                {/* Roter Punkt oben rechts */}
+                {chat.lastMessage.senderId != userId &&
+                chat.lastMessage.read != true ? (
+                  <span
+                    className="position-absolute top-0 end-0  rounded-circle bg-danger m-1"
+                    style={{ width: "10px", height: "10px", zIndex: 1 }}
+                  />
+                ) : (
+                  ""
+                )}
+
                 <div className="d-flex ">
                   <div className="ps-2 pe-3 pt-2 pb-1 d-flex flex-column justify-content-center align-items-center">
                     <img
@@ -216,7 +230,14 @@ export default function Chat() {
                     <div className="text-dark">
                       {truncateText(chat.itemTitle, 50)}
                     </div>
-                    <div>
+                    <div
+                      className={
+                        chat.lastMessage.senderId != userId &&
+                        chat.lastMessage.read != true
+                          ? "text-danger"
+                          : ""
+                      }
+                    >
                       {chat.lastMessage.senderId == userId
                         ? `Du: ${truncateText(chat.lastMessage.content, 45)}`
                         : truncateText(chat.lastMessage.content, 45)}
@@ -297,6 +318,7 @@ export default function Chat() {
         dialogTitle={"Chat löschen"}
         dialogButtons={[
           <button
+            key="dialog_button_1"
             type="button"
             className="btn btn-secondary"
             onClick={() => setIsDialogActive(false)}
@@ -304,6 +326,7 @@ export default function Chat() {
             Abbrechen
           </button>,
           <button
+            key="dialog_button_2"
             type="button"
             className="btn btn-danger"
             onClick={handleChatDelete}
