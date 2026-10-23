@@ -179,7 +179,7 @@ VALUES
 (12, 1, 1, 'Ja, 400 Euro wären in Ordnung.', TRUE, '2026-10-09 18:26:00+02'),
 (13, 1, 2, 'Perfekt! Kann ich die Switch am Wochenende abholen?', TRUE, '2026-10-09 18:29:00+02'),
 (14, 1, 1, 'Ja, am Samstag würde es mir gut passen.', TRUE, '2026-10-09 18:32:00+02'),
-(15, 1, 2, 'Super, dann melde ich mich am Samstag noch einmal. Danke!', TRUE, '2026-10-09 18:35:00+02'),
+(15, 1, 2, 'Super, dann melde ich mich am Samstag noch einmal. Danke!', FALSE, '2026-10-09 18:35:00+02'),
 
 -- Chat 2: Nintendo Switch 2, ca. 10 Nachrichten
 -- Erste Nachricht: sender_id = 3, 2026-10-10 20:00:00+02
@@ -192,7 +192,7 @@ VALUES
 (22, 2, 3, 'Wäre Versand möglich?', TRUE, '2026-10-10 20:16:00+02'),
 (23, 2, 1, 'Ja, Versand ist möglich. Die Versandkosten müssten wir noch abstimmen.', TRUE, '2026-10-10 20:19:00+02'),
 (24, 2, 3, 'Alles klar, ich würde sie gerne kaufen.', TRUE, '2026-10-10 20:22:00+02'),
-(25, 2, 1, 'Sehr gerne! Dann besprechen wir die Versanddetails.', TRUE, '2026-10-10 20:25:00+02'),
+(25, 2, 1, 'Sehr gerne! Dann besprechen wir die Versanddetails.', FALSE, '2026-10-10 20:25:00+02'),
 
 -- Chat 3: Nintendo Switch 2, ca. 5 Nachrichten
 -- Erste Nachricht: sender_id = 4, 2026-10-11 20:30:00+02
@@ -213,7 +213,7 @@ VALUES
 (37, 4, 4, 'Wie alt ist das Headset ungefähr?', TRUE, '2026-10-12 12:31:00+02'),
 (38, 4, 1, 'Es ist ungefähr ein Jahr alt und wurde gut gepflegt.', TRUE, '2026-10-12 12:34:00+02'),
 (39, 4, 4, 'Würdest du es für 50 Euro verkaufen?', TRUE, '2026-10-12 12:37:00+02'),
-(40, 4, 1, 'Ja, 50 Euro sind in Ordnung.', TRUE, '2026-10-12 12:40:00+02'),
+(40, 4, 1, 'Ja, 50 Euro sind in Ordnung.', FALSE, '2026-10-12 12:40:00+02'),
 
 -- Chat 5: Zwei weiße Tastaturen, ca. 15 Nachrichten
 -- Erste Nachricht: sender_id = 4, 2026-10-13 12:30:00+02
@@ -249,7 +249,7 @@ VALUES
 (67, 6, 2, 'Würdest du bei einem Kauf von zwei Uhren einen Rabatt geben?', TRUE, '2026-10-14 13:16:00+02'),
 (68, 6, 1, 'Ja, bei Interesse an zwei Uhren können wir über den Preis sprechen.', TRUE, '2026-10-14 13:19:00+02'),
 (69, 6, 2, 'Ich würde gerne die Rolex und die Fossil nehmen.', TRUE, '2026-10-14 13:22:00+02'),
-(70, 6, 1, 'Gerne! Lass uns die Preise und die Übergabe im Detail abstimmen.', TRUE, '2026-10-14 13:25:00+02'),
+(70, 6, 1, 'Gerne! Lass uns die Preise und die Übergabe im Detail abstimmen.', FALSE, '2026-10-14 13:25:00+02'),
 
 -- Chat 7: Weißer Gartenstuhl, ca. 15 Nachrichten
 -- Erste Nachricht: sender_id = 1, 2026-10-15 12:50:00+02
@@ -267,7 +267,7 @@ VALUES
 (82, 7, 3, 'Wäre beim Preis noch etwas möglich?', TRUE, '2026-10-15 13:22:00+02'),
 (83, 7, 1, 'Wenn du ihn selbst abholst, können wir über den Preis sprechen.', TRUE, '2026-10-15 13:25:00+02'),
 (84, 7, 3, 'Das klingt gut. Ich könnte am Samstag vorbeikommen.', TRUE, '2026-10-15 13:28:00+02'),
-(85, 7, 1, 'Perfekt, Samstag passt. Schreib mir einfach vorher kurz.', TRUE, '2026-10-15 13:31:00+02');
+(85, 7, 1, 'Perfekt, Samstag passt. Schreib mir einfach vorher kurz.', FALSE, '2026-10-15 13:31:00+02');
 
 
 
