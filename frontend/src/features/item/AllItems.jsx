@@ -4,7 +4,7 @@ import { useFetch } from "../../hooks/useFetch";
 import ItemCard from "./ItemCard";
 
 export default function AllItems({ searchFilters, submitState }) {
-  const PAGE_SIZE = 2;
+  const PAGE_SIZE = 10;
   const [page, setPage] = useState(0);
   const {
     searchTerm,
