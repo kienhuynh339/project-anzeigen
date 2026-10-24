@@ -5,6 +5,8 @@ import ItemView from "./features/item/ItemView";
 import AllItems from "./features/item/AllItems";
 import Chat from "./features/chat/Chat";
 import { useState } from "react";
+import UserItems from "./features/item/UserItems";
+import CreateItem from "./features/item/CreateItem";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState({
@@ -44,7 +46,9 @@ function App() {
             }
           />
           <Route path="/anzeigen/:itemId" element={<ItemView />} />
+          <Route path="/meine-anzeigen" element={<UserItems />} />
           <Route path="/nachrichten" element={<Chat />} />
+          <Route path="/anzeige-erstellen" element={<CreateItem />} />
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
