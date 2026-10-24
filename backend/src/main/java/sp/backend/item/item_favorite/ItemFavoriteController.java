@@ -13,8 +13,8 @@ public class ItemFavoriteController {
     private final ItemFavoriteRepository itemFavoriteRepository;
     private ItemFavoriteController(ItemFavoriteRepository itemFavoriteRepository){this.itemFavoriteRepository=itemFavoriteRepository;}
 
-    @GetMapping
-    private ResponseEntity<Page<ItemDto>> findByUserId(@RequestParam Long userId, Pageable pageable){
+    @GetMapping("/user/{userId}")
+    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
         Page<ItemDto> page = itemFavoriteRepository.findByUserId(userId,pageable);
         return ResponseEntity.ok(page);
     }
