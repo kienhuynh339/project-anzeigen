@@ -1,8 +1,9 @@
-import React from "react";
-import { categories } from "./categories";
+import { useState } from "react";
+import CategorySelect from "../input/CategorySelect";
 
 export default function CreateItem() {
-  const [images, setImages] = React.useState([]);
+  const [images, setImages] = useState([]);
+  const [categoryId, setCategoryId] = useState(1);
   const handleImageChange = (event) => {
     setImages(Array.from(event.target.files));
   };
@@ -40,18 +41,10 @@ export default function CreateItem() {
                 Kategorie
               </label>
               <div className="col">
-                <select
-                  name="category"
-                  id="category"
-                  defaultValue="Alle Kategorien"
-                  className="form-select border border-dark-subtle"
-                >
-                  {categories.map((category) => (
-                    <>
-                      <option value={category}>{category}</option>
-                    </>
-                  ))}
-                </select>
+                <CategorySelect
+                  categoryId={categoryId}
+                  setCategoryId={setCategoryId}
+                />
               </div>
             </div>
             {/* Beschreibung */}
