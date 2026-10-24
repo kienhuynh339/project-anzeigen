@@ -12,7 +12,7 @@ export default function Navbar({
   const options = [
     { option: "Meine Anzeigen", link: "/meine-anzeigen" },
     { option: "Nachrichten", link: "/nachrichten" },
-    { option: "Merkliste", link: "/" },
+    { option: "Merkliste", link: "/meine-merkliste" },
     { option: "Einstellungen", link: "/" },
     { option: "Abmelden", link: "#" },
   ];
