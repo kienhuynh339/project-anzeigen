@@ -7,6 +7,7 @@ import Chat from "./features/chat/Chat";
 import { useState } from "react";
 import UserItems from "./features/item/UserItems";
 import CreateItem from "./features/item/CreateItem";
+import MyFavoriteItems from "./features/item/MyFavoriteItems";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState({
@@ -49,6 +50,7 @@ function App() {
           <Route path="/meine-anzeigen" element={<UserItems />} />
           <Route path="/nachrichten" element={<Chat />} />
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
+          <Route path="/meine-merkliste" element={<MyFavoriteItems />} />
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
