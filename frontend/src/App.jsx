@@ -1,8 +1,8 @@
 import { Route, BrowserRouter, Routes } from "react-router";
-import Navbar from "./features/navigation/Navbar";
-import SearchBar from "./features/search/SearchBar";
+import Navbar from "./features/header/Navbar";
+import SearchBar from "./features/header/SearchBar";
 import ItemView from "./features/item/ItemView";
-import ItemList from "./features/item/ItemList";
+import AllItems from "./features/item/AllItems";
 import Chat from "./features/chat/Chat";
 import { useState } from "react";
 
@@ -20,7 +20,11 @@ function App() {
   return (
     <BrowserRouter>
       <header>
-        <Navbar />
+        <Navbar
+          setSearchFilters={setSearchFilters}
+          submitState={submitState}
+          setSubmitState={setSubmitState}
+        />
         <SearchBar
           searchFilters={searchFilters}
           setSearchFilters={setSearchFilters}
@@ -28,12 +32,12 @@ function App() {
           setSubmitState={setSubmitState}
         />
       </header>
-      <main>
+      <main className="min-vh-100">
         <Routes>
           <Route
             path="/"
             element={
-              <ItemList
+              <AllItems
                 searchFilters={searchFilters}
                 submitState={submitState}
               />
