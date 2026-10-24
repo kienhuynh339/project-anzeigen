@@ -10,7 +10,7 @@ export default function HamburgerMenu({ options }) {
       >
         <i className="bi bi-list-ul"></i>
       </button>
-      <ul className="dropdown-menu dropdown-menu-end">
+      <ul className="dropdown-menu dropdown-menu-end shadow">
         {options.map((option) => (
           <li key={option.option}>
             <Link className="dropdown-item" to={option.link}>
