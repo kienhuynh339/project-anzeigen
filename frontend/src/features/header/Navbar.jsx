@@ -1,14 +1,16 @@
 import HamburgerMenu from "../../components/HamburgerMenu";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
 export default function Navbar({
   setSearchFilters,
   submitState,
   setSubmitState,
 }) {
+  const navigate = useNavigate();
   const options = [
-    { option: "Meine Anzeigen", link: "/" },
+    { option: "Meine Anzeigen", link: "/meine-anzeigen" },
     { option: "Nachrichten", link: "/nachrichten" },
     { option: "Merkliste", link: "/" },
     { option: "Einstellungen", link: "/" },
@@ -42,7 +44,11 @@ export default function Navbar({
           <div className="d-flex flex-nowrap align-items-center gap-2">
             <div className="text-white">Hallo ...!</div>
             <div>
-              <button type="button" className="btn btn-outline-light">
+              <button
+                type="button"
+                className="btn btn-outline-light"
+                onClick={() => navigate("/anzeige-erstellen")}
+              >
                 <i className="bi bi-plus-circle"></i> Anzeige erstellen
               </button>
             </div>
