@@ -34,7 +34,6 @@ export default function MyFavoriteItems({ setSearchFilters }) {
       pageSize={PAGE_SIZE}
       title={title}
       showItemAmount={false}
-      activateAdditionalContentWhenItemAmountIsZero={true}
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
