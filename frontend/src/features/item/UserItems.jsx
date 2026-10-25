@@ -52,7 +52,7 @@ export default function UserItems() {
           ""
         ) : (
           <div className="d-flex flex-column gap-2">
-            <div>Du hast keine Anzeigen</div>
+            <div>Du hast keine Anzeigen.</div>
             <button
               className="btn btn-outline-primary"
               onClick={() => navigate("/anzeige-erstellen")}
