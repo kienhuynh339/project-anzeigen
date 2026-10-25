@@ -8,6 +8,7 @@ export default function ItemView() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { itemId } = useParams();
+  const [isBooked, setIsBooked] = useState(false);
 
   const item = useFetch(`http://localhost:8080/api/items/${itemId}`, []) ?? {
     id: "",
@@ -33,6 +34,19 @@ export default function ItemView() {
     event.preventDefault();
 
     setIsDialogOpen(false);
+  };
+
+  const handleDeleteButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    // DELETE-Anfrage an Backend (für Favorite/Item)
+  };
+
+  const handleBookButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setIsBooked(!isBooked);
+    // UPDATE-Anfrage an Backend
   };
 
   return (
@@ -96,48 +110,13 @@ export default function ItemView() {
                 className="btn btn-outline-primary"
                 onClick={handleDialogOpen}
               >
-                <i className="bi bi-chat-dots"></i> Nachricht schreiben
+                <i className="bi bi-chat-text"></i> Nachricht schreiben
               </button>
-              <DialogWindow
-                isOpen={isDialogOpen}
-                dialogWidth={"70ch"}
-                dialogTitle={"Nachricht schreiben"}
-                dialogContent={
-                  <div>
-                    <span className=" mb-3">
-                      {item.title.length > 50
-                        ? item.title.slice(0, 50) + "..."
-                        : item.title}{" "}
-                      •{" "}
-                      {item.price.toLocaleString("de-DE", {
-                        style: "currency",
-                        currency: "EUR",
-                      })}
-                    </span>
-                    <textarea
-                      className="form-control"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      rows={4}
-                    />
-                  </div>
-                }
-                dialogButtons={[
-                  <button
-                    className="btn btn-secondary"
-                    onClick={handleDialogClose}
-                  >
-                    Abbrechen
-                  </button>,
-                  <button className="btn btn-primary" onClick={handleSend}>
-                    Senden
-                  </button>,
-                ]}
-              />
+
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
               <button
                 type="button"
-                className="btn btn-outline-primary"
+                className="btn btn-outline-danger"
                 onClick={() => setIsFavorite(!isFavorite)}
               >
                 {isFavorite ? (
@@ -150,9 +129,56 @@ export default function ItemView() {
                   </>
                 )}
               </button>
+              <button
+                type="button"
+                className={`btn btn${isBooked ? "-outline-success" : "-outline-primary"}`}
+                onClick={handleBookButtonClick}
+              >
+                {isBooked ? "Aktivieren" : "Reservieren"}
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleDeleteButtonClick}
+              >
+                <i className="bi bi-trash"></i> Anzeige löschen
+              </button>
             </div>
           </div>
         </div>
+        <DialogWindow
+          isOpen={isDialogOpen}
+          dialogWidth={"70ch"}
+          dialogTitle={"Nachricht schreiben"}
+          dialogContent={
+            <div>
+              <span className=" mb-3">
+                {item.title.length > 50
+                  ? item.title.slice(0, 50) + "..."
+                  : item.title}{" "}
+                •{" "}
+                {item.price.toLocaleString("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                })}
+              </span>
+              <textarea
+                className="form-control"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={4}
+              />
+            </div>
+          }
+          dialogButtons={[
+            <button className="btn btn-secondary" onClick={handleDialogClose}>
+              Abbrechen
+            </button>,
+            <button className="btn btn-primary" onClick={handleSend}>
+              Senden
+            </button>,
+          ]}
+        ></DialogWindow>
       </div>
     </>
   );
