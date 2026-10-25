@@ -2,23 +2,16 @@ import { Route, BrowserRouter, Routes } from "react-router";
 import Navbar from "./features/header/Navbar";
 import SearchBar from "./features/header/SearchBar";
 import ItemView from "./features/item/ItemView";
-import AllItems from "./features/item/AllItems";
 import Chat from "./features/chat/Chat";
 import { useState } from "react";
 import UserItems from "./features/item/UserItems";
 import CreateItem from "./features/item/CreateItem";
 import MyFavoriteItems from "./features/item/MyFavoriteItems";
+import { initialSearchFilters } from "./utils/initialSearchFilters";
+import AllItems from "./features/item/AllItems";
 
 function App() {
-  const [searchFilters, setSearchFilters] = useState({
-    searchTerm: "",
-    categoryId: 1,
-    postcode: "",
-    locationId: "",
-    radiusKm: "",
-    priceMin: "",
-    priceMax: "",
-  });
+  const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
   const [submitState, setSubmitState] = useState(false);
   return (
     <BrowserRouter>
@@ -50,7 +43,10 @@ function App() {
           <Route path="/meine-anzeigen" element={<UserItems />} />
           <Route path="/nachrichten" element={<Chat />} />
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
-          <Route path="/meine-merkliste" element={<MyFavoriteItems />} />
+          <Route
+            path="/meine-merkliste"
+            element={<MyFavoriteItems setSearchFilters={setSearchFilters} />}
+          />
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
