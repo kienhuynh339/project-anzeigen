@@ -4,6 +4,7 @@ import { useFetch } from "../../hooks/useFetch";
 import Messages from "./Messages";
 import { truncateText } from "../../utils/truncatetext";
 import { Link } from "react-router";
+import { useState } from "react";
 
 const userId = "1";
 
@@ -99,6 +100,20 @@ export default function Chat() {
         ? prev.filter((id) => id !== chat.id)
         : [...prev, chat.id];
     });
+  };
+
+  const [isBooked, setIsBooked] = useState(false);
+  const handleDeleteButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    // DELETE-Anfrage an Backend (für Favorite/Item)
+  };
+
+  const handleBookButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setIsBooked(!isBooked);
+    // UPDATE-Anfrage an Backend
   };
 
   return (
@@ -255,20 +270,38 @@ export default function Chat() {
             {/* Chat-Kopfzeile */}
             <div
               className="p-3 border-bottom border-dark-subtle bg-secondary-subtle"
-              style={{ height: "6ch" }}
+              style={{ height: currentChat.id == "" ? "6ch" : "auto" }}
             >
-              <h5 className="mb-0 text-primary">
-                {currentChat.id === "" ? (
-                  ""
-                ) : (
-                  <Link
-                    className="text-decoration-none"
-                    to={`/anzeigen/${currentChat.itemId}`}
-                  >
-                    {truncateText(currentChat.itemTitle, 40)}
-                  </Link>
-                )}
-              </h5>
+              {currentChat.id != "" && (
+                <>
+                  {/* Anzeigetitel */}
+                  <h5 className="text-primary pb-1">
+                    <Link
+                      className="text-decoration-none"
+                      to={`/anzeigen/${currentChat.itemId}`}
+                    >
+                      {truncateText(currentChat.itemTitle, 40)}
+                    </Link>
+                  </h5>
+                  {/* Löschen / Reservieren */}
+                  <div className="d-flex flex-wrap justify-content-between pt-2 m-0 border-top border-dark-subtle">
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger"
+                      onClick={handleDeleteButtonClick}
+                    >
+                      <i className="bi bi-trash"></i> Anzeige löschen
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn${isBooked ? "-outline-success" : "-outline-primary"}`}
+                      onClick={handleBookButtonClick}
+                    >
+                      {isBooked ? "Aktivieren" : "Reservieren"}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Nachrichten */}
