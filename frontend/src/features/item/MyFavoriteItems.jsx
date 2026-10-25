@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import "../../styles/hoverEffect.css";
 import { useFetch } from "../../hooks/useFetch";
 import ItemCard from "./ItemCard";
+import { useNavigate } from "react-router";
 
-const userId = "2";
+const userId = "1";
 
 export default function MyFavoriteItems() {
+  const navigate = useNavigate();
   const PAGE_SIZE = 9999;
   const sortOption = Object.freeze({
     CREATED_AT_DESC: "createdAt,desc",
@@ -15,7 +17,7 @@ export default function MyFavoriteItems() {
   const [sortMode, setSortMode] = useState(sortOption.CREATED_AT_DESC);
 
   const response = useFetch(
-    `http://localhost:8080/api/favorites/user/${userId}?page=0&size=${PAGE_SIZE}&sort=${sortMode}`,
+    `http://localhost:8080/api/items/user/${userId}/favorites?page=0&size=${PAGE_SIZE}&sort=${sortMode}`,
     [sortMode],
   );
   const items = response?.content ?? [];
@@ -24,7 +26,7 @@ export default function MyFavoriteItems() {
     <div className="p-2">
       <div
         className="d-flex justify-content-between
-                      align-items-center mb-1"
+                          align-items-center mb-1"
       >
         <h2 className="ps-1 m-0">Meine Merkliste</h2>
         {items.length > 0 ? (
@@ -46,6 +48,19 @@ export default function MyFavoriteItems() {
       </div>
 
       <div className="d-flex gap-2 flex-wrap justify-content-center">
+        {items.length > 0 ? (
+          ""
+        ) : (
+          <div className="d-flex flex-column gap-2 align-items-center">
+            <div>Deine Merkliste ist leer.</div>
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => navigate("/")}
+            >
+              Anzeigen durchsuchen
+            </button>
+          </div>
+        )}
         {items.map((item) => (
           <ItemCard key={item.id} item={item} />
         ))}
