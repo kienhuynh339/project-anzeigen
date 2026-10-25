@@ -19,7 +19,6 @@ export default function AllItems({ searchFilters, submitState }) {
       additionalDependencies={[submitState]}
       pageSize={10}
       showItemAmount={true}
-      activateAdditionalContentWhenItemAmountIsZero={false}
     ></ItemList>
   );
 }
