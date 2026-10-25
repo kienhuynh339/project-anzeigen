@@ -1,12 +1,10 @@
 import { useState } from "react";
 import CategorySelect from "../input/CategorySelect";
-
+import ImageInput from "./ImageInput";
 export default function CreateItem() {
   const [images, setImages] = useState([]);
   const [categoryId, setCategoryId] = useState(1);
-  const handleImageChange = (event) => {
-    setImages(Array.from(event.target.files));
-  };
+
   return (
     <>
       <div className="container-fluid mb-5">
@@ -18,9 +16,7 @@ export default function CreateItem() {
         >
           <form>
             {/* Titel */}
-            <div
-              className={"border-dark-subtle row mx-1 my-3 align-items-center"}
-            >
+            <div className={"row mx-1 my-3 align-items-center"}>
               <label htmlFor="title" className="fw-bold col-2">
                 Titel
               </label>
@@ -34,9 +30,7 @@ export default function CreateItem() {
               </div>
             </div>
             {/* Kategorie */}
-            <div
-              className={"border-dark-subtle row mx-1 my-3 align-items-center"}
-            >
+            <div className={"row mx-1 my-3 align-items-center"}>
               <label htmlFor="category" className="fw-bold col-2">
                 Kategorie
               </label>
@@ -48,9 +42,7 @@ export default function CreateItem() {
               </div>
             </div>
             {/* Beschreibung */}
-            <div
-              className={"border-dark-subtle row mx-1 my-3 align-items-center"}
-            >
+            <div className={"row mx-1 my-3 align-items-center"}>
               <label htmlFor="description" className="fw-bold col-2">
                 Beschreibung
               </label>
@@ -64,9 +56,7 @@ export default function CreateItem() {
               </div>
             </div>
             {/* Preis */}
-            <div
-              className={"border-dark-subtle row mx-1 my-3 align-items-center"}
-            >
+            <div className={"row mx-1 my-3 align-items-center"}>
               <label htmlFor="price" className="fw-bold col-2">
                 Preis
               </label>
@@ -81,67 +71,17 @@ export default function CreateItem() {
               </div>
             </div>
             {/* Bilder Input*/}
-            <div
-              className={
-                "border-dark-subtle row mx-1 mt-3 mb-1 align-items-center"
-              }
-            >
-              <label htmlFor="titel" className="fw-bold col-2">
+            <div className={"row mx-1 my-3 align-items-center"}>
+              <label htmlFor="description" className="fw-bold col-2">
                 Bilder
               </label>
               <div className="col">
-                <input
-                  id="images"
-                  name="images"
-                  type="file"
-                  multiple
-                  // Browser erlaubt nur Bilder
-                  accept="image/*"
-                  className="form-control border-dark-subtle"
-                  onChange={handleImageChange}
-                />
+                <ImageInput images={images} setImages={setImages}></ImageInput>
               </div>
             </div>
-            {/* Bilder*/}
-            <div
-              className={
-                "border-dark-subtle row mx-1 mb-3 mt-0 align-items-center"
-              }
-            >
-              <div className=" col-2"></div>
-              <div className="col">
-                <div
-                  className="border-dark-subtle rounded d-flex flex-wrap gap-2 p-2"
-                  style={{
-                    border: "1px dashed",
-                  }}
-                >
-                  {images.map((image, index) => {
-                    const imageUrl = URL.createObjectURL(image);
-                    return (
-                      <div className="position-relative">
-                        <img
-                          key={`${image.name}-${index}`}
-                          src={imageUrl}
-                          alt={image.name}
-                          className="img-thumbnail"
-                          style={{
-                            width: "22ch",
-                            height: "22ch",
-                            objectFit: "contain",
-                            backgroundColor: "#000000",
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+
             {/* Ort */}
-            <div
-              className={"border-dark-subtle row mx-1 my-3 align-items-center"}
-            >
+            <div className={"row mx-1 my-3 align-items-center"}>
               <span className="fw-bold col-2">Ort</span>
               {/* PLZ */}
               <div className="col-2">
