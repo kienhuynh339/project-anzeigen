@@ -1,14 +1,55 @@
 import { Link } from "react-router";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
+import { useState } from "react";
 
 export default function ItemCard({ item }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isBooked, setIsBooked] = useState(false);
+
+  const handleFavoriteButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setIsFavorite(!isFavorite);
+    // UPDATE-Anfrage an Backend
+  };
+
+  const handleDeleteButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    // DELETE-Anfrage an Backend (für Favorite/Item)
+  };
+
+  const handleMessageButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    // Message...
+  };
+
+  const handleBookButtonClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setIsBooked(!isBooked);
+    // UPDATE-Anfrage an Backend
+  };
+
   return (
     <Link
       className="text-decoration-none hover-effect p-0"
       to={`/anzeigen/${item.id}`}
       style={{ width: "22rem" }}
     >
-      <div className="card shadow-sm h-100">
+      <div className="card shadow-sm h-100 position-relative">
+        {/* Favorite-Knopf */}
+        <button
+          className="top-0 end-0 m-1 rounded position-absolute btn"
+          style={{ backgroundColor: "#9d9d9db9" }}
+          onClick={handleFavoriteButtonClick}
+        >
+          <i
+            className={` bi bi-heart${isFavorite ? "-fill" : ""} ${isFavorite ? "text-danger" : ""}`}
+          ></i>
+        </button>
+        {/* Bild */}
         <img
           src={`http://localhost:8080/api/images/item/${item.id}/first`}
           className="card-img-top"
@@ -32,18 +73,50 @@ export default function ItemCard({ item }) {
             </h5>
           </div>
 
-          <div className="d-flex justify-content-between align-items-end">
-            <p className="fs-5 fw-bold m-0">
-              {item.price == 0
-                ? ""
-                : item.price.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-            </p>
-            <p className="text-secondary m-0">
-              {formatTimestamp(item.createdAt, TimestampType.ITEM)}
-            </p>
+          <div className="d-flex flex-column gap-2">
+            <div className="d-flex justify-content-between align-items-end">
+              <p className="fs-5 fw-bold m-0">
+                {item.price == 0
+                  ? ""
+                  : item.price.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+              </p>
+              <p className="text-secondary m-0">
+                {formatTimestamp(item.createdAt, TimestampType.ITEM)}
+              </p>
+            </div>
+            <div className="d-flex justify-content-between">
+              {/* <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleDeleteButtonClick}
+              >
+                <i className="bi bi-trash"></i>
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                onClick={handleMessageButtonClick}
+              >
+                <i className="bi bi-chat-text"></i>
+              </button> */}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleDeleteButtonClick}
+              >
+                <i className="bi bi-trash"></i>
+              </button>
+              <button
+                type="button"
+                className={`btn btn${isBooked ? "-outline-success" : "-outline-primary"}`}
+                onClick={handleBookButtonClick}
+              >
+                {isBooked ? "Aktivieren" : "Reservieren"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
