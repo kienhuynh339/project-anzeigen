@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/items")
+@RequestMapping("/api/items")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ItemController {
 
@@ -45,6 +45,12 @@ public class ItemController {
     @GetMapping("/user/{userId}")
     private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
         Page<ItemDto> page = itemService.findByUserId(userId, pageable);
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/user/{userId}/favorites")
+    private ResponseEntity<Page<ItemDto>> findFavoriteItemsByUserId(@PathVariable Long userId, Pageable pageable){
+        Page<ItemDto> page = itemService.findFavoriteItemsByUserId(userId, pageable);
         return ResponseEntity.ok(page);
     }
 }
