@@ -9,7 +9,6 @@ export default function ItemList({
   pageSize = 10,
   title = "Überschrift fehlt.",
   showItemAmount = false,
-  activateAdditionalContentWhenItemAmountIsZero = false,
   additionalContentWhenItemAmountIsZero = "",
 }) {
   const [page, setPage] = useState(0);
@@ -79,9 +78,7 @@ export default function ItemList({
       </div>
 
       <div className="d-flex gap-2 flex-wrap justify-content-center">
-        {activateAdditionalContentWhenItemAmountIsZero && totalElements > 0
-          ? ""
-          : additionalContentWhenItemAmountIsZero}
+        {totalElements == 0 && additionalContentWhenItemAmountIsZero}
         {items.map((item) => (
           <ItemCard key={item.id} item={item} />
         ))}
