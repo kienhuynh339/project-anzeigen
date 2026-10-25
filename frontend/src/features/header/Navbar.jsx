@@ -2,6 +2,7 @@ import HamburgerMenu from "../../components/HamburgerMenu";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
+import { initialSearchFilters } from "../../utils/initialSearchFilters";
 
 export default function Navbar({
   setSearchFilters,
@@ -18,15 +19,7 @@ export default function Navbar({
   ];
 
   const handleLogoClick = () => {
-    setSearchFilters({
-      searchTerm: "",
-      categoryId: 1,
-      postcode: "",
-      locationId: "",
-      radiusKm: "",
-      priceMin: "",
-      priceMax: "",
-    });
+    setSearchFilters(initialSearchFilters);
     setSubmitState(!submitState);
   };
 
