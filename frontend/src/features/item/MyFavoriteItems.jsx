@@ -2,7 +2,7 @@ import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 import { initialSearchFilters } from "../../utils/initialSearchFilters";
 
-const userId = "1";
+const userId = "2";
 
 export default function MyFavoriteItems({ setSearchFilters }) {
   const navigate = useNavigate();
