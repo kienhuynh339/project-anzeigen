@@ -1,7 +1,7 @@
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 
-const userId = "2";
+const userId = "4";
 
 export default function UserItems() {
   const navigate = useNavigate();
@@ -27,7 +27,6 @@ export default function UserItems() {
       pageSize={PAGE_SIZE}
       title={title}
       showItemAmount={false}
-      activateAdditionalContentWhenItemAmountIsZero={true}
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
