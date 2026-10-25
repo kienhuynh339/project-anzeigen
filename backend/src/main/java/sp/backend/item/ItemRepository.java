@@ -113,4 +113,23 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             WHERE :id = u.id
             """)
     Page<ItemDto> findByUserId(Long id, Pageable pageable);
+
+    @Query("""
+SElECT new sp.backend.item.ItemDto(
+            i.id,
+            new sp.backend.user.UserPublicDto(u),
+            i.title,
+            i.description,
+            i.price,
+            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
+            i.status,
+            i.createdAt
+            )
+FROM Item i
+JOIN i.poster u
+JOIN i.location l
+JOIN ItemFavorite f ON i.id = f.item.id
+WHERE f.user.id = :userId
+""")
+    Page<ItemDto> findFavoriteItemsByUserId(Long userId, Pageable pageable);
 }
