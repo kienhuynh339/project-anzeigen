@@ -1,7 +1,7 @@
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 
-const userId = "4";
+const userId = "1";
 
 export default function UserItems() {
   const navigate = useNavigate();
