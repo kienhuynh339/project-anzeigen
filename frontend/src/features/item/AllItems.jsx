@@ -1,6 +1,9 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import ItemList from "./ItemList";
 
-export default function AllItems({ searchFilters, submitState }) {
+export default function AllItems({ searchFilters, searchTrigger }) {
   const {
     searchTerm,
     categoryId,
@@ -16,7 +19,7 @@ export default function AllItems({ searchFilters, submitState }) {
   return (
     <ItemList
       urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
-      additionalDependencies={[submitState]}
+      additionalDependencies={[searchTrigger]}
       pageSize={10}
       showItemAmount={true}
     ></ItemList>
