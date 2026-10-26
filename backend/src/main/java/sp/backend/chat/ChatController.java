@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.chat;
 
 import org.springframework.data.domain.Page;
@@ -20,4 +23,11 @@ public class ChatController {
         Page<ChatDto> page = chatService.findByUserId(userId, pageable);
         return ResponseEntity.ok(page);
     }
+
+    @DeleteMapping("/{chatId}/user/{userId}")
+    private ResponseEntity<Void> deleteChat(@PathVariable Long chatId, @PathVariable Long userId){
+        chatService.deleteChat(chatId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
