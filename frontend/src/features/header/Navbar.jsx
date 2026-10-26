@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import HamburgerMenu from "../../components/HamburgerMenu";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router";
@@ -6,8 +9,8 @@ import { initialSearchFilters } from "../../utils/initialSearchFilters";
 
 export default function Navbar({
   setSearchFilters,
-  submitState,
-  setSubmitState,
+  searchTrigger,
+  setSearchTrigger,
 }) {
   const navigate = useNavigate();
   const options = [
@@ -20,7 +23,7 @@ export default function Navbar({
 
   const handleLogoClick = () => {
     setSearchFilters(initialSearchFilters);
-    setSubmitState(!submitState);
+    setSearchTrigger(!searchTrigger);
   };
 
   return (
