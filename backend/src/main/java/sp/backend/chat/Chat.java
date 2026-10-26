@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.chat;
 
 import jakarta.persistence.*;
@@ -25,7 +28,7 @@ public class Chat {
     @JoinColumn(name="interested_user_id")
     private User interestedUser;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="first_deleted_by_user_id")
     private User firstDeletedByUser;
 
@@ -64,7 +67,11 @@ public class Chat {
         return firstDeletedByUser;
     }
 
-//    public OffsetDateTime getCreatedAt() {
+    public void setFirstDeletedByUser(User firstDeletedByUser) {
+        this.firstDeletedByUser = firstDeletedByUser;
+    }
+
+    //    public OffsetDateTime getCreatedAt() {
 //        return createdAt;
 //    }
 }
