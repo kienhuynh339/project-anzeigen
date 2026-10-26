@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.chat;
 
 import sp.backend.chat.message.MessageDto;
@@ -12,9 +15,9 @@ public class ChatDto {
     private UserPublicDto poster;
     private UserPublicDto interestedUser;
     private MessageDto lastMessage;
+    private Long fistDeletedByUserId;
 
-
-    public ChatDto(Long id, Long itemId, String itemTitle, ItemStatus itemStatus, UserPublicDto poster, UserPublicDto interestedUser, MessageDto lastMessage) {
+    public ChatDto(Long id, Long itemId, String itemTitle, ItemStatus itemStatus, UserPublicDto poster, UserPublicDto interestedUser, MessageDto lastMessage, Long fistDeletedByUserId) {
         this.id = id;
         this.itemId = itemId;
         this.itemTitle = itemTitle;
@@ -22,7 +25,9 @@ public class ChatDto {
         this.poster = poster;
         this.interestedUser = interestedUser;
         this.lastMessage = lastMessage;
+        this.fistDeletedByUserId = fistDeletedByUserId;
     }
+
 
     public Long getId() {
         return id;
@@ -50,6 +55,10 @@ public class ChatDto {
 
     public MessageDto getLastMessage() {
         return lastMessage;
+    }
+
+    public Long getFistDeletedByUserId() {
+        return fistDeletedByUserId;
     }
 
     public void setLastMessage(MessageDto lastMessage) {
