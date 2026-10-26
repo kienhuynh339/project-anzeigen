@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useFetch } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { Link } from "react-router";
@@ -5,7 +8,7 @@ import { useRef, useEffect } from "react";
 
 export default function Messages({ chatId, userId, otherUser }) {
   const messagePage = useFetch(
-    `http://localhost:8080/api/chats/${chatId}/messages?page=0&size=200&sort=createdAt,asc`,
+    `http://localhost:8080/api/messages/chat/${chatId}?page=0&size=200&sort=createdAt,asc`,
     [chatId],
   );
 
