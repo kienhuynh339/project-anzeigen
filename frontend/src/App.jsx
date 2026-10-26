@@ -1,8 +1,11 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { Route, BrowserRouter, Routes } from "react-router";
 import Navbar from "./features/header/Navbar";
 import SearchBar from "./features/header/SearchBar";
 import ItemView from "./features/item/ItemView";
-import Chat from "./features/chat/Chat";
+import ChatView from "./features/chat/ChatView";
 import { useState } from "react";
 import UserItems from "./features/item/UserItems";
 import CreateItem from "./features/item/CreateItem";
@@ -12,20 +15,20 @@ import AllItems from "./features/item/AllItems";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
-  const [submitState, setSubmitState] = useState(false);
+  const [searchTrigger, setSearchTrigger] = useState(false);
   return (
     <BrowserRouter>
       <header>
         <Navbar
           setSearchFilters={setSearchFilters}
-          submitState={submitState}
-          setSubmitState={setSubmitState}
+          searchTrigger={searchTrigger}
+          setSearchTrigger={setSearchTrigger}
         />
         <SearchBar
           searchFilters={searchFilters}
           setSearchFilters={setSearchFilters}
-          submitState={submitState}
-          setSubmitState={setSubmitState}
+          searchTrigger={searchTrigger}
+          setSearchTrigger={setSearchTrigger}
         />
       </header>
       <main className="min-vh-100">
@@ -35,13 +38,13 @@ function App() {
             element={
               <AllItems
                 searchFilters={searchFilters}
-                submitState={submitState}
+                searchTrigger={searchTrigger}
               />
             }
           />
           <Route path="/anzeigen/:itemId" element={<ItemView />} />
           <Route path="/meine-anzeigen" element={<UserItems />} />
-          <Route path="/nachrichten" element={<Chat />} />
+          <Route path="/nachrichten" element={<ChatView />} />
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
           <Route
             path="/meine-merkliste"
