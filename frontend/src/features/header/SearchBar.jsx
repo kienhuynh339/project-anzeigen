@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import "../../styles/inputWhiteFocus.css";
 import { useState, useEffect } from "react";
 import PostcodeInput from "../input/PostCodeInput";
@@ -9,8 +12,8 @@ import { useNavigate } from "react-router";
 export default function SearchBar({
   searchFilters,
   setSearchFilters,
-  submitState,
-  setSubmitState,
+  searchTrigger,
+  setSearchTrigger,
 }) {
   const navigate = useNavigate();
   const {
@@ -32,7 +35,7 @@ export default function SearchBar({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setSubmitState(!submitState);
+    setSearchTrigger(!searchTrigger);
     navigate("/");
   };
 
