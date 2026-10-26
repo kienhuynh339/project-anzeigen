@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import DialogWindow from "../../components/DialogWindow";

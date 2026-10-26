@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.item.item_favorite;
 
 import jakarta.persistence.*;

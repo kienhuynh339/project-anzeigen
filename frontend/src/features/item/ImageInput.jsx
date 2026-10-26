@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useState } from "react";
 
 function ImageInput({ images, setImages }) {

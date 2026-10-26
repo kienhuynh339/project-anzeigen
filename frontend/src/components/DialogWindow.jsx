@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useEffect } from "react";
 
 export default function DialogWindow({

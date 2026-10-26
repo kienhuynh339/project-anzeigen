@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useEffect, useState } from "react";
 
 export function useFetch(url, dependencies) {

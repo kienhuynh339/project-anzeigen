@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useState } from "react";
 import CategorySelect from "../input/CategorySelect";
 import ImageInput from "./ImageInput";

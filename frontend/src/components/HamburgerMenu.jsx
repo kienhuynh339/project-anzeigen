@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { Link } from "react-router";
 
 export default function HamburgerMenu({ options }) {

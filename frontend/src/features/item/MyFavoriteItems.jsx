@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 import { initialSearchFilters } from "../../utils/initialSearchFilters";

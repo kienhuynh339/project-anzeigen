@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.location.areacode;
 
 import java.io.Serializable;

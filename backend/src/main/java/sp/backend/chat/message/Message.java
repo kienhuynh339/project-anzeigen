@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.chat.message;
 
 import jakarta.persistence.*;

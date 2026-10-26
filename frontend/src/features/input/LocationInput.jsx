@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
 

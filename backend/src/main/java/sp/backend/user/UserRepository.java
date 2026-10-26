@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { Link } from "react-router";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useState } from "react";

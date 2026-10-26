@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 export const TimestampType = Object.freeze({
   MESSAGE: "MESSAGE",
   ITEM: "ITEM",
