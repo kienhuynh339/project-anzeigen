@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -29,6 +30,11 @@ public class MessageController {
     private ResponseEntity<Void> markMessagesAsRead(@PathVariable Long chatId, @PathVariable Long senderId){
         messageService.markMessagesAsReadByChat_IdAndSender_Id(chatId, senderId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    private ResponseEntity<Void>createMessage(@RequestBody Message newMessage, UriComponentsBuilder ucb){
+        Message message = new Message()
     }
 
 }
