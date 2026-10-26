@@ -175,11 +175,11 @@ VALUES
 (8, 1, 1, 'Ich habe sie erst seit ein paar Monaten.', TRUE, '2026-10-09 18:14:00+02'),
 (9, 1, 2, 'Würdest du beim Preis noch etwas entgegenkommen?', TRUE, '2026-10-09 18:17:00+02'),
 (10, 1, 1, 'Ein bisschen Spielraum habe ich noch.', TRUE, '2026-10-09 18:20:00+02'),
-(11, 1, 2, 'Wären 400 Euro für dich in Ordnung?', TRUE, '2026-10-09 18:23:00+02'),
-(12, 1, 1, 'Ja, 400 Euro wären in Ordnung.', TRUE, '2026-10-09 18:26:00+02'),
-(13, 1, 2, 'Perfekt! Kann ich die Switch am Wochenende abholen?', TRUE, '2026-10-09 18:29:00+02'),
-(14, 1, 1, 'Ja, am Samstag würde es mir gut passen.', TRUE, '2026-10-09 18:32:00+02'),
-(15, 1, 2, 'Super, dann melde ich mich am Samstag noch einmal. Danke!', FALSE, '2026-10-09 18:35:00+02'),
+(11, 1, 2, 'Wären 400 Euro für dich in Ordnung? Kann ich die Switch am Wochenende abholen?', TRUE, '2026-10-09 18:23:00+02'),
+(12, 1, 1, 'Ja, 400 Euro wären in Ordnung und Samstag passt.', TRUE, '2026-10-09 18:26:00+02'),
+(13, 1, 2, 'Perfekt!', FALSE, '2026-10-09 18:29:00+02'),
+(14, 1, 2, 'Ich melde mich am Samstag noch einmal.', FALSE, '2026-10-09 18:29:02+02'),
+(15, 1, 2, 'Danke!', FALSE, '2026-10-09 18:29:04+02'),
 
 -- Chat 2: Nintendo Switch 2, ca. 10 Nachrichten
 -- Erste Nachricht: sender_id = 3, 2026-10-10 20:00:00+02
