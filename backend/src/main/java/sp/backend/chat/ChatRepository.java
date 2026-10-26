@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.chat;
 
 import org.springframework.data.domain.Page;
@@ -15,7 +18,8 @@ c.item.title,
 c.item.status,
 new sp.backend.user.UserPublicDto(c.poster),
 new sp.backend.user.UserPublicDto(c.interestedUser),
-null
+null,
+c.firstDeletedByUser.id
 )
 FROM Chat c
 WHERE (c.firstDeletedByUser IS NULL OR (c.firstDeletedByUser.id != 0 AND c.firstDeletedByUser.id != :userId))
