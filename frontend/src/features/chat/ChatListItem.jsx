@@ -49,7 +49,7 @@ export default function ChatListItem({
               chat.lastMessage.senderId != userId &&
               chat.lastMessage.read != true
                 ? "text-danger"
-                : ""
+                : null
             }
           >
             {chat.lastMessage.senderId == userId
