@@ -10,14 +10,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/messages")
 @CrossOrigin(origins = "http://localhost:5173")
 public class MessageController {
     private final MessageService messageService;
 
-    public MessageController(MessageService messageService) {
+    private MessageController(MessageService messageService) {
         this.messageService = messageService;
+    }
+
+    @GetMapping("/{messageId}")
+    private ResponseEntity<MessageDto> findByMessageId(@PathVariable Long messageId){
+        MessageDto messageDto = messageService.findByMessageId(messageId);
+        return ResponseEntity.ok(messageDto);
     }
 
     @GetMapping("/chat/{chatId}")
@@ -33,8 +41,10 @@ public class MessageController {
     }
 
     @PostMapping
-    private ResponseEntity<Void>createMessage(@RequestBody Message newMessage, UriComponentsBuilder ucb){
-        Message message = new Message()
+    private ResponseEntity<Void>createMessage(@RequestBody CreateMessageRequest createMessageRequest, UriComponentsBuilder ucb){
+        Message message = messageService.createMessage(createMessageRequest);
+        URI locationOfNewMessage = ucb.path("/{messageId}").buildAndExpand(message.getId()).toUri();
+        return ResponseEntity.created(locationOfNewMessage).build();
     }
 
 }
