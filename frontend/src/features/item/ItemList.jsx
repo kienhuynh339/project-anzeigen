@@ -10,7 +10,7 @@ export default function ItemList({
   urlWithoutPaginationAndSorting,
   additionalDependencies = [],
   pageSize = 10,
-  title = "Überschrift fehlt.",
+  title = "",
   showItemAmount = false,
   additionalContentWhenItemAmountIsZero = "",
 }) {
@@ -91,7 +91,9 @@ export default function ItemList({
         <nav className="mt-4">
           <ul className="pagination gap-2 justify-content-center align-items-center flex-wrap">
             {/* Vorherige Seite */}
-            <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${currentPage === 0 ? "disabled" : null}`}
+            >
               <button
                 type="button"
                 className="page-link"
@@ -112,7 +114,7 @@ export default function ItemList({
                     pageNumber - previousPage > 1 && <span>…</span>}
 
                   <li
-                    className={` ${currentPage === pageNumber ? "active" : ""}`}
+                    className={` ${currentPage === pageNumber ? "active" : null}`}
                   >
                     <button
                       type="button"
@@ -129,7 +131,7 @@ export default function ItemList({
             {/* Nächste Seite */}
             <li
               className={`page-item ${
-                currentPage >= totalPages - 1 ? "disabled" : ""
+                currentPage >= totalPages - 1 ? "disabled" : null
               }`}
             >
               <button
