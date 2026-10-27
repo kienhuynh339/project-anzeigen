@@ -6,6 +6,7 @@ package sp.backend.item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -135,4 +136,5 @@ JOIN ItemFavorite f ON i.id = f.item.id
 WHERE f.user.id = :userId
 """)
     Page<ItemDto> findFavoriteItemsByUserId(Long userId, Pageable pageable);
+
 }
