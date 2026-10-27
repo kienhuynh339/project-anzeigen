@@ -12,6 +12,7 @@ import CreateItem from "./features/item/CreateItem";
 import MyFavoriteItems from "./features/item/MyFavoriteItems";
 import { initialSearchFilters } from "./utils/initialSearchFilters";
 import AllItems from "./features/item/AllItems";
+import MyItems from "./features/item/MyItems";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
@@ -43,7 +44,8 @@ function App() {
             }
           />
           <Route path="/anzeigen/:itemId" element={<ItemView />} />
-          <Route path="/meine-anzeigen" element={<UserItems />} />
+          <Route path="/meine-anzeigen" element={<MyItems />} />
+          <Route path="/user/:otherUserId" element={<UserItems />} />
           <Route path="/nachrichten" element={<ChatView />} />
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
           <Route
