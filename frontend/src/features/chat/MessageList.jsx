@@ -38,11 +38,11 @@ export default function MessageList({
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`d-flex align-items-end ${message.senderId == userId ? "align-self-end" : ""}`}
+            className={`d-flex align-items-end ${message.senderId == userId ? "align-self-end" : null}`}
             style={{ maxWidth: "80%" }}
           >
             {message.senderId != userId ? (
-              <Link className="pb-1 pe-1">
+              <Link className="pb-1 pe-1" to={`/user/${message.senderId}`}>
                 <img
                   src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser.profileName.charAt(0)}`}
                   className="rounded-circle"
@@ -53,7 +53,7 @@ export default function MessageList({
               </Link>
             ) : null}
             <div
-              className={`d-flex flex-column ${message.senderId == userId ? "align-self-end" : ""}`}
+              className={`d-flex flex-column ${message.senderId == userId ? "align-self-end" : null}`}
             >
               <div
                 className={`rounded p-2 ${message.senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
@@ -61,7 +61,7 @@ export default function MessageList({
                 {message.content}
               </div>
               <span
-                className={`text-secondary small ${message.senderId == userId ? "align-self-end" : ""}`}
+                className={`text-secondary small ${message.senderId == userId ? "align-self-end" : null}`}
               >
                 {formatTimestamp(message.createdAt, TimestampType.MESSAGE)}
               </span>
