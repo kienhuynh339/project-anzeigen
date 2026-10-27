@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     @Query("""
@@ -26,4 +28,6 @@ WHERE (c.firstDeletedByUser IS NULL OR (c.firstDeletedByUser.id != 0 AND c.first
 AND (:userId = c.poster.id OR :userId = c.interestedUser.id)
 """)
     Page<ChatDto> findByUserId(Long userId, Pageable pageable);
+
+    Optional<Chat> findByItem_IdAndInterestedUser_Id(Long itemId, Long interestedUserId);
 }
