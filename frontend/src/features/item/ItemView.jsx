@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import DialogWindow from "../../components/DialogWindow";
 import { useFetch } from "../../hooks/useFetch";
 
@@ -76,7 +76,10 @@ export default function ItemView() {
             <div className="border-top"></div>
             {/* Anbieter */}
             <div className="align-items-center">
-              <a className="text-decoration-none text-dark" href="#">
+              <Link
+                className="text-decoration-none text-dark"
+                to={`/user/${item.poster.id}`}
+              >
                 <img
                   src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${item.poster.profileName.charAt(0)}`}
                   className="rounded-circle my-2"
@@ -85,7 +88,7 @@ export default function ItemView() {
                   style={{ objectFit: "cover" }}
                 />
                 <span className="fw-bold ms-2">{item.poster.profileName}</span>
-              </a>
+              </Link>
             </div>
             <div className="border-top"></div>
             {/* Preis */}
