@@ -39,17 +39,17 @@ export default function LocationInput({
   }, [locationsData]);
 
   const handleInputChange = (event) => {
-    setInputValue(event.target.value);
+    const value = event.target.value;
+    setInputValue(value);
     // Optionen bei Benutzereingabe filtern
     setOptions(
       locations.filter((location) =>
-        location.name.toLowerCase().includes(event.target.value.toLowerCase()),
+        location.name.toLowerCase().includes(value.toLowerCase()),
       ),
     );
     // locationId bei gültiger Eingabe setzen
     const location = locations.find(
-      (location) =>
-        location.name.toLowerCase() === event.target.value.toLowerCase(),
+      (location) => location.name.toLowerCase() === value.toLowerCase(),
     );
     setLocationId(location?.id ?? "");
   };
