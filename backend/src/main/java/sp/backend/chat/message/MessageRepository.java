@@ -28,4 +28,11 @@ WHERE :chatId = m.chat.id
 UPDATE Message m SET m.isRead = true WHERE (m.chat.id = :chatId) AND (m.sender.id = :senderId)
 """)
     int markMessagesAsReadByChat_IdAndSender_Id(Long chatId, Long senderId);
+
+    @Query("""
+SELECT m
+FROM Message m
+WHERE m.id = :messageId
+""")
+    MessageDto findByMessageId(Long messageId);
 }
