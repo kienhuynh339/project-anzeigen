@@ -137,7 +137,7 @@ export default function ChatView() {
       <h2 className="py-2 m-0">Meine Nachrichten</h2>
       <div
         className="row border border-dark-subtle shadow-sm"
-        style={{ height: "80vh" }}
+        style={{ height: "85vh" }}
       >
         {/* Linke Hälfte: Chatliste */}
         <div className="h-100 col-5 p-0 border-end border-dark-subtle">
