@@ -4,6 +4,7 @@
 package sp.backend.item;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,28 @@ public class ItemController {
     private ResponseEntity<Page<ItemDto>> findFavoriteItemsByUserId(@PathVariable Long userId, Pageable pageable){
         Page<ItemDto> page = itemService.findFavoriteItemsByUserId(userId, pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @DeleteMapping("/{itemId}")
+    private ResponseEntity<Void> markItemAsDeleted(@PathVariable Long itemId){
+        try{
+            itemService.markItemAsDeletedByItemId(itemId);
+            return ResponseEntity.noContent().build();
+        }catch(EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Void> updateItemStatus(
+            @PathVariable Long itemId,
+            @RequestBody UpdateItemStatusRequest request) {
+        try{
+            itemService.updateItemStatus(itemId, request.getStatus());
+            return ResponseEntity.noContent().build();
+        }catch(EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }
 
