@@ -268,7 +268,8 @@ VALUES
 (83, 7, 1, 'Wenn du ihn selbst abholst, können wir über den Preis sprechen.', TRUE, '2026-10-15 13:25:00+02'),
 (84, 7, 3, 'Das klingt gut. Ich könnte am Samstag vorbeikommen.', TRUE, '2026-10-15 13:28:00+02'),
 (85, 7, 1, 'Perfekt, Samstag passt. Schreib mir einfach vorher kurz.', FALSE, '2026-10-15 13:31:00+02');
-
-
+-- IDENTITY-Zähler auf 86 setzen, ansonsten startet er nach dem Seeding mit 1
+ALTER TABLE messages
+    ALTER COLUMN id RESTART WITH 86;
 
 
