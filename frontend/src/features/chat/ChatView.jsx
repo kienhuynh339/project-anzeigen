@@ -92,7 +92,7 @@ export default function ChatView() {
       // Nachricht(en) als gelesen markieren
       await fetch(
         `http://localhost:8080/api/messages/chat/${chat.id}/sender/${chat.lastMessage.senderId}`,
-        { method: "PUT" },
+        { method: "PATCH" },
       )
         .then((response) => {
           if (!response.ok) {
