@@ -11,7 +11,6 @@ export default function LocationInput({
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState([]);
 
   // Orte abrufen
   const locationsData =
@@ -29,24 +28,18 @@ export default function LocationInput({
   // States bei Änderung der PLZ zurücksetzen
   useEffect(() => {
     setInputValue("");
-    setOptions([]);
     setLocationId("");
   }, [postcode]);
 
-  // Optionen aktualisieren
-  useEffect(() => {
-    setOptions(locations);
-  }, [locationsData]);
+  // Ort-Optionen aktualisieren
+  const options = locations.filter((location) =>
+    location.name.toLowerCase().includes(inputValue.toLowerCase()),
+  );
 
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
-    // Optionen bei Benutzereingabe filtern
-    setOptions(
-      locations.filter((location) =>
-        location.name.toLowerCase().includes(value.toLowerCase()),
-      ),
-    );
+
     // locationId bei gültiger Eingabe setzen
     const location = locations.find(
       (location) => location.name.toLowerCase() === value.toLowerCase(),
