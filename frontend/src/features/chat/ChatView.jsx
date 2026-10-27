@@ -1,16 +1,17 @@
 /**
  * @author Trung Kien Huynh
  */
-import DialogWindow from "../../components/DialogWindow";
 import { useFetch } from "../../hooks/useFetch";
 import MessageList from "./MessageList";
 import { truncateText } from "../../utils/truncatetext";
 import { Link } from "react-router";
-import { useState } from "react";
-import { deleteRequest } from "../../utils/deleteRequest";
+import { useState, useEffect } from "react";
 import ChatListItem from "./ChatListItem";
 import ChatDeleteButton from "./ChatDeleteButton";
 import { createMessage } from "../../utils/createMessage";
+import ItemDeleteButton from "../../components/ItemDeleteButton";
+import ItemActivateButton from "../../components/ItemActivateButton";
+import ItemReserveButton from "../../components/ItemReserveButton";
 
 const userId = "1";
 
@@ -39,21 +40,16 @@ export default function ChatView() {
     },
     fistDeletedByUserId: "",
   };
-
   const chatFilterOptions = [
     { label: "Alle Anzeigen", value: "all" },
     { label: "Deine Anzeigen", value: "yours" },
     { label: "Anzeigen anderer", value: "others" },
   ];
-
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
-  // Ids von zu löschenden Chats
-  const [deleteList, setDeleteList] = useState([]);
-  const [isDialogActive, setIsDialogActive] = useState(false);
+  const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
   const [chatFilter, setChatFilter] = useState("all");
   const [chatsUpdateTrigger, setChatsUpdateTrigger] = useState(false);
-  const [isChatDeleting, setIsChatDeleting] = useState(false);
   const [messageContent, setMessageContent] = useState("");
   const [messagesUpdateTrigger, setMessagesUpdateTrigger] = useState(false);
   const [isMessageInputActive, setIsMessageInputActive] = useState(false);
@@ -64,6 +60,16 @@ export default function ChatView() {
   );
 
   const chats = chatPage?.content ?? [];
+
+  useEffect(() => {
+    if (!currentChat.id) return;
+
+    const updatedChat = chats.find((chat) => chat.id === currentChat.id);
+
+    if (updatedChat) {
+      setCurrentChat(updatedChat);
+    }
+  }, [chats, currentChat.id]);
 
   const otherUser =
     userId != currentChat.poster.id
@@ -83,6 +89,7 @@ export default function ChatView() {
 
   const handleChatSelect = async (chat) => {
     if (!chat.lastMessage.read) {
+      // Nachricht(en) als gelesen markieren
       await fetch(
         `http://localhost:8080/api/messages/chat/${chat.id}/sender/${chat.lastMessage.senderId}`,
         { method: "PUT" },
@@ -103,45 +110,12 @@ export default function ChatView() {
     setCurrentChat(chat);
   };
 
-  const handleChatDelete = async () => {
-    setIsChatDeleting(true);
-    await Promise.all(
-      deleteList.map((chatId) =>
-        deleteRequest(
-          `http://localhost:8080/api/chats/${chatId}/user/${userId}`,
-        ).catch((error) => {
-          console.log(error);
-        }),
-      ),
-    );
-
-    setChatsUpdateTrigger((prev) => !prev);
-    setDeleteList([]);
-    setIsChatDeleteActive(false);
-    setIsDialogActive(false);
-    setIsChatDeleting(false);
-  };
-
   const handleChatToDeleteSelect = (chat) => {
     setDeleteList((prev) => {
       return prev.includes(chat.id)
         ? prev.filter((id) => id !== chat.id)
         : [...prev, chat.id];
     });
-  };
-
-  const [isBooked, setIsBooked] = useState(false);
-  const handleDeleteButtonClick = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    // DELETE-Anfrage an Backend (für Favorite/Item)
-  };
-
-  const handleBookButtonClick = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setIsBooked(!isBooked);
-    // UPDATE-Anfrage an Backend
   };
 
   const handleMessageSend = async (
@@ -171,7 +145,7 @@ export default function ChatView() {
             {/* Aktionleiste */}
             <div
               className="border-bottom border-dark-subtle  p-2 bg-secondary-subtle d-flex gap-2 align-items-center justify-content-between"
-              style={{ height: "6ch" }}
+              style={{ height: "3rem" }}
             >
               {/* Chat-Filter */}
               <div>
@@ -202,9 +176,12 @@ export default function ChatView() {
                   setIsChatDeleteActive(true);
                   setCurrentChat(initialChat);
                 }}
-                setIsDialogActive={setIsDialogActive}
-                deleteListLength={deleteList.length}
+                deleteList={deleteList}
                 chatListLength={chats.length}
+                setDeleteList={setDeleteList}
+                setIsChatDeleteActive={setIsChatDeleteActive}
+                userId={userId}
+                setChatsUpdateTrigger={setChatsUpdateTrigger}
               ></ChatDeleteButton>
             </div>
             {/* Chatliste */}
@@ -239,17 +216,26 @@ export default function ChatView() {
         </div>
 
         {/* Rechte Hälfte: Chatverlauf */}
-        <div className="h-100 col-7 p-0 ">
+        <div className="h-100 col-7 p-0">
           <div className="h-100 d-flex flex-column">
             {/* Chat-Kopfzeile */}
             <div
-              className="p-3 border-bottom border-dark-subtle bg-secondary-subtle"
-              style={{ height: currentChat.id == "" ? "6ch" : "auto" }}
+              className="border-bottom border-dark-subtle bg-secondary-subtle"
+              style={{ height: currentChat.id ? "auto" : "3rem" }}
             >
               {currentChat.id && (
                 <>
                   {/* Anzeigetitel */}
-                  <h5 className="text-primary pb-1">
+                  <h5
+                    className="text-primary m-0 ps-3 d-flex align-items-center"
+                    style={{ height: "2.95rem" }}
+                  >
+                    {currentChat.itemStatus == "DELETED" && (
+                      <p className="m-0 text-secondary pe-1">Gelöscht •</p>
+                    )}
+                    {currentChat.itemStatus == "RESERVED" && (
+                      <p className="m-0 text-secondary pe-1">Reserviert •</p>
+                    )}
                     <Link
                       className="text-decoration-none"
                       to={`/anzeigen/${currentChat.itemId}`}
@@ -258,28 +244,36 @@ export default function ChatView() {
                     </Link>
                   </h5>
                   {/* Löschen / Reservieren */}
-                  <div className="d-flex flex-wrap justify-content-between pt-2 m-0 border-top border-dark-subtle">
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger"
-                      onClick={handleDeleteButtonClick}
-                    >
-                      <i className="bi bi-trash"></i> Anzeige löschen
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn btn${isBooked ? "-outline-success" : "-outline-primary"}`}
-                      onClick={handleBookButtonClick}
-                    >
-                      {isBooked ? "Aktivieren" : "Reservieren"}
-                    </button>
-                  </div>
+                  {userId == currentChat.poster.id &&
+                    currentChat.itemStatus != "DELETED" && (
+                      <>
+                        <div className="border-top border-dark-subtle mx-2"></div>
+                        <div className="d-flex flex-wrap justify-content-between p-2">
+                          <ItemDeleteButton
+                            itemId={currentChat.itemId}
+                            setChatsUpdateTrigger={setChatsUpdateTrigger}
+                          ></ItemDeleteButton>
+                          {currentChat.itemStatus == "RESERVED" && (
+                            <ItemActivateButton
+                              itemId={currentChat.itemId}
+                              setChatsUpdateTrigger={setChatsUpdateTrigger}
+                            ></ItemActivateButton>
+                          )}
+                          {currentChat.itemStatus == "ACTIVE" && (
+                            <ItemReserveButton
+                              itemId={currentChat.itemId}
+                              setChatsUpdateTrigger={setChatsUpdateTrigger}
+                            ></ItemReserveButton>
+                          )}
+                        </div>
+                      </>
+                    )}
                 </>
               )}
             </div>
 
             {/* Chatverlauf */}
-            {currentChat.id ? (
+            {currentChat.id && (
               <>
                 {/* Nachrichten */}
                 <MessageList
@@ -326,37 +320,10 @@ export default function ChatView() {
                   )}
                 </div>
               </>
-            ) : null}
+            )}
           </div>
         </div>
       </div>
-      {/* Dialogfenster */}
-      <DialogWindow
-        dialogWidth={"50ch"}
-        isOpen={isDialogActive}
-        dialogTitle={"Chat löschen"}
-        dialogContent={
-          <>{isChatDeleting && <p>Chats werden gelöscht ...</p>}</>
-        }
-        dialogButtons={[
-          <button
-            key="dialog_button_1"
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => setIsDialogActive(false)}
-          >
-            Abbrechen
-          </button>,
-          <button
-            key="dialog_button_2"
-            type="button"
-            className="btn btn-danger"
-            onClick={handleChatDelete}
-          >
-            Bestätigen
-          </button>,
-        ]}
-      />
     </div>
   );
 }
