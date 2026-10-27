@@ -4,6 +4,7 @@
 export const TimestampType = Object.freeze({
   MESSAGE: "MESSAGE",
   ITEM: "ITEM",
+  USER: "USER",
 });
 
 export function formatTimestamp(dateString, type) {
@@ -16,6 +17,19 @@ export function formatTimestamp(dateString, type) {
     hour: "2-digit",
     minute: "2-digit",
   });
+  const dayMonth = date.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+  const dayMonthYear = date.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  if (type === TimestampType.USER) {
+    return `${dayMonthYear}`;
+  }
 
   // Heute
   if (date.toDateString() === today.toDateString()) {
@@ -26,18 +40,6 @@ export function formatTimestamp(dateString, type) {
   if (date.toDateString() === yesterday.toDateString()) {
     return `Gestern, ${time}`;
   }
-
-  // Datum und Monat
-  const dayMonth = date.toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-
-  const dayMonthYear = date.toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
 
   // Gleiches Jahr
   if (date.getFullYear() === today.getFullYear()) {
