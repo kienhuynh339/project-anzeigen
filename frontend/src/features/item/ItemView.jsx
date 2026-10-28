@@ -3,13 +3,20 @@
  */
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router";
-import DialogWindow from "../../components/DialogWindow";
+import MessageButton from "../../components/MessageButton";
 import { useFetch } from "../../hooks/useFetch";
+import DialogWindow from "../../components/DialogWindow";
 
 export default function ItemView() {
+  const [dialogWindowProps, setDialogWindowProps] = useState({
+    dialogContent: "",
+    dialogTitle: "",
+    dialogButtons: [],
+    dialogWidth: "10rem",
+    isOpen: false,
+  });
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [message, setMessage] = useState("");
+
   const { itemId } = useParams();
   const [isBooked, setIsBooked] = useState(false);
 
@@ -26,18 +33,6 @@ export default function ItemView() {
 
   const imageIds =
     useFetch(`http://localhost:8080/api/images/item/${itemId}`, []) ?? [];
-
-  const handleDialogOpen = () => {
-    setIsDialogOpen(true);
-  };
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-  };
-  const handleSend = (event) => {
-    event.preventDefault();
-
-    setIsDialogOpen(false);
-  };
 
   const handleDeleteButtonClick = (event) => {
     event.stopPropagation();
@@ -111,14 +106,10 @@ export default function ItemView() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Nachricht schreiben */}
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={handleDialogOpen}
-              >
-                <i className="bi bi-chat-text"></i> Nachricht schreiben
-              </button>
-
+              <MessageButton
+                item={item}
+                setDialogWindowProps={setDialogWindowProps}
+              ></MessageButton>
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
               <button
                 type="button"
@@ -152,40 +143,14 @@ export default function ItemView() {
             </div>
           </div>
         </div>
-        <DialogWindow
-          isOpen={isDialogOpen}
-          dialogWidth={"70ch"}
-          dialogTitle={"Nachricht schreiben"}
-          dialogContent={
-            <div>
-              <span className=" mb-3">
-                {item.title.length > 50
-                  ? item.title.slice(0, 50) + "..."
-                  : item.title}{" "}
-                •{" "}
-                {item.price.toLocaleString("de-DE", {
-                  style: "currency",
-                  currency: "EUR",
-                })}
-              </span>
-              <textarea
-                className="form-control"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={4}
-              />
-            </div>
-          }
-          dialogButtons={[
-            <button className="btn btn-secondary" onClick={handleDialogClose}>
-              Abbrechen
-            </button>,
-            <button className="btn btn-primary" onClick={handleSend}>
-              Senden
-            </button>,
-          ]}
-        ></DialogWindow>
       </div>
+      <DialogWindow
+        dialogContent={dialogWindowProps.dialogContent}
+        dialogTitle={dialogWindowProps.dialogTitle}
+        dialogButtons={dialogWindowProps.dialogButtons}
+        isOpen={dialogWindowProps.isOpen}
+        dialogWidth={dialogWindowProps.dialogWidth}
+      ></DialogWindow>
     </>
   );
 }
