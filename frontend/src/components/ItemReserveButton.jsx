@@ -1,13 +1,15 @@
-import { useState } from "react";
+/**
+ * @author Trung Kien Huynh
+ */
 import { patchRequest } from "../utils/patchRequest";
-export default function ItemReserveButton({ itemId, setChatsUpdateTrigger }) {
+export default function ItemReserveButton({ itemId }) {
   const handleItemReserved = async (event) => {
+    event.preventDefault();
     await patchRequest(
       `http://localhost:8080/api/items/${itemId}`,
       "status",
       "RESERVED",
     ).catch((error) => console.log(error));
-    setChatsUpdateTrigger((prev) => !prev);
   };
   return (
     <button
