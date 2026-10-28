@@ -14,7 +14,7 @@ export default function DialogWindow({
   useEffect(() => {
     // hidden verhindert das Scrollen des <body>
     // "" stellt den ursprünglichen CSS-Zustand wieder her
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    document.body.style.overflow = isOpen ? "hidden" : null;
 
     return () => {
       document.body.style.overflow = "";
@@ -46,9 +46,7 @@ export default function DialogWindow({
             </div>
           </div>
         </>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 }
