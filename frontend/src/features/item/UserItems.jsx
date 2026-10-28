@@ -7,8 +7,8 @@ import { useParams } from "react-router";
 import { useFetch } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useEffect } from "react";
-
-const userId = "1";
+import { userId } from "../../utils/userId";
+import { itemCardTypes } from "./itemCardTypes";
 
 export default function UserItems() {
   const navigate = useNavigate();
@@ -59,6 +59,8 @@ export default function UserItems() {
         additionalContentWhenItemAmountIsZero={
           additionalContentWhenItemAmountIsZero
         }
+        userId={userId}
+        itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
       ></ItemList>
     </>
   );
