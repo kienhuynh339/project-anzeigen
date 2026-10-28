@@ -1,11 +1,15 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import DialogWindow from "./DialogWindow";
 import { deleteRequest } from "../utils/deleteRequest";
 import { useState } from "react";
 
-export default function ItemDeleteButton({ itemId, setChatsUpdateTrigger }) {
+export default function ItemDeleteButton({ itemId }) {
   const [isDialogActive, setIsDialogActive] = useState(false);
   const [isItemDeleting, setIsItemDeleting] = useState(false);
-  const handleItemDelete = async () => {
+  const handleItemDelete = async (event) => {
+    event.preventDefault();
     setIsItemDeleting(true);
     await deleteRequest(`http://localhost:8080/api/items/${itemId}`).catch(
       (error) => {
@@ -13,7 +17,6 @@ export default function ItemDeleteButton({ itemId, setChatsUpdateTrigger }) {
       },
     );
     setIsDialogActive(false);
-    setChatsUpdateTrigger((prev) => !prev);
     setIsItemDeleting(false);
   };
   return (
@@ -21,7 +24,10 @@ export default function ItemDeleteButton({ itemId, setChatsUpdateTrigger }) {
       <button
         type="button"
         className="btn btn-outline-danger"
-        onClick={() => setIsDialogActive(true)}
+        onClick={(event) => {
+          event.preventDefault();
+          setIsDialogActive(true);
+        }}
       >
         <i className="bi bi-trash"></i> Anzeige löschen
       </button>
@@ -35,7 +41,10 @@ export default function ItemDeleteButton({ itemId, setChatsUpdateTrigger }) {
             key="dialog_button_1"
             type="button"
             className="btn btn-secondary"
-            onClick={() => setIsDialogActive(false)}
+            onClick={(event) => {
+              event.preventDefault();
+              setIsDialogActive(false);
+            }}
           >
             Abbrechen
           </button>,
