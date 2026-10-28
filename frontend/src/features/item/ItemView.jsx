@@ -5,16 +5,9 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router";
 import MessageButton from "../../components/MessageButton";
 import { useFetch } from "../../hooks/useFetch";
-import DialogWindow from "../../components/DialogWindow";
+import ItemDeleteButton from "../../components/ItemDeleteButton";
 
 export default function ItemView() {
-  const [dialogWindowProps, setDialogWindowProps] = useState({
-    dialogContent: "",
-    dialogTitle: "",
-    dialogButtons: [],
-    dialogWidth: "10rem",
-    isOpen: false,
-  });
   const [isFavorite, setIsFavorite] = useState(false);
 
   const { itemId } = useParams();
@@ -106,10 +99,7 @@ export default function ItemView() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Nachricht schreiben */}
-              <MessageButton
-                item={item}
-                setDialogWindowProps={setDialogWindowProps}
-              ></MessageButton>
+              <MessageButton item={item}></MessageButton>
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
               <button
                 type="button"
@@ -133,24 +123,11 @@ export default function ItemView() {
               >
                 {isBooked ? "Aktivieren" : "Reservieren"}
               </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleDeleteButtonClick}
-              >
-                <i className="bi bi-trash"></i> Anzeige löschen
-              </button>
+              <ItemDeleteButton itemId={item.id}></ItemDeleteButton>
             </div>
           </div>
         </div>
       </div>
-      <DialogWindow
-        dialogContent={dialogWindowProps.dialogContent}
-        dialogTitle={dialogWindowProps.dialogTitle}
-        dialogButtons={dialogWindowProps.dialogButtons}
-        isOpen={dialogWindowProps.isOpen}
-        dialogWidth={dialogWindowProps.dialogWidth}
-      ></DialogWindow>
     </>
   );
 }
