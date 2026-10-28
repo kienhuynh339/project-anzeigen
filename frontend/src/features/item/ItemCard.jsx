@@ -3,7 +3,6 @@
  */
 import { Link } from "react-router";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
-import { useState } from "react";
 import ItemFavorButton from "../../components/ItemFavorButton";
 import { itemCardTypes } from "./itemCardTypes";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
@@ -11,16 +10,8 @@ import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import FavoriteItemDeleteButton from "../../components/FavoriteItemDeleteButton";
 import MessageButton from "../../components/MessageButton";
-import DialogWindow from "../../components/DialogWindow";
 
 export default function ItemCard({ item, userId, itemCardType }) {
-  const [dialogWindowProps, setDialogWindowProps] = useState({
-    dialogContent: "",
-    dialogTitle: "",
-    dialogButtons: [],
-    dialogWidth: "10rem",
-    isOpen: false,
-  });
   return (
     <>
       <Link
@@ -88,10 +79,7 @@ export default function ItemCard({ item, userId, itemCardType }) {
                       itemId={item.id}
                       userId={userId}
                     ></FavoriteItemDeleteButton>
-                    <MessageButton
-                      item={item}
-                      setDialogWindowProps={setDialogWindowProps}
-                    ></MessageButton>
+                    <MessageButton item={item}></MessageButton>
                   </>
                 )}
               </div>
@@ -99,13 +87,6 @@ export default function ItemCard({ item, userId, itemCardType }) {
           </div>
         </div>
       </Link>
-      <DialogWindow
-        dialogContent={dialogWindowProps.dialogContent}
-        dialogTitle={dialogWindowProps.dialogTitle}
-        dialogButtons={dialogWindowProps.dialogButtons}
-        isOpen={dialogWindowProps.isOpen}
-        dialogWidth={dialogWindowProps.dialogWidth}
-      ></DialogWindow>
     </>
   );
 }
