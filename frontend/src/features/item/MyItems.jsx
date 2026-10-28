@@ -4,7 +4,8 @@
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 
-const userId = "1";
+import { userId } from "../../utils/userId";
+import { itemCardTypes } from "./itemCardTypes";
 
 export default function MyItems() {
   const navigate = useNavigate();
@@ -33,6 +34,8 @@ export default function MyItems() {
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
+      userId={userId}
+      itemCardType={itemCardTypes.MY_ITEM}
     ></ItemList>
   );
 }
