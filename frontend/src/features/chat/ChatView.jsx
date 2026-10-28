@@ -13,7 +13,7 @@ import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import ItemReserveButton from "../../components/ItemReserveButton";
 
-const userId = "1";
+import { userId } from "../../utils/userId";
 
 export default function ChatView() {
   const initialChat = {
@@ -251,18 +251,15 @@ export default function ChatView() {
                         <div className="d-flex flex-wrap justify-content-between p-2">
                           <ItemDeleteButton
                             itemId={currentChat.itemId}
-                            setChatsUpdateTrigger={setChatsUpdateTrigger}
                           ></ItemDeleteButton>
                           {currentChat.itemStatus == "RESERVED" && (
                             <ItemActivateButton
                               itemId={currentChat.itemId}
-                              setChatsUpdateTrigger={setChatsUpdateTrigger}
                             ></ItemActivateButton>
                           )}
                           {currentChat.itemStatus == "ACTIVE" && (
                             <ItemReserveButton
                               itemId={currentChat.itemId}
-                              setChatsUpdateTrigger={setChatsUpdateTrigger}
                             ></ItemReserveButton>
                           )}
                         </div>
