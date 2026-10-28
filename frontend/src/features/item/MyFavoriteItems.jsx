@@ -4,8 +4,8 @@
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 import { initialSearchFilters } from "../../utils/initialSearchFilters";
-
-const userId = "2";
+import { userId } from "../../utils/userId";
+import { itemCardTypes } from "./itemCardTypes";
 
 export default function MyFavoriteItems({ setSearchFilters }) {
   const navigate = useNavigate();
@@ -40,6 +40,8 @@ export default function MyFavoriteItems({ setSearchFilters }) {
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
+      userId={userId}
+      itemCardType={itemCardTypes.MY_FAVORITE_ITEM}
     ></ItemList>
   );
 }
