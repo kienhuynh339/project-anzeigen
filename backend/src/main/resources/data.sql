@@ -4,6 +4,7 @@ VALUES (1, 'Samwise', 'samwise', '123456789', '2020-01-01 01:01:00+02:00'),
        (2, 'Merry', 'merryy', '234567890', '2022-02-02 02:02:00+02:00'),
        (3, 'Pippin', 'pippin', '3456789012', '2024-04-04 04:04:00+02:00'),
        (4, 'Frodo', 'frodoo', '1212121212', '2025-05-05 05:05:00+02:00');
+ALTER TABLE users ALTER COLUMN id RESTART WITH 5;
 
 INSERT INTO item_categories(id, name)
 VALUES (1, 'Alle Kategorien'),
@@ -42,6 +43,7 @@ VALUES (1, 'Alle Kategorien'),
        (34, 'TV, Video & Audio'),
        (35, 'Uhren & Schmuck'),
        (36, 'Verschiedenes');
+ALTER TABLE item_categories ALTER COLUMN id RESTART WITH 37;
 
 -- status: 1(DRAFT)/2(ACTIVE)/3(RESERVED)/4(DELETED)
 INSERT INTO items(id, poster_id, title, category_id, description, price, location_id,plz, status, created_at)
@@ -95,7 +97,7 @@ VALUES (1, 1, 'Nintendo switch 2', 28, E'Schreib mir gerne, wenn du weitere Info
        (32, 3, 'Sofa Orange', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 315, 19511,'50733', 2, '2026-07-16 11:45:00+02'),
        (33, 3, 'Sofa zu verschenken', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 0, 19511,'50733', 2, '2026-07-17 12:00:00+02'),
        (34, 3, 'Sofa Samtstoff Smaragdgrün', 24, E'Bei Interesse gerne melden!\nPrivatverkauf\nkeine Garantie oder Rücknahme.', 317, 19511,'50733', 2, '2026-07-18 12:15:00+02');
-
+ALTER TABLE items ALTER COLUMN id RESTART WITH 35;
 
 INSERT INTO item_images (content_type,image, item_id, display_order)
 VALUES
@@ -160,6 +162,7 @@ VALUES (1,1,1,2,null),
        (5,6,1,4,null),
        (6,16,2,1,null),
        (7,27,3,1,null);
+ALTER TABLE chats ALTER COLUMN id RESTART WITH 8;
 
 INSERT INTO messages(id, chat_id, sender_id, content, is_read, created_at)
 VALUES
