@@ -96,24 +96,38 @@ export default function ItemView() {
               <p className="text-secondary m-0">{item.createdAt}</p>
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
-              {/* Nachricht schreiben */}
-              <MessageButton item={item}></MessageButton>
-              {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
-              <ItemFavorButton
-                userId={userId}
-                itemId={item.id}
-                isFavorite={item.favorite}
-                className={"btn btn-outline-danger"}
-                showLabel={true}
-              ></ItemFavorButton>
-              {item.status === "ACTIVE" ? (
-                <ItemReserveButton itemId={item.id}></ItemReserveButton>
-              ) : item.status === "RESERVED" ? (
-                <ItemActivateButton itemId={item.id}></ItemActivateButton>
-              ) : null}
-              <ItemDeleteButton itemId={item.id}>
-                <span className="ps-1">Anzeige löschen</span>
-              </ItemDeleteButton>
+              {/* Knöpfe für Interessenten */}
+              {userId && userId != item.poster.id && (
+                <>
+                  {/* Nachricht schreiben */}
+                  {item.status !== "DELETED" && (
+                    <MessageButton item={item}></MessageButton>
+                  )}
+                  {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
+                  <ItemFavorButton
+                    userId={userId}
+                    itemId={item.id}
+                    isFavorite={item.favorite}
+                    className={"btn btn-outline-danger"}
+                    showLabel={true}
+                  ></ItemFavorButton>
+                </>
+              )}
+              {/* Knöpfe für Poster der Anzeige */}
+              {userId == item.poster.id && (
+                <>
+                  {item.status === "ACTIVE" ? (
+                    <ItemReserveButton itemId={item.id}></ItemReserveButton>
+                  ) : item.status === "RESERVED" ? (
+                    <ItemActivateButton itemId={item.id}></ItemActivateButton>
+                  ) : null}
+                  {item.status !== "DELETED" && (
+                    <ItemDeleteButton itemId={item.id}>
+                      <span className="ps-1">Anzeige löschen</span>
+                    </ItemDeleteButton>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
