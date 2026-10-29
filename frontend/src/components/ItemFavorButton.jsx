@@ -4,13 +4,24 @@
 import { useState } from "react";
 import { createItemFavorite } from "../utils/createItemFavorite";
 import { deleteRequest } from "../utils/deleteRequest";
-export default function ItemFavorButton({ userId, itemId, isFavorite }) {
+import { useEffect } from "react";
+export default function ItemFavorButton({
+  userId,
+  itemId,
+  isFavorite,
+  className = "btn btn-outline-danger",
+  style,
+  showLabel = false,
+}) {
   const [isFavoriteChanging, setIsFavoriteChanging] = useState(false);
   const [favorite, setFavorite] = useState(isFavorite);
+  useEffect(() => {
+    setFavorite(isFavorite);
+  }, [isFavorite]);
   const handleFavoriteButtonClick = async (event) => {
     event.preventDefault();
     setIsFavoriteChanging(true);
-    if (isFavorite) {
+    if (favorite) {
       await deleteRequest(
         `http://localhost:8080/api/item-favorites/user/${userId}/item/${itemId}`,
       )
@@ -33,14 +44,16 @@ export default function ItemFavorButton({ userId, itemId, isFavorite }) {
   };
   return (
     <button
-      className="top-0 end-0 m-1 rounded position-absolute btn"
-      style={{ backgroundColor: "#9d9d9db9" }}
+      className={className}
+      style={style}
       onClick={handleFavoriteButtonClick}
       disabled={isFavoriteChanging}
     >
       <i
-        className={` bi bi-heart${favorite ? "-fill" : ""} ${favorite ? "text-danger" : ""}`}
+        className={` bi bi-heart${favorite ? "-fill" : ""} ${!showLabel && (favorite ? "text-danger" : "")}`}
       ></i>
+      {showLabel &&
+        (favorite ? " Von Merkliste entfernen" : " Zur Merkliste hinzufügen")}
     </button>
   );
 }
