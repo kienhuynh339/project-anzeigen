@@ -43,6 +43,7 @@ export default function ItemCard({ item, userId, itemCardType }) {
               <ItemFavorButton
                 itemId={item.id}
                 userId={userId}
+                isFavorite={item.favorite}
               ></ItemFavorButton>
             )}
             {item.status && item.status !== "ACTIVE" && (
