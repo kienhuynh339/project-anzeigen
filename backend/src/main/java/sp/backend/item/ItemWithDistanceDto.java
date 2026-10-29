@@ -15,9 +15,17 @@ public class ItemWithDistanceDto {
     private GeodbLocationDto location;
     private OffsetDateTime createdAt;
     private Double distance;
+    private Boolean isFavorite;
 
-    public ItemWithDistanceDto(Long id, String title, String description, int price, GeodbLocationDto location, OffsetDateTime createdAt, Double distance){
-        this.id=id;this.title=title;this.description=description;this.price=price;this.location=location;this.createdAt=createdAt;this.distance=distance;
+    public ItemWithDistanceDto(Long id, String title, String description, int price, GeodbLocationDto location, OffsetDateTime createdAt, Double distance, Boolean isFavorite) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.createdAt = createdAt;
+        this.distance = distance;
+        this.isFavorite = isFavorite;
     }
 
     public Long getId() {
@@ -46,5 +54,9 @@ public class ItemWithDistanceDto {
 
     public Double getDistance() {
         return distance;
+    }
+
+    public Boolean getFavorite() {
+        return isFavorite;
     }
 }
