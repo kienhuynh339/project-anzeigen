@@ -103,7 +103,9 @@ export default function ItemCard({ item, userId, itemCardType }) {
                       itemId={item.id}
                       userId={userId}
                     ></FavoriteItemDeleteButton>
-                    <MessageButton item={item}></MessageButton>
+                    {item.status !== "DELETED" && (
+                      <MessageButton item={item}></MessageButton>
+                    )}
                   </>
                 )}
               </div>
