@@ -7,9 +7,6 @@ export function translateItemStatus(status) {
     case "RESERVED":
       translatedStatus = "Reserviert";
       break;
-    case "DRAFT":
-      translatedStatus = "Entwurf";
-      break;
     case "DELETED":
       translatedStatus = "Gelöscht";
       break;
