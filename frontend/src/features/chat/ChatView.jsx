@@ -14,6 +14,7 @@ import ItemActivateButton from "../../components/ItemActivateButton";
 import ItemReserveButton from "../../components/ItemReserveButton";
 
 import { userId } from "../../utils/userId";
+import ItemTitle from "../../components/ItemTitle";
 
 export default function ChatView() {
   const initialChat = {
@@ -227,20 +228,18 @@ export default function ChatView() {
                 <>
                   {/* Anzeigetitel */}
                   <h5
-                    className="text-primary m-0 ps-3 d-flex align-items-center"
+                    className="text-primary m-0 ps-3  d-flex  align-items-center"
                     style={{ height: "2.95rem" }}
                   >
-                    {currentChat.itemStatus == "DELETED" && (
-                      <p className="m-0 text-secondary pe-1">Gelöscht •</p>
-                    )}
-                    {currentChat.itemStatus == "RESERVED" && (
-                      <p className="m-0 text-secondary pe-1">Reserviert •</p>
-                    )}
                     <Link
                       className="text-decoration-none"
                       to={`/anzeigen/${currentChat.itemId}`}
                     >
-                      {truncateText(currentChat.itemTitle, 40)}
+                      <ItemTitle
+                        itemStatus={currentChat.itemStatus}
+                        itemTitle={currentChat.itemTitle}
+                        textLimit={40}
+                      ></ItemTitle>
                     </Link>
                   </h5>
                   {/* Löschen / Reservieren */}
