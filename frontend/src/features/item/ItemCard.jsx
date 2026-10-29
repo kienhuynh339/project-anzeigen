@@ -44,6 +44,8 @@ export default function ItemCard({ item, userId, itemCardType }) {
                 itemId={item.id}
                 userId={userId}
                 isFavorite={item.favorite}
+                className="top-0 end-0 m-1 rounded position-absolute btn"
+                style={{ backgroundColor: "#9d9d9db9" }}
               ></ItemFavorButton>
             )}
             {item.status && item.status !== "ACTIVE" && (
