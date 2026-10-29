@@ -27,7 +27,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             JOIN i.poster u
             JOIN i.location l
             LEFT JOIN ItemFavorite ifavorite ON i.id = ifavorite.item.id AND :loggedInUserId = ifavorite.user.id
-            WHERE :itemId = i.id 
+            WHERE :itemId = i.id
             """)
     ItemDto findItemById(Long itemId, Long loggedInUserId);
 
