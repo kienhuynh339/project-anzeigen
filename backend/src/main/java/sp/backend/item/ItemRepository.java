@@ -20,14 +20,16 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             i.price,
             new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
             i.status,
-            i.createdAt
+            i.createdAt,
+            CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
             )
             FROM Item i
             JOIN i.poster u
             JOIN i.location l
-            WHERE :id = i.id
+            LEFT JOIN ItemFavorite ifavorite ON i.id = ifavorite.item.id AND :loggedInUserId = ifavorite.user.id
+            WHERE :itemId = i.id 
             """)
-    ItemDto findItemById(Long id);
+    ItemDto findItemById(Long itemId, Long loggedInUserId);
 
 
     @Query("""
@@ -54,10 +56,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                                 2
                             )
                         ))
-                END
+                END,
+                CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
             )
             FROM Item i
             JOIN i.location l
+            LEFT JOIN ItemFavorite ifavorite ON i.id = ifavorite.item.id  AND :loggedInUserId = ifavorite.user.id
             WHERE (i.status = ItemStatus.ACTIVE)
             AND (:searchTerm IS NULL OR
                     LOWER(i.title) LIKE
@@ -95,7 +99,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             @Param("locationId") Integer locationId,
             @Param("latitude") Float latitude,
             @Param("longitude") Float longitude,
-            @Param("radiusKm") Integer radiusKm,
+            @Param("radiusKm") Integer radiusKm, Long loggedInUserId,
             Pageable pageable
     );
 
@@ -108,11 +112,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             i.price,
             new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
             i.status,
-            i.createdAt
+            i.createdAt,
+            CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
             )
             FROM Item i
             JOIN i.poster u
             JOIN i.location l
+            LEFT JOIN ItemFavorite ifavorite ON i.id = ifavorite.item.id  AND :loggedInUserId = ifavorite.user.id
             WHERE (:userId = u.id)
             AND (i.status = ItemStatus.ACTIVE OR (:userId = :loggedInUserId
                                                  AND i.status != ItemStatus.DELETED))
@@ -130,7 +136,8 @@ SElECT new sp.backend.item.ItemDto(
             i.price,
             new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
             i.status,
-            i.createdAt
+            i.createdAt,
+            true
             )
 FROM Item i
 JOIN i.poster u
