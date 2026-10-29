@@ -6,7 +6,6 @@ package sp.backend.item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -59,8 +58,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             )
             FROM Item i
             JOIN i.location l
-            WHERE
-                (:searchTerm IS NULL OR
+            WHERE (i.status = ItemStatus.ACTIVE)
+            AND (:searchTerm IS NULL OR
                     LOWER(i.title) LIKE
                         LOWER(CONCAT('%', :searchTerm, '%'))
                     OR LOWER(i.description) LIKE
@@ -114,9 +113,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             FROM Item i
             JOIN i.poster u
             JOIN i.location l
-            WHERE :id = u.id
+            WHERE (:userId = u.id)
+            AND (i.status = ItemStatus.ACTIVE OR (:userId = :loggedInUserId
+                                                 AND i.status != ItemStatus.DELETED))
             """)
-    Page<ItemDto> findByUserId(Long id, Pageable pageable);
+    Page<ItemDto> findByUserId(Long userId, Long loggedInUserId, Pageable pageable);
+
+
 
     @Query("""
 SElECT new sp.backend.item.ItemDto(
