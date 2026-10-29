@@ -10,7 +10,7 @@ import { itemCardTypes } from "./itemCardTypes";
 export default function MyItems() {
   const navigate = useNavigate();
 
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${userId}?`;
+  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${userId}?loggedInUserId=${userId}&`;
   const PAGE_SIZE = 9999;
   const title = "Meine Anzeigen";
   const additionalContentWhenItemAmountIsZero = (
