@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/items")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -47,8 +45,8 @@ public class ItemController {
     }
 
     @GetMapping("/user/{userId}")
-    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Pageable pageable){
-        Page<ItemDto> page = itemService.findByUserId(userId, pageable);
+    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, @RequestParam(required = false) Long loggedInUserId, Pageable pageable){
+        Page<ItemDto> page = itemService.findByUserId(userId,loggedInUserId, pageable);
         return ResponseEntity.ok(page);
     }
 
