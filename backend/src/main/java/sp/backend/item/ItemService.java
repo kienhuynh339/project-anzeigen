@@ -23,8 +23,8 @@ public class ItemService {
         this.geodbLocationRepository = geodbLocationRepository;
     }
 
-    public ItemDto findById(Long itemId){
-        return itemRepository.findItemById(itemId);
+    public ItemDto findById(Long itemId, Long loggedInUserId){
+        return itemRepository.findItemById(itemId,loggedInUserId);
     }
 
     public Page<ItemWithDistanceDto> search(
@@ -33,7 +33,7 @@ public class ItemService {
             Integer minPrice,
             Integer maxPrice,
             Integer locationId,
-            Integer radiusKm,
+            Integer radiusKm, Long loggedInUserId,
             Pageable pageable) {
 
         Float latitude = null;
@@ -45,7 +45,7 @@ public class ItemService {
                 longtitude = location.get().getLaenge();
             }
         }
-        return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, pageable);
+        return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm,loggedInUserId, pageable);
     }
 
     public Page<ItemDto> findByUserId(Long userId, Long loggedInUserId, Pageable pageable){
