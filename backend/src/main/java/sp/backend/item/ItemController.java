@@ -22,8 +22,8 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    private ResponseEntity<ItemDto> findById(@PathVariable Long itemId){
-        ItemDto item = itemService.findById(itemId);
+    private ResponseEntity<ItemDto> findById(@PathVariable Long itemId,@RequestParam(required = false) Long loggedInUserId){
+        ItemDto item = itemService.findById(itemId,loggedInUserId);
         if(item != null){
             return ResponseEntity.ok(item);
         }else{
@@ -38,9 +38,9 @@ public class ItemController {
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
             @RequestParam(required = false) Integer locationId,
-            @RequestParam(required = false) Integer radiusKm,
+            @RequestParam(required = false) Integer radiusKm,@RequestParam(required = false) Long loggedInUserId,
             Pageable pageable) {
-        Page<ItemWithDistanceDto> page = itemService.search(searchTerm,categoryId,minPrice,maxPrice,locationId,radiusKm,pageable);
+        Page<ItemWithDistanceDto> page = itemService.search(searchTerm,categoryId,minPrice,maxPrice,locationId,radiusKm,loggedInUserId,pageable);
         return ResponseEntity.ok(page);
     }
 
