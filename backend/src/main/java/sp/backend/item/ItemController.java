@@ -23,7 +23,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     private ResponseEntity<ItemDto> findById(@PathVariable Long itemId,@RequestParam(required = false) Long loggedInUserId){
-        ItemDto item = itemService.findById(itemId,loggedInUserId);
+        ItemDto item = itemService.findByItemId(itemId,loggedInUserId);
         if(item != null){
             return ResponseEntity.ok(item);
         }else{
