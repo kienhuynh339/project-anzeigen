@@ -14,7 +14,7 @@ export default function UserItems() {
   const navigate = useNavigate();
   // ItemList-Props
   const { otherUserId } = useParams();
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${otherUserId}?`;
+  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${otherUserId}?loggedInUserId=${userId}&`;
   const PAGE_SIZE = 9999;
   const additionalContentWhenItemAmountIsZero = (
     <div className="d-flex flex-column gap-2">
