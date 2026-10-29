@@ -8,14 +8,17 @@ import { useFetch } from "../../hooks/useFetch";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemTitle from "../../components/ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
+import ItemFavorButton from "../../components/ItemFavorButton";
+import { userId } from "../../utils/userId";
 
 export default function ItemView() {
-  const [isFavorite, setIsFavorite] = useState(false);
-
   const { itemId } = useParams();
   const [isBooked, setIsBooked] = useState(false);
 
-  const item = useFetch(`http://localhost:8080/api/items/${itemId}`, []) ?? {
+  const item = useFetch(
+    `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`,
+    [],
+  ) ?? {
     id: "",
     poster: { profileName: "", id: "" },
     title: "",
@@ -102,21 +105,13 @@ export default function ItemView() {
               {/* Nachricht schreiben */}
               <MessageButton item={item}></MessageButton>
               {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => setIsFavorite(!isFavorite)}
-              >
-                {isFavorite ? (
-                  <>
-                    <i className="bi bi-heart-fill"></i> Von Merkliste entfernen
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-heart"></i> Zur Merkliste hinzufügen
-                  </>
-                )}
-              </button>
+              <ItemFavorButton
+                userId={userId}
+                itemId={item.id}
+                isFavorite={item.favorite}
+                className={"btn btn-outline-danger"}
+                showLabel={true}
+              ></ItemFavorButton>
               <button
                 type="button"
                 className={`btn btn${isBooked ? "-outline-success" : "-outline-primary"}`}
@@ -124,7 +119,9 @@ export default function ItemView() {
               >
                 {isBooked ? "Aktivieren" : "Reservieren"}
               </button>
-              <ItemDeleteButton itemId={item.id}></ItemDeleteButton>
+              <ItemDeleteButton itemId={item.id}>
+                <span className="ps-1">Anzeige löschen</span>
+              </ItemDeleteButton>
             </div>
           </div>
         </div>
