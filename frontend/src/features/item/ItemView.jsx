@@ -10,10 +10,11 @@ import ItemTitle from "../../components/ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
 import ItemFavorButton from "../../components/ItemFavorButton";
 import { userId } from "../../utils/userId";
+import ItemReserveButton from "../../components/ItemReserveButton";
+import ItemActivateButton from "../../components/ItemActivateButton";
 
 export default function ItemView() {
   const { itemId } = useParams();
-  const [isBooked, setIsBooked] = useState(false);
 
   const item = useFetch(
     `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`,
@@ -31,13 +32,6 @@ export default function ItemView() {
 
   const imageIds =
     useFetch(`http://localhost:8080/api/images/item/${itemId}`, []) ?? [];
-
-  const handleBookButtonClick = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setIsBooked(!isBooked);
-    // UPDATE-Anfrage an Backend
-  };
 
   return (
     <>
@@ -112,13 +106,11 @@ export default function ItemView() {
                 className={"btn btn-outline-danger"}
                 showLabel={true}
               ></ItemFavorButton>
-              <button
-                type="button"
-                className={`btn btn${isBooked ? "-outline-success" : "-outline-primary"}`}
-                onClick={handleBookButtonClick}
-              >
-                {isBooked ? "Aktivieren" : "Reservieren"}
-              </button>
+              {item.status === "ACTIVE" ? (
+                <ItemReserveButton itemId={item.id}></ItemReserveButton>
+              ) : item.status === "RESERVED" ? (
+                <ItemActivateButton itemId={item.id}></ItemActivateButton>
+              ) : null}
               <ItemDeleteButton itemId={item.id}>
                 <span className="ps-1">Anzeige löschen</span>
               </ItemDeleteButton>
