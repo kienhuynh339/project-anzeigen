@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { patchRequest } from "../utils/patchRequest";
-export default function ItemActivateOrReserveButton({ itemId }) {
+export default function ItemReserveButton({ itemId }) {
   const handleItemReserved = async (event) => {
     event.preventDefault();
     await patchRequest(
