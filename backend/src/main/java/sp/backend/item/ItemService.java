@@ -23,7 +23,7 @@ public class ItemService {
         this.geodbLocationRepository = geodbLocationRepository;
     }
 
-    public ItemDto findById(Long itemId, Long loggedInUserId){
+    public ItemDto findByItemId(Long itemId, Long loggedInUserId){
         return itemRepository.findItemById(itemId,loggedInUserId);
     }
 
