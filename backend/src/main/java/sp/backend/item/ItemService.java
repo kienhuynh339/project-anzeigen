@@ -48,8 +48,8 @@ public class ItemService {
         return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, pageable);
     }
 
-    public Page<ItemDto> findByUserId(Long userId, Pageable pageable){
-        return itemRepository.findByUserId(userId,pageable);
+    public Page<ItemDto> findByUserId(Long userId, Long loggedInUserId, Pageable pageable){
+        return itemRepository.findByUserId(userId, loggedInUserId,pageable);
     }
 
     public Page<ItemDto> findFavoriteItemsByUserId(Long userId, Pageable pageable){
