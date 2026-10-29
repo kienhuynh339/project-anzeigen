@@ -6,6 +6,8 @@ import { Link, useParams } from "react-router";
 import MessageButton from "../../components/MessageButton";
 import { useFetch } from "../../hooks/useFetch";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
+import ItemTitle from "../../components/ItemTitle";
+import { translateItemStatus } from "../../utils/translateItemStatus";
 
 export default function ItemView() {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -15,7 +17,7 @@ export default function ItemView() {
 
   const item = useFetch(`http://localhost:8080/api/items/${itemId}`, []) ?? {
     id: "",
-    poster: { profileName: "" },
+    poster: { profileName: "", id: "" },
     title: "",
     description: "",
     location: { name: "", plz: "", extraInfo: "" },
@@ -26,12 +28,6 @@ export default function ItemView() {
 
   const imageIds =
     useFetch(`http://localhost:8080/api/images/item/${itemId}`, []) ?? [];
-
-  const handleDeleteButtonClick = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    // DELETE-Anfrage an Backend (für Favorite/Item)
-  };
 
   const handleBookButtonClick = (event) => {
     event.stopPropagation();
@@ -47,7 +43,7 @@ export default function ItemView() {
           {/* Linke Seite */}
           <div className="col-7">
             {/* Galerie */}
-            <ImageGallery imageIds={imageIds} />
+            <ImageGallery imageIds={imageIds} itemStatus={item.status} />
             {/* Beschreibung */}
             <h4 className="mt-3 fw-bold">Beschreibung</h4>
             <p style={{ whiteSpace: "pre-line" }}>
@@ -60,7 +56,12 @@ export default function ItemView() {
           {/* Rechte Seite */}
           <div className="col-5">
             {/* Angebotstitel */}
-            <h4 className="fw-bold">{item.title}</h4>
+            <h4 className="fw-bold">
+              <ItemTitle
+                itemTitle={item.title}
+                itemStatus={item.status}
+              ></ItemTitle>
+            </h4>
             <div className="border-top"></div>
             {/* Anbieter */}
             <div className="align-items-center">
@@ -132,7 +133,7 @@ export default function ItemView() {
   );
 }
 
-function ImageGallery({ imageIds }) {
+function ImageGallery({ imageIds, itemStatus }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const hasImages = imageIds.length > 0;
@@ -153,8 +154,21 @@ function ImageGallery({ imageIds }) {
         <>
           <img
             src={`http://localhost:8080/api/images/${imageIds[currentIndex]}`}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              filter:
+                currentIndex === 0 && itemStatus && itemStatus !== "ACTIVE"
+                  ? "brightness(0.20)"
+                  : "none",
+            }}
           />
+          {currentIndex === 0 && itemStatus && itemStatus !== "ACTIVE" && (
+            <span className="text-white position-absolute top-50 start-50 translate-middle">
+              {translateItemStatus(itemStatus)}
+            </span>
+          )}
           {imageIds.length > 1 && (
             <>
               <button
