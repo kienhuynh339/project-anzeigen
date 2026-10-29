@@ -17,18 +17,9 @@ public class ItemDto {
     private GeodbLocationDto location;
     private ItemStatus status;
     private OffsetDateTime createdAt;
+    private Boolean isFavorite;
 
-    public ItemDto(Long id,
-                   UserPublicDto poster,
-                   String title,
-                   String description,
-                   int price,
-                   GeodbLocationDto location,
-                   ItemStatus status,
-                   OffsetDateTime createdAt){
-        this.id=id;this.poster = poster;this.title=title;this.description=description;this.price=price;this.location=location;this.status=status;this.createdAt=createdAt;
-    }
-    public ItemDto(Item item){
+    public ItemDto(Item item, Boolean isFavorite){
         this.id=item.getId();
         this.poster =new UserPublicDto(item.getPoster());
         this.title= item.getTitle();
@@ -37,6 +28,19 @@ public class ItemDto {
         this.location= new GeodbLocationDto(item.getLocation().getId(), item.getLocation().getName(),item.getPlz(),item.getLocationExtraInfo());
         this.status = item.getStatus();
         this.createdAt = item.getCreatedAt();
+        this.isFavorite=isFavorite;
+    }
+
+    public ItemDto(Long id, UserPublicDto poster, String title, String description, int price, GeodbLocationDto location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
+        this.id = id;
+        this.poster = poster;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.isFavorite = isFavorite;
     }
 
     public Long getId() {
@@ -69,5 +73,9 @@ public class ItemDto {
 
     public OffsetDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public Boolean getFavorite() {
+        return isFavorite;
     }
 }
