@@ -12,6 +12,8 @@ import FavoriteItemDeleteButton from "../../components/FavoriteItemDeleteButton"
 import MessageButton from "../../components/MessageButton";
 import ItemTitle from "../../components/ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
+import { truncateText } from "../../utils/truncatetext";
+import noImage from "../../assets/noImage.jpg";
 
 export default function ItemCard({ item, userId, itemCardType }) {
   return (
@@ -29,6 +31,10 @@ export default function ItemCard({ item, userId, itemCardType }) {
               className="card-img-top"
               alt={`item-${item.id}-image`}
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = noImage;
+              }}
               style={{
                 objectFit: "cover",
                 height: "22rem",
@@ -57,10 +63,13 @@ export default function ItemCard({ item, userId, itemCardType }) {
 
           <div className="card-body d-flex flex-column justify-content-between pt-0">
             <div className="container-fluid p-0 m-0">
-              <div className="d-flex align-items-center gap-1">
+              <div
+                className="d-flex align-items-center gap-1"
+                style={{ fontSize: "0.85rem" }}
+              >
                 <i className="bi bi-geo-alt-fill text-body-tertiary"></i>
                 <p className="card-text text-secondary m-0">
-                  {`${item.location.plz} ${item.location.name} ${item.distance ? `(${item.distance.toFixed(2)} km)` : ""}`}
+                  {`${item.location.postcode} ${item.location.name} ${truncateText(item.location.extraInfo, 13)} ${item.distance ? `(${item.distance.toFixed(1)} km)` : ""}`}
                 </p>
               </div>
               <h5 className="card-title">
