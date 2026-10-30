@@ -35,7 +35,8 @@ public class Item {
     @JoinColumn(name="location_id")
     private GeodbLocation location;
 
-    private String plz;
+    @Column(name="plz")
+    private String postcode;
 
     @Column(name="location_extra_info")
     private String locationExtraInfo;
@@ -50,14 +51,14 @@ public class Item {
 
     public Item(User poster, String title, Category category,
                 String description, Integer price,
-                GeodbLocation location,String plz,String locationExtraInfo, ItemStatus status) {
+                GeodbLocation location, String postcode, String locationExtraInfo, ItemStatus status) {
         this.poster = poster;
         this.title = title;
         this.category = category;
         this.description = description;
         this.price = price;
         this.location = location;
-        this.plz = plz;
+        this.postcode = postcode;
         this.locationExtraInfo=locationExtraInfo;
         this.status = status;
     }
@@ -121,12 +122,12 @@ public class Item {
         this.location = location;
     }
 
-    public String getPlz() {
-        return plz;
+    public String getPostcode() {
+        return postcode;
     }
 
-    public void setPlz(String plz) {
-        this.plz = plz;
+    public void setPostcode(String plz) {
+        this.postcode = plz;
     }
 
     public String getLocationExtraInfo() {
