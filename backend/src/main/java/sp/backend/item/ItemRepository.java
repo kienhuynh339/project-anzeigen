@@ -18,7 +18,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             i.title,
             i.description,
             i.price,
-            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
+            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
             i.status,
             i.createdAt,
             CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
@@ -38,7 +38,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                 i.title,
                 i.description,
                 i.price,
-                new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
+                new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
                 i.createdAt,
                 CASE
                     WHEN :latitude IS NULL OR :longitude IS NULL OR l.id = :locationId
@@ -73,8 +73,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             AND (:minPrice IS NULL OR i.price >= :minPrice)
             AND (:maxPrice IS NULL OR i.price <= :maxPrice)
             AND (:locationId IS NULL OR (l.id = :locationId AND :radiusKm IS NULL) OR (
-                :radiusKm IS NOT NULL 
-                AND :latitude IS NOT NULL 
+                :radiusKm IS NOT NULL
+                AND :latitude IS NOT NULL
                 AND :longitude IS NOT NULL
                 AND 6371.0 * 2 * ASIN(SQRT(
                         POWER(
@@ -88,8 +88,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                             SIN(RADIANS(l.laenge - :longitude) / 2),
                             2
                         )
-                    )) <= :radiusKm) 
-                )         
+                    )) <= :radiusKm)
+                )
             """)
     Page<ItemWithDistanceDto> search(
             @Param("searchTerm") String searchTerm,
@@ -110,7 +110,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             i.title,
             i.description,
             i.price,
-            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
+            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
             i.status,
             i.createdAt,
             CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
@@ -134,7 +134,7 @@ SElECT new sp.backend.item.ItemDto(
             i.title,
             i.description,
             i.price,
-            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.plz,i.locationExtraInfo),
+            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
             i.status,
             i.createdAt,
             true
