@@ -3,7 +3,7 @@
  */
 import { useState } from "react";
 
-function ImageInput({ images, setImages }) {
+export default function ImageInput({ images, setImages }) {
   const [inputId, setInputId] = useState(0);
 
   const handleImageChange = (event) => {
@@ -134,5 +134,3 @@ function ImageInput({ images, setImages }) {
     </div>
   );
 }
-
-export default ImageInput;
