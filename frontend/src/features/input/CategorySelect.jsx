@@ -1,7 +1,6 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
 
 export default function CategorySelect({ categoryId, setCategoryId }) {
@@ -12,7 +11,6 @@ export default function CategorySelect({ categoryId, setCategoryId }) {
   return (
     <>
       <select
-        id="category"
         name="category"
         className="form-select white-focus"
         value={categoryId}
