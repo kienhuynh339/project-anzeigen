@@ -6,17 +6,17 @@ package sp.backend.location;
 public class GeodbLocationDto {
     private Integer id;
     private String name;
-    private String plz;
+    private String postcode;
     private String extraInfo; // für die Spalte extraInfo in items.
 
     public GeodbLocationDto(GeodbLocationProjection geodbLocation, String extraInfo){
-        this.id=geodbLocation.getId();this.name=geodbLocation.getName();this.plz=geodbLocation.getPlz();this.extraInfo=extraInfo;
+        this.id=geodbLocation.getId();this.name=geodbLocation.getName();this.postcode =geodbLocation.getPlz();this.extraInfo=extraInfo;
     }
     public GeodbLocationDto(GeodbLocation geodbLocation, String extraInfo){
-        this.id=geodbLocation.getId();this.name=geodbLocation.getName();this.plz=geodbLocation.getPlz();this.extraInfo=extraInfo;
+        this.id=geodbLocation.getId();this.name=geodbLocation.getName();this.postcode =geodbLocation.getPlz();this.extraInfo=extraInfo;
     }
-    public GeodbLocationDto(Integer id, String name, String plz, String extraInfo){
-        this.id=id;this.name=name;this.plz=plz;this.extraInfo=extraInfo;
+    public GeodbLocationDto(Integer id, String name, String postcode, String extraInfo){
+        this.id=id;this.name=name;this.postcode = postcode;this.extraInfo=extraInfo;
     }
 
     public Integer getId() {
@@ -31,7 +31,7 @@ public class GeodbLocationDto {
         return name;
     }
 
-    public String getPlz() {
-        return plz;
+    public String getPostcode() {
+        return postcode;
     }
 }
