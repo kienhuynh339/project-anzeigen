@@ -13,6 +13,7 @@ import MyFavoriteItems from "./features/item/MyFavoriteItems";
 import { initialSearchFilters } from "./utils/initialSearchFilters";
 import AllItems from "./features/item/AllItems";
 import MyItems from "./features/item/MyItems";
+import EditItem from "./features/item/EditItem";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
@@ -48,6 +49,14 @@ function App() {
           <Route path="/user/:otherUserId" element={<UserItems />} />
           <Route path="/nachrichten" element={<ChatView />} />
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
+          <Route
+            path="/anzeige-bearbeiten/:itemId"
+            element={<EditItem />}
+          ></Route>
+          <Route
+            path="/anzeige-erstellen/:itemId"
+            element={<CreateItem />}
+          ></Route>
           <Route
             path="/meine-merkliste"
             element={<MyFavoriteItems setSearchFilters={setSearchFilters} />}
