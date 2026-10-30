@@ -7,18 +7,20 @@ import { useFetch } from "../../hooks/useFetch";
 export default function PostcodeInput({
   postcode,
   setPostcode,
+  width = "6rem",
   maxHeight = "400px",
+  dropListAbove = false,
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // PLZs abrufen
+  // Gefilterte PLZs abrufen
   const postcodes = useFetch(
     `http://localhost:8080/api/postcodes?postcodePrefix=${encodeURIComponent(postcode)}`,
     [postcode],
   );
 
   return (
-    <>
+    <div className="position-relative" style={{ width: width }}>
       <input
         type="text"
         className="form-control white-focus w-100"
@@ -43,6 +45,8 @@ export default function PostcodeInput({
             backgroundColor: "white",
             borderRadius: "0",
             border: "1px solid #676767",
+            bottom: dropListAbove ? "100%" : null,
+            top: dropListAbove ? "auto" : null,
           }}
         >
           {postcodes.map((v) => (
@@ -60,6 +64,6 @@ export default function PostcodeInput({
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }
