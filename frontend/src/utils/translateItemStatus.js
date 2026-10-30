@@ -4,6 +4,9 @@ export function translateItemStatus(status) {
     case "ACTIVE":
       translatedStatus = "";
       break;
+    case "DRAFT":
+      translatedStatus = "Entwurf";
+      break;
     case "RESERVED":
       translatedStatus = "Reserviert";
       break;
