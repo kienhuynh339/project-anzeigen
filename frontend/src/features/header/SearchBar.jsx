@@ -47,6 +47,7 @@ export default function SearchBar({
           style={{ minWidth: "25rem", width: "auto" }}
         >
           <input
+            id="searchTerm"
             type="text"
             className="form-control white-focus"
             placeholder="Suchbegriff"
@@ -60,6 +61,7 @@ export default function SearchBar({
         {/* Kategorie */}
         <div style={{ width: "17rem" }}>
           <CategorySelect
+            formFieldId="search-category-select"
             categoryId={categoryId}
             setCategoryId={(value) => {
               updateFilter("categoryId", value);
@@ -67,23 +69,19 @@ export default function SearchBar({
           />
         </div>
         {/* PLZ */}
-        <div className="position-relative" style={{ width: "6rem" }}>
-          <PostcodeInput
-            postcode={postcode}
-            setPostcode={(value) => {
-              updateFilter("postcode", value);
-            }}
-          />
-        </div>
+        <PostcodeInput
+          postcode={postcode}
+          setPostcode={(value) => {
+            updateFilter("postcode", value);
+          }}
+        ></PostcodeInput>
         {/* Ort */}
-        <div className="position-relative" style={{ width: "15rem" }}>
-          <LocationInput
-            postcode={postcode}
-            setLocationId={(value) => {
-              updateFilter("locationId", value);
-            }}
-          />
-        </div>
+        <LocationInput
+          postcode={postcode}
+          setLocationId={(value) => {
+            updateFilter("locationId", value);
+          }}
+        ></LocationInput>
 
         {/* Umkreis */}
         <div className="">
