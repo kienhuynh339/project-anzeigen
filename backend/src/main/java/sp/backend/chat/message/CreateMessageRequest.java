@@ -9,14 +9,6 @@ public class CreateMessageRequest {
     private Long senderId;
     private String content;
 
-
-    public CreateMessageRequest(Long itemId, Long interestedUserId, Long senderId, String content) {
-        this.itemId = itemId;
-        this.interestedUserId = interestedUserId;
-        this.senderId = senderId;
-        this.content = content;
-    }
-
     public Long getItemId() {
         return itemId;
     }
