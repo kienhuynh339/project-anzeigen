@@ -7,7 +7,10 @@ import { useFetch } from "../../hooks/useFetch";
 export default function LocationInput({
   postcode,
   setLocationId,
+  setLocationExtraInfo,
   maxHeight = "400px",
+  width = "15rem",
+  dropListAbove = false,
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -22,13 +25,14 @@ export default function LocationInput({
   const locations = locationsData.map((location) => ({
     id: location.id,
     name: `${location.name} ${location.extraInfo ?? ""}`.trim(),
-    plz: location.plz,
+    postcode: location.postcode,
   }));
 
   // States bei Änderung der PLZ zurücksetzen
   useEffect(() => {
     setInputValue("");
     setLocationId("");
+    setLocationExtraInfo?.("");
   }, [postcode]);
 
   // Ort-Optionen aktualisieren
@@ -36,27 +40,37 @@ export default function LocationInput({
     location.name.toLowerCase().includes(inputValue.toLowerCase()),
   );
 
+  const getLocationExtraInfo = (locationId) => {
+    return locationsData.find((l) => l.id === locationId).extraInfo;
+  };
+
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
 
-    // locationId bei gültiger Eingabe setzen
+    // locationId und locationExtraInfo bei gültiger Eingabe setzen
     const location = locations.find(
       (location) => location.name.toLowerCase() === value.toLowerCase(),
     );
-    setLocationId(location?.id ?? "");
+    if (location) {
+      setLocationId(location.id);
+      setLocationExtraInfo?.(getLocationExtraInfo(location.id));
+    } else {
+      setLocationId("");
+      setLocationExtraInfo?.("");
+    }
   };
 
   const handleOptionSelect = (location) => {
     setInputValue(location.name);
     setLocationId(location.id);
+    setLocationExtraInfo?.(getLocationExtraInfo(location.id));
     setShowSuggestions(false);
   };
 
   return (
-    <>
+    <div className="position-relative" style={{ width: width }}>
       <input
-        id="locationInput"
         type="text"
         className="form-control white-focus w-100"
         placeholder="Ort"
@@ -77,6 +91,8 @@ export default function LocationInput({
             backgroundColor: "white",
             borderRadius: "0",
             border: "1px solid #676767",
+            bottom: dropListAbove ? "100%" : null,
+            top: dropListAbove ? "auto" : null,
           }}
         >
           {options.map((option) => (
@@ -93,6 +109,6 @@ export default function LocationInput({
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }
