@@ -12,6 +12,7 @@ import ItemFavorButton from "../../components/ItemFavorButton";
 import { userId } from "../../utils/userId";
 import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
+import noImage from "../../assets/noImage.jpg";
 
 export default function ItemView() {
   const { itemId } = useParams();
@@ -88,7 +89,8 @@ export default function ItemView() {
             <div className="d-flex align-items-center gap-1">
               <i className="bi bi-geo-alt-fill text-body-tertiary"></i>
               <p className="card-text text-secondary m-0">
-                {item.location.name}
+                {item.location.postcode} {item.location.name}{" "}
+                {item.location.extraInfo}
               </p>
             </div>
             <div className="d-flex align-items-center gap-1">
@@ -195,10 +197,7 @@ function ImageGallery({ imageIds, itemStatus }) {
           )}
         </>
       ) : (
-        <img
-          className="h-100"
-          src="https://placehold.co/600x400?text=Kein+Bild"
-        ></img>
+        <img className="h-100" src={noImage}></img>
       )}
     </div>
   );
