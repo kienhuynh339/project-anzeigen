@@ -3,12 +3,14 @@
  */
 package sp.backend.item.item_image;
 
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/images")
@@ -24,7 +26,10 @@ public class ItemImageController {
         Optional<ItemImage> itemImage = itemImageRepository.findById(imageId);
         if(itemImage.isPresent()){
             MediaType mediaType = MediaType.parseMediaType(itemImage.get().getContentType());
-            return ResponseEntity.ok().contentType(mediaType).body(itemImage.get().getImage());
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
+                    .body(itemImage.get().getImage());
         }else{
             return ResponseEntity.notFound().build();
         }
@@ -35,9 +40,12 @@ public class ItemImageController {
         ItemImage itemImage = itemImageRepository.findFirstByItemIdOrderByDisplayOrderAsc(itemId);
         if(itemImage != null){
             MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
-            return ResponseEntity.ok().contentType(mediaType).body(itemImage.getImage());
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
+                    .body(itemImage.getImage());
         }else{
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
     }
 
