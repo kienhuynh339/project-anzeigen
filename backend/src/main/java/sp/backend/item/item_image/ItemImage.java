@@ -26,8 +26,9 @@ public class ItemImage {
 
     protected ItemImage(){};
 
-    public ItemImage(byte[] image, Long itemId, Short displayOrder) {
+    public ItemImage(byte[] image, String contentType, Long itemId, Short displayOrder) {
         this.image = image;
+        this.contentType = contentType;
         this.itemId = itemId;
         this.displayOrder = displayOrder;
     }
