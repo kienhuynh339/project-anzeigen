@@ -7,8 +7,12 @@ package sp.backend.item;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/items")
@@ -67,7 +71,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Void> updateItemStatus(
+    private ResponseEntity<Void> updateItemStatus(
             @PathVariable Long itemId,
             @RequestBody UpdateItemStatusRequest request) {
         try{
@@ -76,6 +80,13 @@ public class ItemController {
         }catch(EntityNotFoundException e){
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest createItemRequest, UriComponentsBuilder ucb){
+        Long itemId = itemService.createItem(createItemRequest);
+        URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
+        return ResponseEntity.created(createdItemLocation).build();
     }
 }
 
