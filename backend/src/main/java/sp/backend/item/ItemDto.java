@@ -25,7 +25,7 @@ public class ItemDto {
         this.title= item.getTitle();
         this.description = item.getDescription();
         this.price = item.getPrice();
-        this.location= new GeodbLocationDto(item.getLocation().getId(), item.getLocation().getName(),item.getPlz(),item.getLocationExtraInfo());
+        this.location= new GeodbLocationDto(item.getLocation().getId(), item.getLocation().getName(),item.getPostcode(),item.getLocationExtraInfo());
         this.status = item.getStatus();
         this.createdAt = item.getCreatedAt();
         this.isFavorite=isFavorite;
