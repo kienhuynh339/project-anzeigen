@@ -17,7 +17,7 @@ export default function Navbar({
     { option: "Meine Anzeigen", link: "/meine-anzeigen" },
     { option: "Nachrichten", link: "/nachrichten" },
     { option: "Merkliste", link: "/meine-merkliste" },
-    { option: "Einstellungen", link: "/" },
+    { option: "Einstellungen", link: "/einstellungen" },
     { option: "Abmelden", link: "#" },
   ];
 
