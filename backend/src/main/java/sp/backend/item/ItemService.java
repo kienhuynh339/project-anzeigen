@@ -116,6 +116,10 @@ public class ItemService {
     @Transactional
     public boolean updateItem(Long itemId,UpdateItemRequest request, Long loggedInUserId){
         Item item = itemRepository.findById(itemId).orElseThrow(()->new EntityNotFoundException("Item not found: "+itemId));
+        // Gelöschte Item darf nicht modifiziert werden
+        if(item.getStatus()==ItemStatus.DELETED){
+            throw new IllegalStateException("Deleted item cannot be modified: "+itemId);
+        }
         // Ist der User wirklich der Poster der Anzeige
         if(!loggedInUserId.equals(item.getPoster().getId())){
             throw new EntityNotFoundException("Item not found: "+itemId);
