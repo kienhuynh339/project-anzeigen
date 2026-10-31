@@ -90,8 +90,8 @@ public class ItemController {
     }
 
     @PutMapping(value="/{itemId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, @RequestParam Long loggedInUser){
-        boolean result = itemService.updateItem(itemId, request, loggedInUser);
+    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, @RequestParam Long loggedInUserId){
+        boolean result = itemService.updateItem(itemId, request, loggedInUserId);
         return ResponseEntity.noContent().build();
     }
 }
