@@ -2,65 +2,40 @@
  * @author Trung Kien Huynh
  */
 import { useState, useEffect } from "react";
-import DialogWindow from "./components/DialogWindow";
-
-const userData = {
-  profilname: "Max Mustermann",
-  benutzername: "max.mustermann",
-  passwort: "******",
-  adresse: "52062 Aachen",
-};
-
-const fields = [
-  {
-    key: "profilname",
-    label: "Profilname",
-    type: "text",
-  },
-  {
-    key: "benutzername",
-    label: "Benutzername",
-    type: "text",
-  },
-  {
-    key: "passwort",
-    label: "Passwort",
-    type: "password",
-  },
-  {
-    key: "adresse",
-    label: "Adresse",
-    type: "text",
-  },
-];
+import { useFetch } from "../../hooks/useFetch";
+import { userId } from "../../utils/userId";
+import SettingsDialog from "../../components/SettingsDialog";
+import { useAppContext } from "../../AppContext";
 
 export default function Settings() {
-  const [data, setData] = useState(userData);
-  const [activeField, setActiveField] = useState(null);
-  const [fieldValue, setFieldValue] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const fields = [
+    {
+      key: "profileName",
+      label: "Profilname",
+      type: "text",
+    },
+    {
+      key: "accountName",
+      label: "Benutzername",
+      type: "text",
+    },
+    {
+      key: "password",
+      label: "Passwort",
+      type: "password",
+    },
+  ];
+
+  const { openDialog } = useAppContext();
+  const { data: userData } = useFetch(
+    `http://localhost:8080/api/users/${userId}/private`,
+    [userId],
+    { profileName: "", accountName: "" },
+  );
 
   const handleDialogOpen = (field) => {
-    setActiveField(field);
-    setFieldValue(data[field.key]);
-    setIsDialogOpen(true);
-  };
-
-  const handleChange = (event) => {
-    event.preventDefault();
-
-    setData((prev) => ({
-      ...prev,
-      [activeField.key]: fieldValue,
-    }));
-
-    setActiveField(null);
-    setIsDialogOpen(false);
-  };
-
-  const handleDialogClose = () => {
-    setActiveField(null);
-    setIsDialogOpen(false);
+    const initialValue = userData[field.key];
+    openDialog(SettingsDialog, { initialValue, field });
   };
 
   return (
@@ -78,7 +53,9 @@ export default function Settings() {
             key={field.key}
           >
             <span className="fw-bold col-2">{field.label}</span>
-            <span className="text-secondary ps-5 col">{data[field.key]}</span>
+            <span className="text-secondary ps-5 col">
+              {field.key !== "password" ? userData[field.key] : "********"}
+            </span>
             <div className="col text-end">
               <button
                 className="btn btn-outline-primary border-0"
@@ -91,36 +68,6 @@ export default function Settings() {
           </div>
         ))}
       </div>
-      {/* Dialogfenster*/}
-      {activeField && (
-        <DialogWindow
-          isOpen={isDialogOpen}
-          dialogWidth={"50ch"}
-          dialogContent={
-            <form className="d-flex flex-column" onSubmit={handleChange}>
-              <span className="fw-bold py-4">{activeField.label} ändern</span>
-              <input
-                className="form-control border-dark-subtle"
-                type={activeField.type}
-                value={fieldValue}
-                onChange={(e) => setFieldValue(e.target.value)}
-              ></input>
-              <div className="d-flex justify-content-end gap-3 py-4">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleDialogClose}
-                >
-                  Abbrechen
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Bestätigen
-                </button>
-              </div>
-            </form>
-          }
-        />
-      )}
     </div>
   );
 }
