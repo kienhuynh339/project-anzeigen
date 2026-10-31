@@ -17,22 +17,26 @@ import noImage from "../../assets/noImage.jpg";
 export default function ItemView() {
   const { itemId } = useParams();
 
-  const item = useFetch(
+  const { data: item } = useFetch(
     `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`,
     [],
-  ) ?? {
-    id: "",
-    poster: { profileName: "", id: "" },
-    title: "",
-    description: "",
-    location: { name: "", plz: "", extraInfo: "" },
-    price: 0,
-    createdAt: "",
-    status: "",
-  };
+    {
+      id: "",
+      poster: { profileName: "", id: "" },
+      title: "",
+      description: "",
+      location: { name: "", plz: "", extraInfo: "" },
+      price: 0,
+      createdAt: "",
+      status: "",
+    },
+  );
 
-  const imageIds =
-    useFetch(`http://localhost:8080/api/images/item/${itemId}`, []) ?? [];
+  const { data: imageIds } = useFetch(
+    `http://localhost:8080/api/images/item/${itemId}`,
+    [],
+    [],
+  );
 
   return (
     <>
