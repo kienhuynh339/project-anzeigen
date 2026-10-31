@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 
 public class ItemDto {
     private Long id;
+    private Short categoryId;
     private UserPublicDto poster;
     private String title;
     private String description;
@@ -21,6 +22,7 @@ public class ItemDto {
 
     public ItemDto(Item item, Boolean isFavorite){
         this.id=item.getId();
+        this.categoryId=item.getCategory().getId();
         this.poster =new UserPublicDto(item.getPoster());
         this.title= item.getTitle();
         this.description = item.getDescription();
@@ -31,8 +33,9 @@ public class ItemDto {
         this.isFavorite=isFavorite;
     }
 
-    public ItemDto(Long id, UserPublicDto poster, String title, String description, int price, GeodbLocationDto location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
+    public ItemDto(Long id,Short categoryId, UserPublicDto poster, String title, String description, int price, GeodbLocationDto location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
         this.id = id;
+        this.categoryId = categoryId;
         this.poster = poster;
         this.title = title;
         this.description = description;
@@ -41,6 +44,14 @@ public class ItemDto {
         this.status = status;
         this.createdAt = createdAt;
         this.isFavorite = isFavorite;
+    }
+
+    public Short getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Short categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Long getId() {
