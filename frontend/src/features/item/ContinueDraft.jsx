@@ -1,20 +1,79 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { userId } from "../../utils/userId";
-import { createItemFormData } from "../../utils/createItemFormData";
-import { createItemRequest } from "../../utils/createItemRequest";
 import { useParams } from "react-router";
 import ItemForm from "./ItemForm";
 import ErrorNotification from "../../components/ErrorNotification";
+import { updateItemFormData } from "../../utils/updateItemFormData";
+import { updateItemRequest } from "../../utils/UpdateItemRequest";
+import { useFetch } from "../../hooks/useFetch";
+import itemToUpdateItemRequestConverter from "../../utils/itemToUpdateItemRequestConverter";
 export default function ContinueDraft() {
   const { itemId } = useParams();
-  const [error, setError] = useState(false);
   const [item, setItem] = useState(null);
   const [images, setImages] = useState([]);
 
-  if (error) {
+  let isItemIdValid = /^[1-9]\d*$/.test(itemId);
+
+  const { data: fetchedItem, error: itemDataFetchError } = useFetch(
+    isItemIdValid
+      ? `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`
+      : null,
+    [itemId],
+  );
+
+  const { data: imageIds } = useFetch(
+    isItemIdValid ? `http://localhost:8080/api/images/item/${itemId}` : null,
+    [itemId],
+    [],
+  );
+
+  useEffect(() => {
+    if (imageIds.length === 0) {
+      setImages([]);
+      return;
+    }
+    Promise.all(
+      imageIds.map((id) =>
+        fetch(`http://localhost:8080/api/images/${id}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Bild ${id} konnte nicht geladen werden.`);
+            }
+            return response.blob();
+          })
+          .then(
+            (blob) =>
+              new File([blob], `image-${id}`, {
+                type: blob.type,
+              }),
+          ),
+      ),
+    )
+      .then((fetchedImages) => {
+        setImages(fetchedImages);
+      })
+      .catch((error) => {
+        console.error("Fehler beim Laden der Bilder:", error);
+      });
+  }, [imageIds]);
+
+  useEffect(() => {
+    if (fetchedItem !== null) {
+      setItem(itemToUpdateItemRequestConverter(fetchedItem));
+    }
+  }, [fetchedItem]);
+
+  let initialLocationInputValue = "";
+  if (fetchedItem !== null && fetchedItem.location !== null) {
+    initialLocationInputValue = fetchedItem.location.extraInfo
+      ? `${fetchedItem.location.name} ${fetchedItem.location.extraInfo}`
+      : `${fetchedItem.location.name}`;
+  }
+
+  if (!isItemIdValid || itemDataFetchError) {
     return (
       <ErrorNotification
         description={"Diese Seite gibt es nicht."}
@@ -22,30 +81,11 @@ export default function ContinueDraft() {
     );
   }
 
-  useEffect(() => {
-    // Prüfe, ob itemId gültig ist
-    setError(!/^[1-9]\d*$/.test(itemId));
-  }, [itemId]);
-
-  const itemData = useFetch(
-    `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`,
-    [itemId],
-  );
-
-  useEffect(() => {
-    if (itemData !== null) {
-      setItem(itemData);
-    } else {
-      setError(true);
-    }
-  }, [itemData]);
-
   const handleSubmit = (status) => {
-    const formData = createItemFormData(
+    const formData = updateItemFormData(
       item.title,
       item.categoryId,
       item.description,
-      item.posterId,
       item.locationId,
       item.postcode,
       item.locationExtraInfo,
@@ -53,7 +93,7 @@ export default function ContinueDraft() {
       images,
       status,
     );
-    createItemRequest(formData);
+    updateItemRequest(fetchedItem.id, userId, formData);
   };
 
   const handleSaveDraft = () => {
@@ -71,6 +111,7 @@ export default function ContinueDraft() {
         setItem={setItem}
         images={images}
         setImages={setImages}
+        initialLocationInputValue={initialLocationInputValue}
       >
         {/* Entwurf speichern */}
         <button
