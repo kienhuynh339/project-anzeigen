@@ -3,10 +3,15 @@
  */
 import { useEffect, useState } from "react";
 
-export function useFetch(url, dependencies) {
-  const [data, setData] = useState(null);
+export function useFetch(url, dependencies, initialData = null) {
+  const [data, setData] = useState(initialData);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (!url) return;
+    setLoading(true);
+    setError(false);
     fetch(url)
       .then((response) => {
         if (!response.ok) {
@@ -14,10 +19,18 @@ export function useFetch(url, dependencies) {
         }
         return response.json();
       })
-      .then((data) => {
-        setData(data);
+      .then((result) => {
+        setData(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+        setData(null);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, dependencies);
 
-  return data;
+  return { data, loading, error };
 }
