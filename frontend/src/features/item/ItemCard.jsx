@@ -14,6 +14,7 @@ import ItemTitle from "../../components/ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
 import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
+import ItemEditButton from "../../components/ItemEditButton";
 
 export default function ItemCard({ item, userId, itemCardType }) {
   return (
@@ -99,11 +100,16 @@ export default function ItemCard({ item, userId, itemCardType }) {
                 {itemCardType === itemCardTypes.MY_ITEM && (
                   <>
                     <ItemDeleteButton itemId={item.id}></ItemDeleteButton>
-                    {item.status == "ACTIVE" ? (
+                    {item.status === "DRAFT" ? (
+                      <ItemEditButton
+                        itemId={item.id}
+                        itemStatus={item.status}
+                      ></ItemEditButton>
+                    ) : item.status === "ACTIVE" ? (
                       <ItemReserveButton itemId={item.id}></ItemReserveButton>
-                    ) : (
+                    ) : item.status === "RESERVED" ? (
                       <ItemActivateButton itemId={item.id}></ItemActivateButton>
-                    )}
+                    ) : null}
                   </>
                 )}
                 {itemCardType === itemCardTypes.MY_FAVORITE_ITEM && (
