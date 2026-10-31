@@ -30,7 +30,7 @@ export default function ItemList({
     setPage(0);
   }, [sortMode, ...additionalDependencies]);
 
-  const response = useFetch(
+  const { data: response } = useFetch(
     `${urlWithoutPaginationAndSorting}page=${page}&size=${pageSize}&sort=${sortMode}`,
     [sortMode, page, ...additionalDependencies],
   );
