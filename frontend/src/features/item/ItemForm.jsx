@@ -10,8 +10,12 @@ export default function ItemForm({
   setItem,
   images,
   setImages,
+  initialLocationInputValue = "",
   children,
 }) {
+  if (item === null) {
+    return;
+  }
   // wenn value eine Funktion ist, wird prev[key] an value (eine Funktion) übergeben und diese wird aufgerufen
   const updateItemDetails = (key, value) => {
     setItem((prev) => ({
@@ -113,6 +117,7 @@ export default function ItemForm({
             }
             dropListAbove={true}
             width="100%"
+            initialInputValue={initialLocationInputValue}
           ></LocationInput>
         </div>
       </div>
