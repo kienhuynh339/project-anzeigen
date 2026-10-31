@@ -14,7 +14,7 @@ import { initialSearchFilters } from "./utils/initialSearchFilters";
 import AllItems from "./features/item/AllItems";
 import MyItems from "./features/item/MyItems";
 import EditItem from "./features/item/EditItem";
-import ContinueDraft from "./features/item/ContinueDraft";
+import Settings from "./features/profile/Settings";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
@@ -51,17 +51,13 @@ function App() {
           <Route path="/nachrichten" element={<ChatView />} />
           {/* Anzeige erstellen */}
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
-          {/* Entwurf fortsetzen */}
-          <Route
-            path="/anzeige-erstellen/:itemId"
-            element={<ContinueDraft />}
-          />
-          {/* Anzeige bearbeiten */}
-          <Route path="/anzeige-bearbeiten/:itemId" element={<EditItem />} />
+          {/* Entwurf fortsetzen / Anzeige bearbeiten */}
+          <Route path="/bearbeiten/:itemId" element={<EditItem />} />
           <Route
             path="/meine-merkliste"
             element={<MyFavoriteItems setSearchFilters={setSearchFilters} />}
           ></Route>
+          <Route path="/einstellungen" element={<Settings></Settings>}></Route>
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
