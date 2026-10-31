@@ -13,6 +13,7 @@ import { userId } from "../../utils/userId";
 import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import noImage from "../../assets/noImage.jpg";
+import ItemEditButton from "../../components/ItemEditButton";
 
 export default function ItemView() {
   const { itemId } = useParams();
@@ -128,9 +129,15 @@ export default function ItemView() {
                     <ItemActivateButton itemId={item.id}></ItemActivateButton>
                   ) : null}
                   {item.status !== "DELETED" && (
-                    <ItemDeleteButton itemId={item.id}>
-                      <span className="ps-1">Anzeige löschen</span>
-                    </ItemDeleteButton>
+                    <>
+                      <ItemEditButton
+                        itemId={item.id}
+                        itemStatus={item.status}
+                      ></ItemEditButton>
+                      <ItemDeleteButton itemId={item.id}>
+                        <span className="ps-1">Anzeige löschen</span>
+                      </ItemDeleteButton>
+                    </>
                   )}
                 </>
               )}
