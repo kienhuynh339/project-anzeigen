@@ -14,7 +14,7 @@ export default function PostcodeInput({
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Gefilterte PLZs abrufen
-  const postcodes = useFetch(
+  const { data: postcodes } = useFetch(
     `http://localhost:8080/api/postcodes?postcodePrefix=${encodeURIComponent(postcode)}`,
     [postcode],
   );
