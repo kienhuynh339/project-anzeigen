@@ -6,7 +6,9 @@ import { userId } from "../../utils/userId";
 import { createItemFormData } from "../../utils/createItemFormData";
 import { createItemRequest } from "../../utils/createItemRequest";
 import ItemForm from "./ItemForm";
+import { useNavigate } from "react-router";
 export default function CreateItem() {
+  const navigate = useNavigate();
   const [item, setItem] = useState({
     title: "",
     categoryId: 1,
@@ -38,9 +40,11 @@ export default function CreateItem() {
 
   const handleSaveDraft = () => {
     handleSubmit("DRAFT");
+    navigate("/meine-anzeigen");
   };
   const handlePublishItem = () => {
     handleSubmit("ACTIVE");
+    navigate("/meine-anzeigen");
   };
 
   return (
