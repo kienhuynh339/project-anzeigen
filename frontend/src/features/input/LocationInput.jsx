@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useFetch } from "../../hooks/useFetch";
 
 export default function LocationInput({
@@ -11,15 +11,18 @@ export default function LocationInput({
   maxHeight = "400px",
   width = "15rem",
   dropListAbove = false,
+  initialInputValue = "",
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(initialInputValue);
+  const previousPostcode = useRef(postcode);
 
   // Orte abrufen
-  const locationsData =
-    useFetch(`http://localhost:8080/api/locations?postcode=${postcode}`, [
-      postcode,
-    ]) ?? [];
+  const { data: locationsData } = useFetch(
+    `http://localhost:8080/api/locations?postcode=${postcode}`,
+    [postcode],
+    [],
+  );
 
   // location.extraInfo an location.name anhängen
   const locations = locationsData.map((location) => ({
@@ -30,10 +33,19 @@ export default function LocationInput({
 
   // States bei Änderung der PLZ zurücksetzen
   useEffect(() => {
-    setInputValue("");
-    setLocationId("");
-    setLocationExtraInfo?.("");
+    if (previousPostcode.current !== postcode) {
+      previousPostcode.current = postcode;
+      setInputValue("");
+      setLocationId("");
+      setLocationExtraInfo?.("");
+    }
   }, [postcode]);
+
+  useEffect(() => {
+    if (initialInputValue) {
+      setInputValue(initialInputValue);
+    }
+  }, [initialInputValue]);
 
   // Ort-Optionen aktualisieren
   const options = locations.filter((location) =>
