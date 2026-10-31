@@ -14,6 +14,7 @@ import { initialSearchFilters } from "./utils/initialSearchFilters";
 import AllItems from "./features/item/AllItems";
 import MyItems from "./features/item/MyItems";
 import EditItem from "./features/item/EditItem";
+import ContinueDraft from "./features/item/ContinueDraft";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
@@ -33,7 +34,7 @@ function App() {
           setSearchTrigger={setSearchTrigger}
         />
       </header>
-      <main className="min-vh-100">
+      <main className="min-vh-100 d-flex flex-column">
         <Routes>
           <Route
             path="/"
@@ -48,19 +49,19 @@ function App() {
           <Route path="/meine-anzeigen" element={<MyItems />} />
           <Route path="/user/:otherUserId" element={<UserItems />} />
           <Route path="/nachrichten" element={<ChatView />} />
+          {/* Anzeige erstellen */}
           <Route path="/anzeige-erstellen" element={<CreateItem />} />
-          <Route
-            path="/anzeige-bearbeiten/:itemId"
-            element={<EditItem />}
-          ></Route>
+          {/* Entwurf fortsetzen */}
           <Route
             path="/anzeige-erstellen/:itemId"
-            element={<CreateItem />}
-          ></Route>
+            element={<ContinueDraft />}
+          />
+          {/* Anzeige bearbeiten */}
+          <Route path="/anzeige-bearbeiten/:itemId" element={<EditItem />} />
           <Route
             path="/meine-merkliste"
             element={<MyFavoriteItems setSearchFilters={setSearchFilters} />}
-          />
+          ></Route>
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
