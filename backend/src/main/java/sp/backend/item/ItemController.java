@@ -83,10 +83,16 @@ public class ItemController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest createItemRequest, UriComponentsBuilder ucb){
-        Long itemId = itemService.createItem(createItemRequest);
+    private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb){
+        Long itemId = itemService.createItem(request);
         URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
         return ResponseEntity.created(createdItemLocation).build();
+    }
+
+    @PutMapping(value="/{itemId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, @RequestParam Long loggedInUser){
+        boolean result = itemService.updateItem(itemId, request, loggedInUser);
+        return ResponseEntity.noContent().build();
     }
 }
 
