@@ -14,6 +14,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("""
             SELECT new sp.backend.item.ItemDto(
             i.id,
+            i.category.id,
             new sp.backend.user.UserPublicDto(u),
             i.title,
             i.description,
@@ -106,6 +107,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("""
             SELECT new sp.backend.item.ItemDto(
             i.id,
+            i.category.id,
             new sp.backend.user.UserPublicDto(u),
             i.title,
             i.description,
@@ -130,6 +132,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("""
 SElECT new sp.backend.item.ItemDto(
             i.id,
+            i.category.id,
             new sp.backend.user.UserPublicDto(u),
             i.title,
             i.description,
