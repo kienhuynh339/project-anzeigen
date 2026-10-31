@@ -74,6 +74,10 @@ public class Item {
         return id;
     }
 
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+
     public User getPoster() {
         return poster;
     }
@@ -106,11 +110,11 @@ public class Item {
         this.description = description;
     }
 
-    public Integer getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -118,7 +122,7 @@ public class Item {
         return location;
     }
 
-    public void setLocationId(GeodbLocation location) {
+    public void setLocation(GeodbLocation location) {
         this.location = location;
     }
 
@@ -126,8 +130,8 @@ public class Item {
         return postcode;
     }
 
-    public void setPostcode(String plz) {
-        this.postcode = plz;
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
     }
 
     public String getLocationExtraInfo() {
@@ -150,9 +154,9 @@ public class Item {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public void setCreatedAt(OffsetDateTime createdAt) {
+//        this.createdAt = createdAt;
+//    }
 }
 
 
