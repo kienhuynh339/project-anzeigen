@@ -86,18 +86,18 @@ public class ItemService {
     }
 
     @Transactional
-    public Long createItem(CreateItemRequest createItemRequest){
-        Category category = categoryRepository.findById(createItemRequest.getCategoryId()).orElseThrow(()->new EntityNotFoundException("Category not found: "+createItemRequest.getCategoryId()));
-        User poster = userRepository.findById(createItemRequest.getPosterId()).orElseThrow(()->new EntityNotFoundException("User not found: "+createItemRequest.getPosterId()));
-        GeodbLocation location = geodbLocationRepository.findById(createItemRequest.getLocationId()).orElseThrow(()->new EntityNotFoundException("Location not found: "+createItemRequest.getLocationId()));
+    public Long createItem(CreateItemRequest request){
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(()->new EntityNotFoundException("Category not found: "+request.getCategoryId()));
+        User poster = userRepository.findById(request.getPosterId()).orElseThrow(()->new EntityNotFoundException("User not found: "+request.getPosterId()));
+        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(()->new EntityNotFoundException("Location not found: "+request.getLocationId()));
 
-        Item item = new Item(poster,createItemRequest.getTitle(),category,createItemRequest.getDescription(),createItemRequest.getPrice(),location,createItemRequest.getPostcode(),createItemRequest.getLocationExtraInfo(),createItemRequest.getStatus());
+        Item item = new Item(poster,request.getTitle(),category,request.getDescription(),request.getPrice(),location,request.getPostcode(),request.getLocationExtraInfo(),request.getStatus());
         itemRepository.save(item);
 
-        if(createItemRequest.getImages()!=null){
+        if(request.getImages()!=null){
             short order = 0;
 
-            for(MultipartFile file : createItemRequest.getImages()){
+            for(MultipartFile file : request.getImages()){
                 if(file == null || file.isEmpty()){
                     continue;
                 }
@@ -113,5 +113,46 @@ public class ItemService {
         return item.getId();
     }
 
+    @Transactional
+    public boolean updateItem(Long itemId,UpdateItemRequest request, Long loggedInUserId){
+        Item item = itemRepository.findById(itemId).orElseThrow(()->new EntityNotFoundException("Item not found: "+itemId));
+        // Ist der User wirklich der Poster der Anzeige
+        if(!loggedInUserId.equals(item.getPoster().getId())){
+            throw new EntityNotFoundException("Item not found: "+itemId);
+        }
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(()->new EntityNotFoundException("Category not found: "+request.getCategoryId()));
+        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(()->new EntityNotFoundException("Location not found: "+ request.getLocationId()));
+        // Lösche alle Bilder der Anzeige in der DB
+        List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
+        itemImages.forEach(itemImageRepository::delete);
 
+        // Item aktualisieren
+        item.setTitle(request.getTitle());
+        item.setCategory(category);
+        item.setDescription(request.getDescription());
+        item.setLocation(location);
+        item.setPostcode(request.getPostcode());
+        item.setLocationExtraInfo(request.getLocationExtraInfo());
+        item.setPrice(request.getPrice());
+        item.setStatus(request.getStatus());
+
+        itemRepository.save(item);
+
+        // Bilder speichern
+        if(request.getImages() != null){
+            short order = 0;
+            for(MultipartFile file : request.getImages()){
+                if(file == null || file.isEmpty()){
+                    continue;
+                }
+                try{
+                    ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), item.getId(),order++);
+                    itemImageRepository.save(itemImage);
+                }catch(IOException e){
+                    throw new RuntimeException("Error saving images",e);
+                }
+            }
+        }
+        return true;
+    }
 }
