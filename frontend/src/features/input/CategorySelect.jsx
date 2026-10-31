@@ -4,10 +4,11 @@
 import { useFetch } from "../../hooks/useFetch";
 
 export default function CategorySelect({ categoryId, setCategoryId }) {
-  const categories = useFetch("http://localhost:8080/api/categories", []) ?? [
-    { id: 1, name: "" },
-  ];
-
+  const { data: categories } = useFetch(
+    "http://localhost:8080/api/categories",
+    [],
+    [{ id: 1, name: "" }],
+  );
   return (
     <>
       <select
