@@ -2,6 +2,7 @@ package sp.backend.user.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,10 +46,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**")
                         .permitAll()
+                        //
                         .requestMatchers("/api/users/me")
                         .authenticated()
-                        .requestMatchers("/api/users/me")
+                        // Items: öffentlich zugänglich
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/items",
+                                "/api/items/*",
+                                "/api/items/user/*"
+                        )
+                        .permitAll()
+                        // Alle anderen Item-Endpunkte benötigen Authentifizierung
+                        .requestMatchers("/api/items/**")
                         .authenticated()
+                        //
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
