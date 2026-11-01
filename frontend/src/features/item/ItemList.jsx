@@ -13,7 +13,6 @@ export default function ItemList({
   title = "",
   showItemAmount = false,
   additionalContentWhenItemAmountIsZero = "",
-  userId = 0,
   itemCardType,
 }) {
   const [page, setPage] = useState(0);
@@ -85,12 +84,7 @@ export default function ItemList({
       <div className="d-flex gap-2 flex-wrap justify-content-center">
         {totalElements == 0 && additionalContentWhenItemAmountIsZero}
         {items.map((item) => (
-          <ItemCard
-            key={item.id}
-            item={item}
-            userId={userId}
-            itemCardType={itemCardType}
-          />
+          <ItemCard key={item.id} item={item} itemCardType={itemCardType} />
         ))}
       </div>
       {/* AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */}
