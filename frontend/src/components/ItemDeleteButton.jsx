@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import ItemDeleteDialog from "./ItemDeleteDialog";
-import { useAppContext } from "../AppContext";
+import { useAppContext } from "../contexts/AppContext";
 export default function ItemDeleteButton({ itemId, children }) {
   const { openDialog } = useAppContext();
   const handleOnClick = (event) => {
