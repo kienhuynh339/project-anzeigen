@@ -12,11 +12,11 @@ import { createMessage } from "../../utils/createMessage";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import ItemReserveButton from "../../components/ItemReserveButton";
-
-import { userId } from "../../utils/userId";
 import ItemTitle from "../../components/ItemTitle";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function ChatView() {
+  const { user } = useAuth();
   const initialChat = {
     id: "",
     itemId: "",
@@ -56,8 +56,8 @@ export default function ChatView() {
   const [isMessageInputActive, setIsMessageInputActive] = useState(false);
 
   const chatPage = useFetch(
-    `http://localhost:8080/api/chats?userId=${userId}`,
-    [userId, chatsUpdateTrigger],
+    `http://localhost:8080/api/chats?userId=${user.id}`,
+    [user, chatsUpdateTrigger],
   );
 
   const chats = chatPage?.content ?? [];
@@ -73,7 +73,7 @@ export default function ChatView() {
   }, [chats, currentChat.id]);
 
   const otherUser =
-    userId != currentChat.poster.id
+    user.id != currentChat.poster.id
       ? currentChat.poster
       : currentChat.interestedUser;
 
@@ -82,9 +82,9 @@ export default function ChatView() {
       case "all":
         return true;
       case "yours":
-        return chat.poster.id == userId;
+        return chat.poster.id == user.id;
       case "others":
-        return chat.poster.id != userId;
+        return chat.poster.id != user.id;
     }
   });
 
@@ -181,7 +181,7 @@ export default function ChatView() {
                 chatListLength={chats.length}
                 setDeleteList={setDeleteList}
                 setIsChatDeleteActive={setIsChatDeleteActive}
-                userId={userId}
+                userId={user.id}
                 setChatsUpdateTrigger={setChatsUpdateTrigger}
               ></ChatDeleteButton>
             </div>
@@ -196,7 +196,7 @@ export default function ChatView() {
                 <ChatListItem
                   key={chat.id}
                   chat={chat}
-                  userId={userId}
+                  userId={user.id}
                   backgroundStyle={
                     isChatDeleteActive
                       ? deleteList.includes(chat.id)
@@ -243,7 +243,7 @@ export default function ChatView() {
                     </Link>
                   </h5>
                   {/* Löschen / Reservieren */}
-                  {userId == currentChat.poster.id &&
+                  {user.id == currentChat.poster.id &&
                     currentChat.itemStatus != "DELETED" && (
                       <>
                         <div className="border-top border-dark-subtle mx-2"></div>
@@ -274,7 +274,7 @@ export default function ChatView() {
                 {/* Nachrichten */}
                 <MessageList
                   chatId={currentChat.id}
-                  userId={userId}
+                  userId={user.id}
                   otherUser={otherUser}
                   messagesUpdateTrigger={messagesUpdateTrigger}
                 />
@@ -292,7 +292,7 @@ export default function ChatView() {
                         handleMessageSend(
                           currentChat.itemId,
                           currentChat.interestedUser.id,
-                          userId,
+                          user?.id,
                           messageContent,
                         );
                       }}
