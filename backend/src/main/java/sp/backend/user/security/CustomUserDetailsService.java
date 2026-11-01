@@ -1,0 +1,37 @@
+package sp.backend.user.security;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//import org.springframework.security.core.userdetails.User;
+import sp.backend.user.User;
+import org.springframework.stereotype.Service;
+import sp.backend.user.UserRepository;
+
+@Service
+public class CustomUserDetailsService
+        implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String accountName) {
+
+        User user = userRepository
+                .findByAccountName(accountName)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        return org.springframework.security.core.userdetails.User.withUsername(user.getAccountName())
+                .password(user.getPasswordHash())
+                .roles("USER")
+                .build();
+    }
+}
