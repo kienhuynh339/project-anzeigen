@@ -6,6 +6,7 @@ import logo from "../../assets/logo.svg";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import { initialSearchFilters } from "../../utils/initialSearchFilters";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Navbar({
   setSearchFilters,
@@ -13,6 +14,7 @@ export default function Navbar({
   setSearchTrigger,
 }) {
   const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
   const options = [
     { option: "Meine Anzeigen", link: "/meine-anzeigen" },
     { option: "Nachrichten", link: "/nachrichten" },
@@ -20,6 +22,15 @@ export default function Navbar({
     { option: "Einstellungen", link: "/einstellungen" },
     { option: "Abmelden", link: "#" },
   ];
+
+  async function handleLogout() {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const handleLogoClick = () => {
     setSearchFilters(initialSearchFilters);
@@ -38,7 +49,23 @@ export default function Navbar({
         </Link>
         <div className="col-auto pe-0 ps-0">
           <div className="d-flex flex-nowrap align-items-center gap-2">
-            <div className="text-white">Hallo ...!</div>
+            {/* Login/Logout/Register */}
+            {isAuthenticated ? (
+              <>
+                <span>Willkommen, {user.profileName}</span>
+
+                <button onClick={handleLogout}>Abmelden</button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => navigate("/login")}>Anmelden</button>
+
+                <button onClick={() => navigate("/register")}>
+                  Registrieren
+                </button>
+              </>
+            )}
+            {/* <div className="text-white">Hallo ...!</div> */}
             <div>
               <button
                 type="button"
