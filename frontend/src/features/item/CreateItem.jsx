@@ -22,7 +22,7 @@ export default function CreateItem() {
   });
   const [images, setImages] = useState([]);
 
-  const handleSubmit = (status) => {
+  const handleSubmit = async (status) => {
     const formData = createItemFormData(
       item.title,
       item.categoryId,
@@ -35,15 +35,15 @@ export default function CreateItem() {
       images,
       status,
     );
-    createItemRequest(formData);
+    return await createItemRequest(formData);
   };
 
-  const handleSaveDraft = () => {
-    handleSubmit("DRAFT");
+  const handleSaveDraft = async () => {
+    await handleSubmit("DRAFT");
     navigate("/meine-anzeigen");
   };
-  const handlePublishItem = () => {
-    handleSubmit("ACTIVE");
+  const handlePublishItem = async () => {
+    await handleSubmit("ACTIVE");
     navigate("/meine-anzeigen");
   };
 
