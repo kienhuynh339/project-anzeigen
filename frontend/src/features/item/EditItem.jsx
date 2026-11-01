@@ -2,7 +2,6 @@
  * @author Trung Kien Huynh
  */
 import { useState, useEffect } from "react";
-import { userId } from "../../utils/userId";
 import { useParams } from "react-router";
 import ItemForm from "./ItemForm";
 import ErrorNotification from "../../components/ErrorNotification";
