@@ -15,6 +15,9 @@ import AllItems from "./features/item/AllItems";
 import MyItems from "./features/item/MyItems";
 import EditItem from "./features/item/EditItem";
 import Settings from "./features/profile/Settings";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
@@ -36,6 +39,8 @@ function App() {
       </header>
       <main className="min-vh-100 d-flex flex-column">
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/"
             element={
@@ -46,18 +51,57 @@ function App() {
             }
           />
           <Route path="/anzeigen/:itemId" element={<ItemView />} />
-          <Route path="/meine-anzeigen" element={<MyItems />} />
+          <Route
+            path="/meine-anzeigen"
+            element={
+              <ProtectedRoute>
+                <MyItems />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/user/:otherUserId" element={<UserItems />} />
-          <Route path="/nachrichten" element={<ChatView />} />
+          <Route
+            path="/nachrichten"
+            element={
+              <ProtectedRoute>
+                <ChatView />
+              </ProtectedRoute>
+            }
+          />
           {/* Anzeige erstellen */}
-          <Route path="/anzeige-erstellen" element={<CreateItem />} />
+          <Route
+            path="/anzeige-erstellen"
+            element={
+              <ProtectedRoute>
+                <CreateItem />
+              </ProtectedRoute>
+            }
+          />
           {/* Entwurf fortsetzen / Anzeige bearbeiten */}
-          <Route path="/bearbeiten/:itemId" element={<EditItem />} />
+          <Route
+            path="/bearbeiten/:itemId"
+            element={
+              <ProtectedRoute>
+                <EditItem />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/meine-merkliste"
-            element={<MyFavoriteItems setSearchFilters={setSearchFilters} />}
+            element={
+              <ProtectedRoute>
+                <MyFavoriteItems setSearchFilters={setSearchFilters} />
+              </ProtectedRoute>
+            }
           ></Route>
-          <Route path="/einstellungen" element={<Settings></Settings>}></Route>
+          <Route
+            path="/einstellungen"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          ></Route>
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
