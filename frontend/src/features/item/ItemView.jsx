@@ -9,13 +9,14 @@ import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemTitle from "../../components/ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
 import ItemFavorButton from "../../components/ItemFavorButton";
-import { userId } from "../../utils/userId";
 import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function ItemView() {
+  const { user } = useAuth();
   const { itemId } = useParams();
 
   const { data: item } = useFetch(
@@ -104,7 +105,7 @@ export default function ItemView() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Knöpfe für Interessenten */}
-              {userId && userId != item.poster.id && (
+              {user && user.id != item.poster.id && (
                 <>
                   {/* Nachricht schreiben */}
                   {item.status !== "DELETED" && (
@@ -112,7 +113,7 @@ export default function ItemView() {
                   )}
                   {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
                   <ItemFavorButton
-                    userId={userId}
+                    userId={user?.id}
                     itemId={item.id}
                     isFavorite={item.favorite}
                     className={"btn btn-outline-danger"}
@@ -121,7 +122,7 @@ export default function ItemView() {
                 </>
               )}
               {/* Knöpfe für Poster der Anzeige */}
-              {userId == item.poster.id && (
+              {user?.id == item.poster.id && (
                 <>
                   {item.status === "ACTIVE" ? (
                     <ItemReserveButton itemId={item.id}></ItemReserveButton>
