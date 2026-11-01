@@ -17,7 +17,7 @@ public class UserController {
     @GetMapping("/{userId}")
     private ResponseEntity<UserPublicDto> findPublicById(@PathVariable Long userId){
         try{
-            UserPublicDto user = userService.findByIdPublic(userId);
+            UserPublicDto user = userService.findPublicById(userId);
             return ResponseEntity.ok(user);
         }catch(EntityNotFoundException e){
             return ResponseEntity.notFound().build();
@@ -27,7 +27,7 @@ public class UserController {
     @GetMapping("/{userId}/private")
     private ResponseEntity<UserPrivateDto> findPrivateById(@PathVariable Long userId){
         try{
-            UserPrivateDto user = userService.findByIdPrivate(userId);
+            UserPrivateDto user = userService.findPrivateById(userId);
             return ResponseEntity.ok(user);
         }catch(EntityNotFoundException e){
             return ResponseEntity.notFound().build();
