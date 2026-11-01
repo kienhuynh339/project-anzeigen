@@ -17,40 +17,41 @@ import java.util.concurrent.TimeUnit;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ItemImageController {
     private final ItemImageRepository itemImageRepository;
-    private ItemImageController(ItemImageRepository itemImageRepository){
+
+    private ItemImageController(ItemImageRepository itemImageRepository) {
         this.itemImageRepository = itemImageRepository;
     }
-    
+
     @GetMapping("/{imageId}")
-    private ResponseEntity<byte[]> findById(@PathVariable Long imageId){
+    private ResponseEntity<byte[]> findById(@PathVariable Long imageId) {
         Optional<ItemImage> itemImage = itemImageRepository.findById(imageId);
-        if(itemImage.isPresent()){
+        if (itemImage.isPresent()) {
             MediaType mediaType = MediaType.parseMediaType(itemImage.get().getContentType());
             return ResponseEntity.ok()
                     .contentType(mediaType)
-                    .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
+                    .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
                     .body(itemImage.get().getImage());
-        }else{
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/item/{itemId}/first")
-    private ResponseEntity<byte[]> findFirstByItemId(@PathVariable Long itemId){
+    private ResponseEntity<byte[]> findFirstByItemId(@PathVariable Long itemId) {
         ItemImage itemImage = itemImageRepository.findFirstByItemIdOrderByDisplayOrderAsc(itemId);
-        if(itemImage != null){
+        if (itemImage != null) {
             MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
             return ResponseEntity.ok()
                     .contentType(mediaType)
-                    .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
+                    .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
                     .body(itemImage.getImage());
-        }else{
+        } else {
             return ResponseEntity.noContent().build();
         }
     }
 
     @GetMapping("/item/{itemId}")
-    private ResponseEntity<List<Long>> findByItemId(@PathVariable Long itemId){
+    private ResponseEntity<List<Long>> findByItemId(@PathVariable Long itemId) {
         List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
         List<Long> imageIds = itemImages.stream().map(ItemImage::getId).toList();
 
