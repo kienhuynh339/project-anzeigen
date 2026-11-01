@@ -12,7 +12,10 @@ export function useFetch(url, dependencies, initialData = null) {
     if (!url) return;
     setLoading(true);
     setError(false);
-    fetch(url)
+    fetch(url, {
+      method: "GET",
+      credentials: "include",
+    })
       .then((response) => {
         if (!response.ok) {
           throw Error(`Fehler beim Datenabruf: ${url}`);
