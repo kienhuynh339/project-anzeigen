@@ -52,32 +52,34 @@ export default function Navbar({
             {/* Login/Logout/Register */}
             {isAuthenticated ? (
               <>
-                <span>Willkommen, {user.profileName}</span>
-
-                <button onClick={handleLogout}>Abmelden</button>
+                <div className="text-white">Hallo {user.profileName}!</div>
+                <button
+                  type="button"
+                  className="btn btn-outline-light"
+                  onClick={() => navigate("/anzeige-erstellen")}
+                >
+                  <i className="bi bi-plus-circle"></i> Anzeige erstellen
+                </button>
+                <div className="ps-0 pe-1">
+                  <HamburgerMenu options={options} />
+                </div>
               </>
             ) : (
               <>
-                <button onClick={() => navigate("/login")}>Anmelden</button>
-
-                <button onClick={() => navigate("/register")}>
+                <button
+                  className="btn btn-outline-light"
+                  onClick={() => navigate("/login")}
+                >
+                  Anmelden
+                </button>
+                <button
+                  className="btn btn-outline-light"
+                  onClick={() => navigate("/register")}
+                >
                   Registrieren
                 </button>
               </>
             )}
-            {/* <div className="text-white">Hallo ...!</div> */}
-            <div>
-              <button
-                type="button"
-                className="btn btn-outline-light"
-                onClick={() => navigate("/anzeige-erstellen")}
-              >
-                <i className="bi bi-plus-circle"></i> Anzeige erstellen
-              </button>
-            </div>
-            <div className="ps-0 pe-1">
-              <HamburgerMenu options={options} />
-            </div>
           </div>
         </div>
       </div>
