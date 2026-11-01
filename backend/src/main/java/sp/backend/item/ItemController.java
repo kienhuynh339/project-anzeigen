@@ -17,7 +17,6 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/items")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ItemController {
 
     private final ItemService itemService;
@@ -28,7 +27,8 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     private ResponseEntity<ItemDto> findById(@PathVariable Long itemId, Authentication authentication) {
-        ItemDto item = itemService.findByItemId(itemId, authentication.getName());
+
+        ItemDto item = itemService.findByItemId(itemId, getLoggedInAccountName(authentication));
         if (item != null) {
             return ResponseEntity.ok(item);
         } else {
@@ -43,28 +43,28 @@ public class ItemController {
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
             @RequestParam(required = false) Integer locationId,
-            @RequestParam(required = false) Integer radiusKm, @RequestParam(required = false) Long loggedInUserId,
+            @RequestParam(required = false) Integer radiusKm, Authentication authentication,
             Pageable pageable) {
-        Page<ItemWithDistanceDto> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, loggedInUserId, pageable);
+        Page<ItemWithDistanceDto> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, getLoggedInAccountName(authentication), pageable);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/user/{userId}")
-    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, @RequestParam(required = false) Long loggedInUserId, Pageable pageable) {
-        Page<ItemDto> page = itemService.findByUserId(userId, loggedInUserId, pageable);
+    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Authentication authentication, Pageable pageable) {
+        Page<ItemDto> page = itemService.findByUserId(userId, getLoggedInAccountName(authentication), pageable);
         return ResponseEntity.ok(page);
     }
 
-    @GetMapping("/user/{userId}/favorites")
-    private ResponseEntity<Page<ItemDto>> findFavoriteItemsByUserId(@PathVariable Long userId, Pageable pageable) {
-        Page<ItemDto> page = itemService.findFavoriteItemsByUserId(userId, pageable);
+    @GetMapping("/user/favorites")
+    private ResponseEntity<Page<ItemDto>> findFavoriteItems(Authentication authentication, Pageable pageable) {
+        Page<ItemDto> page = itemService.findFavoriteItems(getLoggedInAccountName(authentication), pageable);
         return ResponseEntity.ok(page);
     }
 
     @DeleteMapping("/{itemId}")
-    private ResponseEntity<Void> markItemAsDeleted(@PathVariable Long itemId) {
+    private ResponseEntity<Void> markItemAsDeleted(@PathVariable Long itemId, Authentication authentication) {
         try {
-            itemService.markItemAsDeletedByItemId(itemId);
+            itemService.markItemAsDeletedByItemId(itemId, getLoggedInAccountName(authentication));
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -74,9 +74,9 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     private ResponseEntity<Void> updateItemStatus(
             @PathVariable Long itemId,
-            @RequestBody UpdateItemStatusRequest request) {
+            @RequestBody UpdateItemStatusRequest request, Authentication authentication) {
         try {
-            itemService.updateItemStatus(itemId, request.getStatus());
+            itemService.updateItemStatus(itemId, request.getStatus(), getLoggedInAccountName(authentication));
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -84,16 +84,22 @@ public class ItemController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb) {
-        Long itemId = itemService.createItem(request);
+    private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb, Authentication authentication) {
+        Long itemId = itemService.createItem(request, getLoggedInAccountName(authentication));
         URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
         return ResponseEntity.created(createdItemLocation).build();
     }
 
     @PutMapping(value = "/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, @RequestParam Long loggedInUserId) {
-        boolean result = itemService.updateItem(itemId, request, loggedInUserId);
+    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, Authentication authentication) {
+        boolean result = itemService.updateItem(itemId, request, getLoggedInAccountName(authentication));
         return ResponseEntity.noContent().build();
+    }
+
+    private String getLoggedInAccountName(Authentication authentication) {
+        return authentication != null
+                ? authentication.getName()
+                : "";
     }
 }
 
