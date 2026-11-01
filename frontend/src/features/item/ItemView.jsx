@@ -19,7 +19,7 @@ export default function ItemView() {
   const { itemId } = useParams();
 
   const { data: item } = useFetch(
-    `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`,
+    `http://localhost:8080/api/items/${itemId}`,
     [],
     {
       id: "",
