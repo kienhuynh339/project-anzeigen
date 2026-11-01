@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import ChatDeleteDialog from "../../components/ChatDeleteDialog";
-import { useAppContext } from "../../AppContext";
+import { useAppContext } from "../../contexts/AppContext";
 export default function ChatDeleteButton({
   userId,
   isChatDeleteActive,
