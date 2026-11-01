@@ -15,8 +15,10 @@ import { translateItemStatus } from "../../utils/translateItemStatus";
 import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
+import { useAuth } from "../../contexts/AuthContext";
 
-export default function ItemCard({ item, userId, itemCardType }) {
+export default function ItemCard({ item, itemCardType }) {
+  const { user } = useAuth();
   return (
     <>
       <Link
@@ -46,10 +48,10 @@ export default function ItemCard({ item, userId, itemCardType }) {
               }}
             />
             {/* Favorite-Knopf */}
-            {itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
+            {user && itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
               <ItemFavorButton
                 itemId={item.id}
-                userId={userId}
+                userId={user.id}
                 isFavorite={item.favorite}
                 className="top-0 end-0 m-1 rounded position-absolute btn"
                 style={{ backgroundColor: "#9d9d9db9" }}
@@ -116,7 +118,7 @@ export default function ItemCard({ item, userId, itemCardType }) {
                   <>
                     <FavoriteItemDeleteButton
                       itemId={item.id}
-                      userId={userId}
+                      userId={user.id}
                     ></FavoriteItemDeleteButton>
                     {item.status !== "DELETED" && (
                       <MessageButton item={item}></MessageButton>
