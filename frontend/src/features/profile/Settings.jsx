@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { userId } from "../../utils/userId";
 import SettingsDialog from "../../components/SettingsDialog";
-import { useAppContext } from "../../AppContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 export default function Settings() {
   const fields = [
@@ -27,11 +27,15 @@ export default function Settings() {
   ];
 
   const { openDialog } = useAppContext();
-  const { data: userData } = useFetch(
-    `http://localhost:8080/api/users/${userId}/private`,
-    [userId],
+  const { data: userData, loading } = useFetch(
+    `http://localhost:8080/api/users/me`,
+    [],
     { profileName: "", accountName: "" },
   );
+
+  // if (loading) {
+  //   return <p>Lade Einstellungen...</p>;
+  // }
 
   const handleDialogOpen = (field) => {
     const initialValue = userData[field.key];
