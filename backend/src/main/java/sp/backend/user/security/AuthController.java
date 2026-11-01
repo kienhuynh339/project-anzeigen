@@ -37,11 +37,6 @@ public class AuthController {
         this.securityContextRepository = securityContextRepository;
     }
 
-    @GetMapping("/csrf")
-    public Map<String, String> csrf(CsrfToken token) {
-        return Map.of("token", token.getToken());
-    }
-
     // REGISTRIEREN
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
