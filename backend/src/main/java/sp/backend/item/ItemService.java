@@ -6,6 +6,7 @@ package sp.backend.item;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,8 +39,10 @@ public class ItemService {
         this.itemImageRepository = itemImageRepository;
     }
 
-    public ItemDto findByItemId(Long itemId, Long loggedInUserId){
-        return itemRepository.findItemById(itemId,loggedInUserId);
+    public ItemDto findByItemId(Long itemId, String loggedInAccountName) {
+        User user = userRepository.findByAccountName(loggedInAccountName).orElse(null);
+        Long loggedInUserId = user != null ? user.getId() : null;
+        return itemRepository.findItemById(itemId, loggedInUserId);
     }
 
     public Page<ItemWithDistanceDto> search(
@@ -48,7 +51,7 @@ public class ItemService {
             Integer minPrice,
             Integer maxPrice,
             Integer locationId,
-            Integer radiusKm, Long loggedInUserId,
+            Integer radiusKm, String loggedInAccountName,
             Pageable pageable) {
 
         Float latitude = null;
@@ -60,52 +63,63 @@ public class ItemService {
                 longtitude = location.get().getLaenge();
             }
         }
-        return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm,loggedInUserId, pageable);
+        User user = userRepository.findByAccountName(loggedInAccountName).orElse(null);
+        Long loggedInUserId = user != null ? user.getId() : null;
+        return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, loggedInUserId, pageable);
     }
 
-    public Page<ItemDto> findByUserId(Long userId, Long loggedInUserId, Pageable pageable){
-        return itemRepository.findByUserId(userId, loggedInUserId,pageable);
+    public Page<ItemDto> findByUserId(Long userId, String loggedInAccountName, Pageable pageable) {
+        User user = userRepository.findByAccountName(loggedInAccountName).orElse(null);
+        Long loggedInUserId = user != null ? user.getId() : null;
+        return itemRepository.findByUserId(userId, loggedInUserId, pageable);
     }
 
-    public Page<ItemDto> findFavoriteItemsByUserId(Long userId, Pageable pageable){
-        return itemRepository.findFavoriteItemsByUserId(userId, pageable);
+    public Page<ItemDto> findFavoriteItems(String loggedInAccountName, Pageable pageable) {
+        User user = userRepository.findByAccountName(loggedInAccountName).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return itemRepository.findFavoriteItemsByUserId(user.getId(), pageable);
     }
 
     @Transactional
-    public void markItemAsDeletedByItemId(Long itemId){
-        Item item = itemRepository.findById(itemId).orElseThrow(()->new EntityNotFoundException("Item not found: "+itemId));
+    public void markItemAsDeletedByItemId(Long itemId, String loggedInAccountName) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found: " + itemId));
+        if (!item.getPoster().getAccountName().equals(loggedInAccountName)) {
+            throw new AccessDeniedException("Only the owner is allowed to edit this item");
+        }
         item.setStatus(ItemStatus.DELETED);
         itemRepository.save(item);
     }
 
     @Transactional
-    public void updateItemStatus(Long itemId, ItemStatus itemStatus){
-        Item item = itemRepository.findById(itemId).orElseThrow(()->new EntityNotFoundException("Item not found: "+itemId));
+    public void updateItemStatus(Long itemId, ItemStatus itemStatus, String loggedInAccountName) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found: " + itemId));
+        if (!item.getPoster().getAccountName().equals(loggedInAccountName)) {
+            throw new AccessDeniedException("Only the owner is allowed to edit this item");
+        }
         item.setStatus(itemStatus);
         itemRepository.save(item);
     }
 
     @Transactional
-    public Long createItem(CreateItemRequest request){
-        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(()->new EntityNotFoundException("Category not found: "+request.getCategoryId()));
-        User poster = userRepository.findById(request.getPosterId()).orElseThrow(()->new EntityNotFoundException("User not found: "+request.getPosterId()));
-        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(()->new EntityNotFoundException("Location not found: "+request.getLocationId()));
+    public Long createItem(CreateItemRequest request, String loggedInAccountName) {
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found: " + request.getCategoryId()));
+        User poster = userRepository.findByAccountName(loggedInAccountName).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() -> new EntityNotFoundException("Location not found: " + request.getLocationId()));
 
-        Item item = new Item(poster,request.getTitle(),category,request.getDescription(),request.getPrice(),location,request.getPostcode(),request.getLocationExtraInfo(),request.getStatus());
+        Item item = new Item(poster, request.getTitle(), category, request.getDescription(), request.getPrice(), location, request.getPostcode(), request.getLocationExtraInfo(), request.getStatus());
         itemRepository.save(item);
 
-        if(request.getImages()!=null){
+        if (request.getImages() != null) {
             short order = 0;
 
-            for(MultipartFile file : request.getImages()){
-                if(file == null || file.isEmpty()){
+            for (MultipartFile file : request.getImages()) {
+                if (file == null || file.isEmpty()) {
                     continue;
                 }
-                try{
-                    ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), item.getId(),order++);
+                try {
+                    ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), item.getId(), order++);
                     itemImageRepository.save(itemImage);
-                }catch (IOException e){
-                    throw new RuntimeException("Error saving image",e);
+                } catch (IOException e) {
+                    throw new RuntimeException("Error saving image", e);
                 }
 
             }
@@ -114,18 +128,18 @@ public class ItemService {
     }
 
     @Transactional
-    public boolean updateItem(Long itemId,UpdateItemRequest request, Long loggedInUserId){
-        Item item = itemRepository.findById(itemId).orElseThrow(()->new EntityNotFoundException("Item not found: "+itemId));
+    public boolean updateItem(Long itemId, UpdateItemRequest request, String loggedInAccountName) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found: " + itemId));
         // Gelöschte Item darf nicht modifiziert werden
-        if(item.getStatus()==ItemStatus.DELETED){
-            throw new IllegalStateException("Deleted item cannot be modified: "+itemId);
+        if (item.getStatus() == ItemStatus.DELETED) {
+            throw new IllegalStateException("Deleted item cannot be modified: " + itemId);
         }
         // Ist der User wirklich der Poster der Anzeige
-        if(!loggedInUserId.equals(item.getPoster().getId())){
-            throw new EntityNotFoundException("Item not found: "+itemId);
+        if (!loggedInAccountName.equals(item.getPoster().getAccountName())) {
+            throw new AccessDeniedException("Only the owner is allowed to edit this item");
         }
-        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(()->new EntityNotFoundException("Category not found: "+request.getCategoryId()));
-        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(()->new EntityNotFoundException("Location not found: "+ request.getLocationId()));
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found: " + request.getCategoryId()));
+        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() -> new EntityNotFoundException("Location not found: " + request.getLocationId()));
         // Lösche alle Bilder der Anzeige in der DB
         List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
         itemImages.forEach(itemImageRepository::delete);
@@ -143,17 +157,17 @@ public class ItemService {
         itemRepository.save(item);
 
         // Bilder speichern
-        if(request.getImages() != null){
+        if (request.getImages() != null) {
             short order = 0;
-            for(MultipartFile file : request.getImages()){
-                if(file == null || file.isEmpty()){
+            for (MultipartFile file : request.getImages()) {
+                if (file == null || file.isEmpty()) {
                     continue;
                 }
-                try{
-                    ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), item.getId(),order++);
+                try {
+                    ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), item.getId(), order++);
                     itemImageRepository.save(itemImage);
-                }catch(IOException e){
-                    throw new RuntimeException("Error saving images",e);
+                } catch (IOException e) {
+                    throw new RuntimeException("Error saving images", e);
                 }
             }
         }
