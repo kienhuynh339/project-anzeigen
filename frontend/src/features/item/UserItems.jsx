@@ -7,14 +7,15 @@ import { useParams } from "react-router";
 import { useFetch } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useEffect } from "react";
-import { userId } from "../../utils/userId";
 import { itemCardTypes } from "./itemCardTypes";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function UserItems() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   // ItemList-Props
   const { otherUserId } = useParams();
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${otherUserId}?loggedInUserId=${userId}&`;
+  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${otherUserId}?`;
   const PAGE_SIZE = 9999;
   const additionalContentWhenItemAmountIsZero = (
     <div className="d-flex flex-column gap-2">
@@ -22,17 +23,19 @@ export default function UserItems() {
     </div>
   );
   // Daten des anderen Users
-  const otherUser = useFetch(`http://localhost:8080/api/users/${otherUserId}`, [
-    otherUserId,
-  ]) ?? { profileName: "", createdAt: "" };
+  const { data: otherUser } = useFetch(
+    `http://localhost:8080/api/users/${otherUserId}`,
+    [otherUserId],
+    { profileName: "", createdAt: "" },
+  );
 
   // "/meine-anzeigen" aufrufen statt "user/:userId", wenn otherUser = user
   useEffect(() => {
-    if (String(otherUserId) == String(userId)) {
+    if (String(otherUserId) == String(user?.id)) {
       navigate("/meine-anzeigen", { replace: true });
     }
-  }, [otherUserId, userId]);
-  if (String(otherUserId) === String(userId)) {
+  }, [otherUserId, user]);
+  if (String(otherUserId) === String(user?.id)) {
     return null;
   }
 
@@ -40,7 +43,7 @@ export default function UserItems() {
     <>
       <div className="d-flex justify-content-center align-items-center gap-2 border-bottom border-dark-subtle">
         <img
-          src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser.profileName.charAt(0)}`}
+          src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser?.profileName?.charAt(0)}`}
           className="rounded-circle my-2"
           width="50"
           height="50"
@@ -59,7 +62,6 @@ export default function UserItems() {
         additionalContentWhenItemAmountIsZero={
           additionalContentWhenItemAmountIsZero
         }
-        userId={userId}
         itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
       ></ItemList>
     </>
