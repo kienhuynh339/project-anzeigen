@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useAppContext } from "../AppContext";
+import { useAppContext } from "../contexts/AppContext";
 import MessageInputDialog from "./MessageInputDialog";
 export default function MessageButton({ item }) {
   const { openDialog } = useAppContext();
