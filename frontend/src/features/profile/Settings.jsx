@@ -3,7 +3,6 @@
  */
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
-import { userId } from "../../utils/userId";
 import SettingsDialog from "../../components/SettingsDialog";
 import { useAppContext } from "../../contexts/AppContext";
 
