@@ -1,4 +1,5 @@
 package sp.backend.item;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -7,7 +8,6 @@ public class CreateItemRequest {
     private String title;
     private Short categoryId;
     private String description;
-    private Long posterId;
     private Integer locationId;
     private String postcode;
     private String locationExtraInfo;
@@ -37,14 +37,6 @@ public class CreateItemRequest {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getPosterId() {
-        return posterId;
-    }
-
-    public void setPosterId(Long posterId) {
-        this.posterId = posterId;
     }
 
     public Integer getLocationId() {
