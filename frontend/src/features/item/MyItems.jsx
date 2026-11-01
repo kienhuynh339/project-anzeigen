@@ -3,14 +3,14 @@
  */
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
-
-import { userId } from "../../utils/userId";
 import { itemCardTypes } from "./itemCardTypes";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function MyItems() {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${userId}?loggedInUserId=${userId}&`;
+  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${user.id}&`;
   const PAGE_SIZE = 9999;
   const title = "Meine Anzeigen";
   const additionalContentWhenItemAmountIsZero = (
@@ -34,7 +34,6 @@ export default function MyItems() {
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
-      userId={userId}
       itemCardType={itemCardTypes.MY_ITEM}
     ></ItemList>
   );
