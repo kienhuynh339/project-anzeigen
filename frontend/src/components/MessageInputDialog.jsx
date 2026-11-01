@@ -4,7 +4,6 @@
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
 import { createMessage } from "../utils/createMessage";
-import { userId } from "../utils/userId";
 export default function MessageInputDialog({ item, closeDialog }) {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
