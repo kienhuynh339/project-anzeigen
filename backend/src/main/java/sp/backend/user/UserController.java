@@ -2,6 +2,7 @@ package sp.backend.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,24 +16,19 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    private ResponseEntity<UserPublicDto> findPublicById(@PathVariable Long userId){
-        try{
+    private ResponseEntity<UserPublicDto> findPublicById(@PathVariable Long userId) {
+        try {
             UserPublicDto user = userService.findPublicById(userId);
             return ResponseEntity.ok(user);
-        }catch(EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @GetMapping("/{userId}/private")
-    private ResponseEntity<UserPrivateDto> findPrivateById(@PathVariable Long userId){
-        try{
-            UserPrivateDto user = userService.findPrivateById(userId);
-            return ResponseEntity.ok(user);
-        }catch(EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/me")
+    public ResponseEntity<UserPrivateDto> getCurrentUser(Authentication authentication) {
+        User user = userService.findByAccountName(authentication.getName());
+
+        return ResponseEntity.ok(new UserPrivateDto(user));
     }
-
-
 }
