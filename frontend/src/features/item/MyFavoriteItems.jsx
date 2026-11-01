@@ -4,16 +4,17 @@
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 import { initialSearchFilters } from "../../utils/initialSearchFilters";
-import { userId } from "../../utils/userId";
 import { itemCardTypes } from "./itemCardTypes";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function MyFavoriteItems({ setSearchFilters }) {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const handleSearchFiltersReset = () => {
     setSearchFilters(initialSearchFilters);
   };
 
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${userId}/favorites?`;
+  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/favorites?`;
   const PAGE_SIZE = 9999;
   const title = "Meine Merkliste";
   const additionalContentWhenItemAmountIsZero = (
@@ -40,7 +41,6 @@ export default function MyFavoriteItems({ setSearchFilters }) {
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
-      userId={userId}
       itemCardType={itemCardTypes.MY_FAVORITE_ITEM}
     ></ItemList>
   );
