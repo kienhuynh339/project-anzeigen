@@ -2,7 +2,6 @@
  * @author Trung Kien Huynh
  */
 import { useState } from "react";
-import { userId } from "../../utils/userId";
 import { createItemFormData } from "../../utils/createItemFormData";
 import { createItemRequest } from "../../utils/createItemRequest";
 import ItemForm from "./ItemForm";
