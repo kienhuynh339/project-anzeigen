@@ -1,6 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
+import { itemCardTypes } from "./itemCardTypes";
 import ItemList from "./ItemList";
 
 export default function AllItems({ searchFilters, searchTrigger }) {
@@ -22,6 +23,7 @@ export default function AllItems({ searchFilters, searchTrigger }) {
       additionalDependencies={[searchTrigger]}
       pageSize={10}
       showItemAmount={true}
+      itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
     ></ItemList>
   );
 }
