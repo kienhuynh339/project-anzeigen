@@ -9,5 +9,8 @@ import java.util.List;
 
 public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
     ItemImage findFirstByItemIdOrderByDisplayOrderAsc(Long itemId);
+
     List<ItemImage> findByItemIdOrderByDisplayOrderAsc(Long itemId);
+
+    void deleteAllByItemId(Long itemId);
 }
