@@ -4,20 +4,21 @@
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
 import { deleteRequest } from "../utils/deleteRequest";
+import { useAuth } from "../contexts/AuthContext";
 export default function ChatDeleteDialog({
   setIsChatDeleteActive,
   setDeleteList,
   deleteList,
-  userId,
   closeDialog,
 }) {
+  const { user } = useAuth();
   const [isChatDeleting, setIsChatDeleting] = useState(false);
   const handleChatDelete = async () => {
     setIsChatDeleting(true);
     await Promise.all(
       deleteList.map((chatId) =>
         deleteRequest(
-          `http://localhost:8080/api/chats/${chatId}/user/${userId}`,
+          `http://localhost:8080/api/chats/${chatId}/user/${user.id}`,
         ).catch((error) => {
           console.log(error);
         }),
