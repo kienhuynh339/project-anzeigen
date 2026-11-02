@@ -10,7 +10,7 @@ export default function MyItems() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${user.id}&`;
+  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${user.id}?`;
   const PAGE_SIZE = 9999;
   const title = "Meine Anzeigen";
   const additionalContentWhenItemAmountIsZero = (
