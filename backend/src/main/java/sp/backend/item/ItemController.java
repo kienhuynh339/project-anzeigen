@@ -15,6 +15,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+
+
 @RestController
 @RequestMapping("/api/items")
 public class ItemController {
@@ -28,7 +30,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     private ResponseEntity<ItemDto> findById(@PathVariable Long itemId, Authentication authentication) {
 
-        ItemDto item = itemService.findByItemId(itemId, getLoggedInAccountName(authentication));
+        ItemDto item = itemService.findByItemId(itemId, authentication);
         if (item != null) {
             return ResponseEntity.ok(item);
         } else {
@@ -45,26 +47,26 @@ public class ItemController {
             @RequestParam(required = false) Integer locationId,
             @RequestParam(required = false) Integer radiusKm, Authentication authentication,
             Pageable pageable) {
-        Page<ItemWithDistanceDto> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, getLoggedInAccountName(authentication), pageable);
+        Page<ItemWithDistanceDto> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/user/{userId}")
     private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Authentication authentication, Pageable pageable) {
-        Page<ItemDto> page = itemService.findByUserId(userId, getLoggedInAccountName(authentication), pageable);
+        Page<ItemDto> page = itemService.findByUserId(userId, authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/user/favorites")
     private ResponseEntity<Page<ItemDto>> findFavoriteItems(Authentication authentication, Pageable pageable) {
-        Page<ItemDto> page = itemService.findFavoriteItems(getLoggedInAccountName(authentication), pageable);
+        Page<ItemDto> page = itemService.findFavoriteItems(authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
     @DeleteMapping("/{itemId}")
     private ResponseEntity<Void> markItemAsDeleted(@PathVariable Long itemId, Authentication authentication) {
         try {
-            itemService.markItemAsDeletedByItemId(itemId, getLoggedInAccountName(authentication));
+            itemService.markItemAsDeletedByItemId(itemId, authentication);
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -76,7 +78,7 @@ public class ItemController {
             @PathVariable Long itemId,
             @RequestBody UpdateItemStatusRequest request, Authentication authentication) {
         try {
-            itemService.updateItemStatus(itemId, request.getStatus(), getLoggedInAccountName(authentication));
+            itemService.updateItemStatus(itemId, request.getStatus(), authentication);
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -85,22 +87,18 @@ public class ItemController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb, Authentication authentication) {
-        Long itemId = itemService.createItem(request, getLoggedInAccountName(authentication));
+        Long itemId = itemService.createItem(request, authentication);
         URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
         return ResponseEntity.created(createdItemLocation).build();
     }
 
     @PutMapping(value = "/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, Authentication authentication) {
-        boolean result = itemService.updateItem(itemId, request, getLoggedInAccountName(authentication));
+        boolean result = itemService.updateItem(itemId, request, authentication);
         return ResponseEntity.noContent().build();
     }
 
-    private String getLoggedInAccountName(Authentication authentication) {
-        return authentication != null
-                ? authentication.getName()
-                : "";
-    }
+
 }
 
 
