@@ -44,7 +44,7 @@ public class MessageService {
         Message message = messageRepository.findById(messageId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND.getMessage()));
         checkIfUserIsParticipantOfChat(message.getChat().getId(), authentication, chatRepository, userRepository);
-        return messageRepository.findByMessageId(messageId);
+        return new MessageDto(message);
     }
 
     public Page<MessageDto> findByChatId(Long chatId, Authentication authentication, Pageable pageable) {
@@ -82,32 +82,23 @@ public class MessageService {
 
     @Transactional
     public Message createMessage(CreateMessageRequest request, Authentication authentication) {
+        User messageSender = getLoggedInUser(authentication, userRepository, true);
+
         Item item = itemRepository.findById(request.getItemId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
 
-        User poster = item.getPoster();
-
+        User itemPoster = item.getPoster();
         User interestedUser = userRepository.findById(request.getInterestedUserId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
-        User sender;
-        if (poster.getId().equals(request.getSenderId())) {
-            sender = poster;
-        } else if (interestedUser.getId().equals(request.getSenderId())) {
-            sender = interestedUser;
-        } else {
-            throw new IllegalArgumentException("Invalid senderId");
-        }
 
-        // Chat suchen
         Chat chat = chatRepository.findByItem_IdAndInterestedUser_Id(item.getId(), interestedUser.getId()).orElseGet(() -> {
             // Chat existiert nicht. Neu erstellen
-            Chat newChat = new Chat(item, poster, interestedUser, null);
+            Chat newChat = new Chat(item, itemPoster, interestedUser, null);
             return chatRepository.save(newChat);
         });
 
-        // Message erstellen
-        Message message = new Message(chat, sender, request.getContent(), false);
+        Message message = new Message(chat, messageSender, request.getContent(), false);
 
         return messageRepository.save(message);
     }
