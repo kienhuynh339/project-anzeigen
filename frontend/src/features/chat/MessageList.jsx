@@ -12,7 +12,7 @@ export default function MessageList({
   otherUser,
   messagesUpdateTrigger,
 }) {
-  const messagePage = useFetch(
+  const { data: messagePage } = useFetch(
     `http://localhost:8080/api/messages/chat/${chatId}?page=0&size=200&sort=createdAt,asc`,
     [chatId, messagesUpdateTrigger],
   );
