@@ -5,7 +5,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
-import sp.backend.utils.Utils;
+import sp.backend.utils.Utils.ExceptionMessage;
 
 import static sp.backend.utils.Utils.getLoggedInUser;
 
@@ -19,13 +19,14 @@ public class ChatWithUser {
     }
 
     public static ChatWithUser checkIfUserIsParticipantOfChat(Long chatId, Authentication authentication, ChatRepository chatRepository, UserRepository userRepository) {
-        Chat chat = chatRepository.findById(chatId).orElseThrow(() ->
-                new EntityNotFoundException(Utils.ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+        User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
-        User loggedInUser = getLoggedInUser(authentication, userRepository);
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+
         // Prüfe, ob der User Teilnehmer des Chats ist.
         if (!chat.isParticipant(loggedInUser)) {
-            throw new AccessDeniedException(Utils.ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
         }
         return new ChatWithUser(chat, loggedInUser);
     }
