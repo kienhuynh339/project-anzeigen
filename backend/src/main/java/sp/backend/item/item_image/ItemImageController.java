@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/images")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ItemImageController {
     private final ItemImageRepository itemImageRepository;
 
