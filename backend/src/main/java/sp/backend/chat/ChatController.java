@@ -6,11 +6,11 @@ package sp.backend.chat;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/chats")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ChatController {
     private final ChatService chatService;
 
@@ -19,14 +19,14 @@ public class ChatController {
     }
 
     @GetMapping
-    private ResponseEntity<Page<ChatDto>> findByUserId(@RequestParam Long userId, Pageable pageable){
-        Page<ChatDto> page = chatService.findByUserId(userId, pageable);
+    private ResponseEntity<Page<ChatDto>> findByUser(Authentication authentication, Pageable pageable) {
+        Page<ChatDto> page = chatService.findByUser(authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
-    @DeleteMapping("/{chatId}/user/{userId}")
-    private ResponseEntity<Void> deleteChat(@PathVariable Long chatId, @PathVariable Long userId){
-        chatService.deleteChat(chatId, userId);
+    @DeleteMapping("/{chatId}")
+    private ResponseEntity<Void> deleteChat(@PathVariable Long chatId, Authentication authentication) {
+        chatService.deleteChat(chatId, authentication);
         return ResponseEntity.noContent().build();
     }
 
