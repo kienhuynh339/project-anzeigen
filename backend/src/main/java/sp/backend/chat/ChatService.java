@@ -6,6 +6,7 @@ package sp.backend.chat;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sp.backend.chat.message.Message;
@@ -13,6 +14,11 @@ import sp.backend.chat.message.MessageDto;
 import sp.backend.chat.message.MessageRepository;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
+import sp.backend.utils.Utils.ExceptionMessage;
+
+import static sp.backend.chat.ChatWithUser.checkIfUserIsParticipantOfChat;
+import static sp.backend.utils.Utils.getLoggedInUser;
+import static sp.backend.utils.Utils.getLoggedInUserId;
 
 import java.util.Optional;
 
@@ -28,30 +34,36 @@ public class ChatService {
         this.userRepository = userRepository;
     }
 
+    public Page<ChatDto> findByUser(Authentication authentication, Pageable pageable) {
+        Long userId = getLoggedInUserId(authentication, userRepository, true);
 
-    public Page<ChatDto> findByUserId(Long userId, Pageable pageable){
         Page<ChatDto> chats = chatRepository.findByUserId(userId, pageable);
-        chats.stream().forEach((chat)->{
-            Optional<Message> messageOptional = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chat.getId());
-            if(messageOptional.isPresent()){
-                chat.setLastMessage(new MessageDto(messageOptional.get()));
-            }
+        // Füge jedem Chat die letzte Nachricht hinzu
+        chats.stream().forEach((chat) -> {
+            Message lastMessage = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chat.getId()).orElseThrow(() ->
+                    new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND.getMessage()));
+            chat.setLastMessage(new MessageDto(lastMessage));
         });
         return chats;
     }
 
     @Transactional
-    public void deleteChat(Long chatId, Long userId){
-        Chat chat = chatRepository.findById(chatId).orElseThrow(()->new EntityNotFoundException("Chat not found: "+chatId));
+    public void deleteChat(Long chatId, Authentication authentication) {
+        ChatWithUser chatWithUser = checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
+        Chat chat = chatWithUser.getChat();
+
+        User loggedInUser = chatWithUser.getUser();
         User firstDeletedByUser = chat.getFirstDeletedByUser();
 
-        if(firstDeletedByUser == null){
-            User user = userRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("User not found: "+userId));
-            chat.setFirstDeletedByUser(user);
+        // Setze Chat.firstDeletedByUser auf loggedInUser, wenn firstDeletedByUser null ist
+        if (firstDeletedByUser == null) {
+            chat.setFirstDeletedByUser(loggedInUser);
             chatRepository.save(chat);
             return;
         }
 
+        // Chat wurde bereits vom anderen Teilnehmer als gelöscht markiert (durch firstDeletedByUser)
+        // -> Chat und zugehörige Nachrichten löschen
         messageRepository.deleteByChat_Id(chatId);
         chatRepository.delete(chat);
     }
