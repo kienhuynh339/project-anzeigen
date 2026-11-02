@@ -44,12 +44,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Authentifizierung
                         .requestMatchers("/api/auth/**")
                         .permitAll()
-                        //
+                        // Angemeldeter Nutzer
                         .requestMatchers("/api/users/me")
                         .authenticated()
-                        // Items: öffentlich zugänglich
+                        // GET items
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/items",
@@ -57,8 +58,11 @@ public class SecurityConfig {
                                 "/api/items/user/*"
                         )
                         .permitAll()
-                        // Alle anderen Item-Endpunkte benötigen Authentifizierung
+                        // Alle anderen items-Anfragen
                         .requestMatchers("/api/items/**")
+                        .authenticated()
+                        // messages
+                        .requestMatchers("/api/messages/**")
                         .authenticated()
                         //
                         .anyRequest().permitAll()
