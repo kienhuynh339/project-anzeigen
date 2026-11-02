@@ -3,7 +3,6 @@
  */
 import { useFetch } from "../../hooks/useFetch";
 import MessageList from "./MessageList";
-import { truncateText } from "../../utils/truncatetext";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 import ChatListItem from "./ChatListItem";
@@ -55,7 +54,7 @@ export default function ChatView() {
   const [messagesUpdateTrigger, setMessagesUpdateTrigger] = useState(false);
   const [isMessageInputActive, setIsMessageInputActive] = useState(false);
 
-  const chatPage = useFetch(
+  const { data: chatPage } = useFetch(
     `http://localhost:8080/api/chats?userId=${user.id}`,
     [user, chatsUpdateTrigger],
   );
