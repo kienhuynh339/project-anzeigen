@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sp.backend.user.security.RegisterRequest;
+import sp.backend.utils.Utils.ExceptionMessage;
 
 @Service
 public class UserService {
@@ -19,15 +20,20 @@ public class UserService {
     }
 
     public UserPublicDto findPublicById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         return new UserPublicDto(user);
     }
 
     public User register(RegisterRequest request) {
         if (userRepository.existsByAccountName(request.getAccountName())) {
-            throw new IllegalArgumentException("Account name already exists");
+            throw new IllegalArgumentException(ExceptionMessage.ACCOUNT_NAME_ALREADY_EXISTS.getMessage());
         }
 
+        if (request.getPassword().trim().length() < 6) {
+            throw new IllegalArgumentException((ExceptionMessage.PASSWORD_TOO_SHORT.getMessage()));
+        }
+        
         User user = new User();
         user.setProfileName(request.getProfileName());
         user.setAccountName(request.getAccountName());
@@ -37,8 +43,8 @@ public class UserService {
     }
 
     public User findByAccountName(String accountName) {
-        return userRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return userRepository.findByAccountName(accountName).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
     }
 
 }
