@@ -79,7 +79,7 @@ public class AuthController {
         } catch (AuthenticationException e) {
             SecurityContextHolder.clearContext();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Invalid account name or password"));
+                    .body(Map.of("message", "Benutzername oder Passwort ist falsch."));
         }
     }
 
