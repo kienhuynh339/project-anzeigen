@@ -7,6 +7,7 @@ package sp.backend.chat.message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,26 +23,26 @@ public class MessageController {
     }
 
     @GetMapping("/{messageId}")
-    private ResponseEntity<MessageDto> findByMessageId(@PathVariable Long messageId){
-        MessageDto messageDto = messageService.findByMessageId(messageId);
+    private ResponseEntity<MessageDto> findByMessageId(@PathVariable Long messageId, Authentication authentication){
+        MessageDto messageDto = messageService.findByMessageId(messageId, authentication);
         return ResponseEntity.ok(messageDto);
     }
 
     @GetMapping("/chat/{chatId}")
-    private ResponseEntity<Page<MessageDto>> findByChatId(@PathVariable Long chatId, Pageable pageable){
-        Page<MessageDto> page = messageService.findByChatId(chatId, pageable);
+    private ResponseEntity<Page<MessageDto>> findByChatId(@PathVariable Long chatId, Pageable pageable, Authentication authentication){
+        Page<MessageDto> page = messageService.findByChatId(chatId,authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
-    @PatchMapping("/chat/{chatId}/sender/{senderId}")
-    private ResponseEntity<Void> markMessagesAsRead(@PathVariable Long chatId, @PathVariable Long senderId){
-        messageService.markMessagesAsReadByChat_IdAndSender_Id(chatId, senderId);
+    @PatchMapping("/chat/{chatId}")
+    private ResponseEntity<Void> markMessagesAsRead(@PathVariable Long chatId, Authentication authentication){
+        messageService.markMessagesAsReadByChat_IdAndSender_Id(chatId, authentication);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping
-    private ResponseEntity<Void>createMessage(@RequestBody CreateMessageRequest createMessageRequest, UriComponentsBuilder ucb){
-        Message message = messageService.createMessage(createMessageRequest);
+    private ResponseEntity<Void>createMessage(@RequestBody CreateMessageRequest createMessageRequest, UriComponentsBuilder ucb, Authentication authentication){
+        Message message = messageService.createMessage(createMessageRequest,authentication);
         URI locationOfNewMessage = ucb.path("/{messageId}").buildAndExpand(message.getId()).toUri();
         return ResponseEntity.created(locationOfNewMessage).build();
     }
