@@ -6,7 +6,6 @@ package sp.backend.chat.message;
 public class CreateMessageRequest {
     private Long itemId;
     private Long interestedUserId;
-    private Long senderId;
     private String content;
 
     public Long getItemId() {
@@ -23,14 +22,6 @@ public class CreateMessageRequest {
 
     public void setInterestedUserId(Long interestedUserId) {
         this.interestedUserId = interestedUserId;
-    }
-
-    public Long getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
     }
 
     public String getContent() {
