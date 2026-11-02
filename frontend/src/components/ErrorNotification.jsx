@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 export default function ErrorNotification({ description }) {
   return (
     <div className="bg-success d-flex flex-column flex-grow-1">
