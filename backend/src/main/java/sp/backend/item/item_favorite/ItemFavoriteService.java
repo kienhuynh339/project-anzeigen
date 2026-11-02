@@ -1,12 +1,20 @@
 package sp.backend.item.item_favorite;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
+import sp.backend.utils.Utils.ExceptionMessage;
+
+import java.util.Optional;
+
+import static sp.backend.utils.Utils.getLoggedInUser;
+import static sp.backend.utils.Utils.getLoggedInUserId;
 
 @Service
 public class ItemFavoriteService {
@@ -20,23 +28,42 @@ public class ItemFavoriteService {
         this.itemRepository = itemRepository;
     }
 
+    public ItemFavoriteDto findById(Long itemFavoriteId, Authentication authentication) {
+        User loggedInUser = getLoggedInUser(authentication, userRepository, true);
+
+        ItemFavorite itemFavorite = itemFavoriteRepository.findById(itemFavoriteId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND.getMessage()));
+
+        if (!itemFavorite.getUser().equals(loggedInUser)) {
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+        }
+
+        return new ItemFavoriteDto(itemFavorite.getItem().getId());
+    }
+
     @Transactional
-    public ItemFavorite createItemFavorite(Long userId, Long itemId){
-        User user = userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException("User not found: "+userId));
-        Item item = itemRepository.findById(itemId).orElseThrow(()->new EntityNotFoundException("Item not found: "+itemId));
-        ItemFavorite itemFavorite = new ItemFavorite(user,item);
+    public ItemFavorite createItemFavorite(Long itemId, Authentication authentication) {
+        User user = getLoggedInUser(authentication, userRepository, true);
+
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+
+        Optional<ItemFavorite> itemFavoriteOptional = itemFavoriteRepository.findByUser_IdAndItem_Id(user.getId(), item.getId());
+        if (itemFavoriteOptional.isPresent()) {
+            throw new IllegalArgumentException(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS.getMessage());
+        }
+
+        ItemFavorite itemFavorite = new ItemFavorite(user, item);
         return itemFavoriteRepository.save(itemFavorite);
     }
 
     @Transactional
-    public void deleteItemFavorite(Long userId, Long itemId){
-        ItemFavorite itemFavorite = itemFavoriteRepository.findByUser_IdAndItem_Id(userId, itemId).orElseThrow(()->new EntityNotFoundException("ItemFavorite not found"));
-        itemFavoriteRepository.delete(itemFavorite);
-    }
+    public void deleteItemFavorite(Long itemId, Authentication authentication) {
+        Long userId = getLoggedInUserId(authentication, userRepository, true);
 
-    public ItemFavoriteDto findById(Long itemFavoriteId){
-        ItemFavorite itemFavorite = itemFavoriteRepository.findById(itemFavoriteId).orElseThrow(()->new EntityNotFoundException("ItemFavorite not found: "+itemFavoriteId));
-        ItemFavoriteDto itemFavoriteDto = new ItemFavoriteDto(itemFavorite.getId(),itemFavorite.getUser().getId(),itemFavorite.getItem().getId());
-        return itemFavoriteDto;
+        ItemFavorite itemFavorite = itemFavoriteRepository.findByUser_IdAndItem_Id(userId, itemId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND.getMessage()));
+        
+        itemFavoriteRepository.delete(itemFavorite);
     }
 }
