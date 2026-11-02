@@ -16,20 +16,16 @@ export default function Navbar({
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
   const options = [
-    { option: "Meine Anzeigen", link: "/meine-anzeigen" },
-    { option: "Nachrichten", link: "/nachrichten" },
-    { option: "Merkliste", link: "/meine-merkliste" },
-    { option: "Einstellungen", link: "/einstellungen" },
-    { option: "Abmelden", link: "#" },
+    { label: "Meine Anzeigen", action: () => navigate("/meine-anzeigen") },
+    { label: "Nachrichten", action: () => navigate("/nachrichten") },
+    { label: "Merkliste", action: () => navigate("/meine-merkliste") },
+    { label: "Einstellungen", action: () => navigate("/einstellungen") },
+    { label: "Abmelden", action: handleLogout },
   ];
 
   async function handleLogout() {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      console.error(error);
-    }
+    await logout();
+    navigate("/login");
   }
 
   const handleLogoClick = () => {
