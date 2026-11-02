@@ -64,7 +64,9 @@ public class SecurityConfig {
                         // messages
                         .requestMatchers("/api/messages/**")
                         .authenticated()
-                        //
+                        // favorites
+                        .requestMatchers("/api/item-favorites/**")
+                        .authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
