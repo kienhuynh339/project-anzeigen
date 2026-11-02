@@ -1,9 +1,9 @@
 -- Damit Default-Werte verwendet werden, müssen andere Spalten explizit angegeben werden
 INSERT INTO users (id, profile_name, account_name, password_hash, created_at)
-VALUES (1, 'Samwise', 'samwise', '123456789', '2020-01-01 01:01:00+02:00'),
-       (2, 'Merry', 'merryy', '234567890', '2022-02-02 02:02:00+02:00'),
-       (3, 'Pippin', 'pippin', '3456789012', '2024-04-04 04:04:00+02:00'),
-       (4, 'Frodo', 'frodoo', '1212121212', '2025-05-05 05:05:00+02:00');
+VALUES (1, 'Samwise', 'samwise', '$2a$10$s8YJDZ5VN/c8A8ULp0g/heEdyuKG9GvlGS8XxGzrHm.KxagWyruiS', '2020-01-01 01:01:00+02:00'),
+       (2, 'Merry', 'merryy', '$2a$10$TLxIDNTFEs35vLPHVi3BKejJD2IROU6AR9wcpXIZHFFLju2YPXbDe', '2022-02-02 02:02:00+02:00'),
+       (3, 'Pippin', 'pippin', '$2a$10$GD7dU0C2qy/morusnemzUeFCQ8N6akGpg2P1GIYG62/Y7uRF0Q2uy', '2024-04-04 04:04:00+02:00'),
+       (4, 'Frodo', 'frodoo', '$2a$10$ANKEnq3WwF51zjGiTy8PteZY8ODxb31zaCECVQ3skYEr2jTEf0gAe', '2025-05-05 05:05:00+02:00');
 ALTER TABLE users ALTER COLUMN id RESTART WITH 5;
 
 INSERT INTO item_categories(id, name)
