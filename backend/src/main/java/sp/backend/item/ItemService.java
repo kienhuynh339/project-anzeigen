@@ -79,44 +79,46 @@ public class ItemService {
     }
 
     public Page<ItemDto> findFavoriteItems(Authentication authentication, Pageable pageable) {
-        Long userId = getLoggedInUserId(authentication, userRepository);
-        if (userId == null) {
-            throw new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage());
-        }
+        Long userId = getLoggedInUserId(authentication, userRepository, true);
         return itemRepository.findFavoriteItemsByUserId(userId, pageable);
     }
 
     @Transactional
     public void markItemAsDeletedByItemId(Long itemId, Authentication authentication) {
+        User loggedInUser = getLoggedInUser(authentication, userRepository, true);
+
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
-        if (!item.getPoster().equals(getLoggedInUser(authentication, userRepository))) {
+
+        if (!item.getPoster().equals(loggedInUser)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
         }
+
         item.setStatus(ItemStatus.DELETED);
         itemRepository.save(item);
     }
 
     @Transactional
     public void updateItemStatus(Long itemId, ItemStatus itemStatus, Authentication authentication) {
+        User loggedInUser = getLoggedInUser(authentication, userRepository, true);
+
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
-        if (!item.getPoster().equals(getLoggedInUser(authentication, userRepository))) {
+
+        if (!item.getPoster().equals(loggedInUser)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
         }
+
         item.setStatus(itemStatus);
         itemRepository.save(item);
     }
 
     @Transactional
     public Long createItem(CreateItemRequest request, Authentication authentication) {
+        User poster = getLoggedInUser(authentication, userRepository, true);
+
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
-
-        User poster = getLoggedInUser(authentication, userRepository);
-        if (poster == null) {
-            throw new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage());
-        }
 
         GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND.getMessage()));
@@ -131,25 +133,29 @@ public class ItemService {
 
     @Transactional
     public boolean updateItem(Long itemId, UpdateItemRequest request, Authentication authentication) {
+        User loggedInUser = getLoggedInUser(authentication, userRepository, true);
+
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+
         // Gelöschte Item darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
             throw new IllegalStateException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED.getMessage());
         }
+
         // Ist der eingeloggte User wirklich der Poster der Anzeige
-        if (!item.getPoster().getAccountName().equals(getLoggedInAccountName(authentication))) {
+        if (!item.getPoster().getAccountName().equals(loggedInUser.getAccountName())) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
         }
 
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
 
-        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND.getMessage()));
+        GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND.getMessage()));
 
         // Lösche alle Bilder der Anzeige in der DB
-        List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
-        itemImages.forEach(itemImageRepository::delete);
+        itemImageRepository.deleteAllByItemId(itemId);
 
         // Item aktualisieren
         item.setTitle(request.getTitle());
