@@ -42,7 +42,7 @@ public class MessageService {
 
     public MessageDto findByMessageId(Long messageId, Authentication authentication) {
         Message message = messageRepository.findById(messageId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND));
         checkIfUserIsParticipantOfChat(message.getChat().getId(), authentication, chatRepository, userRepository);
         return new MessageDto(message);
     }
@@ -63,7 +63,7 @@ public class MessageService {
         Chat chat = chatWithUser.getChat();
         // Nachrichten nur löschen, wenn der User nicht der Erste ist, der den Chat gelöscht hat.
         if (loggedInUser.equals(chat.getFirstDeletedByUser())) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
         messageRepository.deleteByChat_Id(chatId);
@@ -85,11 +85,11 @@ public class MessageService {
         User messageSender = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(request.getItemId()).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         User itemPoster = item.getPoster();
         User interestedUser = userRepository.findById(request.getInterestedUserId()).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
 
 
         Chat chat = chatRepository.findByItem_IdAndInterestedUser_Id(item.getId(), interestedUser.getId()).orElseGet(() -> {
