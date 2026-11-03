@@ -48,15 +48,16 @@ export default function ItemCard({ item, itemCardType }) {
               }}
             />
             {/* Favorite-Knopf */}
-            {user && itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
-              <ItemFavorButton
-                itemId={item.id}
-                userId={user.id}
-                isFavorite={item.favorite}
-                className="top-0 end-0 m-1 rounded position-absolute btn"
-                style={{ backgroundColor: "#9d9d9db9" }}
-              ></ItemFavorButton>
-            )}
+            {!!user &&
+              user?.id != item.posterId &&
+              itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
+                <ItemFavorButton
+                  itemId={item.id}
+                  isFavorite={item.favorite}
+                  className="top-0 end-0 m-1 rounded position-absolute btn"
+                  style={{ backgroundColor: "#9d9d9db9" }}
+                ></ItemFavorButton>
+              )}
             {item.status && item.status !== "ACTIVE" && (
               <span className="text-white position-absolute top-50 start-50 translate-middle">
                 {translateItemStatus(item.status)}
