@@ -41,7 +41,7 @@ public class ChatService {
         // Füge jedem Chat die letzte Nachricht hinzu
         chats.stream().forEach((chat) -> {
             Message lastMessage = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chat.getId()).orElseThrow(() ->
-                    new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND.getMessage()));
+                    new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND));
             chat.setLastMessage(new MessageDto(lastMessage));
         });
         return chats;
