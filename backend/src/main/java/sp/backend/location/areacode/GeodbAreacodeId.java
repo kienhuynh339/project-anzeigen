@@ -8,20 +8,23 @@ import java.util.Objects;
 
 public class GeodbAreacodeId implements Serializable {
     private Integer id;
-    private String plz;
+    private String postcode;
 
-    GeodbAreacodeId(){};
+    GeodbAreacodeId() {
+    }
+
+    ;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GeodbAreacodeId that)) return false;
         return Objects.equals(id, that.id)
-                && Objects.equals(plz, that.plz);
+                && Objects.equals(postcode, that.postcode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, plz);
+        return Objects.hash(id, postcode);
     }
 }
