@@ -11,11 +11,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface GeodbAreaCodeRepository extends JpaRepository<GeodbAreacode, GeodbAreacodeId> {
-//    List<GeodbAreacode> findById(Integer id);
+    //    List<GeodbAreacode> findById(Integer id);
     @Query("""
-SELECT DISTINCT g.plz FROM GeodbAreacode g
-WHERE g.plz LIKE CONCAT(:plz, '%')
-ORDER BY g.plz ASC
-""")
-    List<String> findDistinctByPlzStartingWithOrderByPlzAsc(@Param("plz") String plz, Pageable pageable);
+            SELECT DISTINCT g.postcode FROM GeodbAreacode g
+            WHERE g.postcode LIKE CONCAT(:postcode, '%')
+            ORDER BY g.postcode ASC
+            """)
+    List<String> findDistinctByPostcodeStartingWithOrderByPostcodeAsc(String postcode, Pageable pageable);
 }
