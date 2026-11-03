@@ -6,7 +6,6 @@ function request(url, options = {}) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...options.headers,
     },
   }).then(async (response) => {
     const data = await response.json().catch(() => null);
