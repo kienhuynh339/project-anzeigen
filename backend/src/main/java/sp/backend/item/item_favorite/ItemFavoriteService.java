@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sp.backend.dto.ItemFavoriteResponse;
+import sp.backend.exception.CannotFavoriteOwnItemException;
+import sp.backend.exception.FavoriteItemAlreadyExistsException;
 import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
 import sp.backend.user.User;
@@ -50,12 +52,12 @@ public class ItemFavoriteService {
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         if (item.getPoster().equals(user)) {
-            throw new IllegalArgumentException(ExceptionMessage.POSTER_CANNOT_FAVORITE_OWN_ITEM);
+            throw new CannotFavoriteOwnItemException(ExceptionMessage.POSTER_CANNOT_FAVORITE_OWN_ITEM);
         }
 
         Optional<ItemFavorite> itemFavoriteOptional = itemFavoriteRepository.findByUser_IdAndItem_Id(user.getId(), item.getId());
         if (itemFavoriteOptional.isPresent()) {
-            throw new IllegalArgumentException(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS);
+            throw new FavoriteItemAlreadyExistsException(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS);
         }
 
         ItemFavorite itemFavorite = new ItemFavorite(user, item);
