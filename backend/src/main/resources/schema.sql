@@ -30,7 +30,7 @@ CREATE TABLE items(
     description TEXT,
     price INTEGER NOT NULL DEFAULT 0 CHECK(price >= 0),
     location_id INTEGER REFERENCES geodb_locations(id) NOT NULL,
-    plz VARCHAR(10) NOT NULL,
+    postcode VARCHAR(10) NOT NULL,
     location_extra_info VARCHAR(50) DEFAULT '',
     status SMALLINT DEFAULT 1 NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
