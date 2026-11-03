@@ -13,8 +13,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
+import sp.backend.dto.LoginRequest;
+import sp.backend.dto.LoginResponse;
+import sp.backend.dto.RegisterRequest;
 import sp.backend.user.User;
 import sp.backend.user.UserService;
 

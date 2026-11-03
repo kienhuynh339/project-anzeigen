@@ -6,7 +6,8 @@ package sp.backend.user;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sp.backend.user.security.RegisterRequest;
+import sp.backend.dto.RegisterRequest;
+import sp.backend.dto.UserPublicResponse;
 import sp.backend.utils.Utils.ExceptionMessage;
 
 @Service
@@ -19,10 +20,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserPublicDto findPublicById(Long userId) {
+    public UserPublicResponse findPublicById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
-        return new UserPublicDto(user);
+        return new UserPublicResponse(user);
     }
 
     public User register(RegisterRequest request) {

@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import sp.backend.dto.MessageCreateRequest;
+import sp.backend.dto.MessageResponse;
 
 import java.net.URI;
 
@@ -24,14 +26,14 @@ public class MessageController {
     }
 
     @GetMapping("/{messageId}")
-    private ResponseEntity<MessageDto> findByMessageId(@PathVariable Long messageId, Authentication authentication) {
-        MessageDto messageDto = messageService.findByMessageId(messageId, authentication);
-        return ResponseEntity.ok(messageDto);
+    private ResponseEntity<MessageResponse> findByMessageId(@PathVariable Long messageId, Authentication authentication) {
+        MessageResponse messageResponse = messageService.findByMessageId(messageId, authentication);
+        return ResponseEntity.ok(messageResponse);
     }
 
     @GetMapping("/chat/{chatId}")
-    private ResponseEntity<Page<MessageDto>> findByChatId(@PathVariable Long chatId, Pageable pageable, Authentication authentication) {
-        Page<MessageDto> page = messageService.findByChatId(chatId, authentication, pageable);
+    private ResponseEntity<Page<MessageResponse>> findByChatId(@PathVariable Long chatId, Pageable pageable, Authentication authentication) {
+        Page<MessageResponse> page = messageService.findByChatId(chatId, authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -42,8 +44,8 @@ public class MessageController {
     }
 
     @PostMapping
-    private ResponseEntity<Void> createMessage(@Valid @RequestBody CreateMessageRequest createMessageRequest, UriComponentsBuilder ucb, Authentication authentication) {
-        Message message = messageService.createMessage(createMessageRequest, authentication);
+    private ResponseEntity<Void> createMessage(@Valid @RequestBody MessageCreateRequest messageCreateRequest, UriComponentsBuilder ucb, Authentication authentication) {
+        Message message = messageService.createMessage(messageCreateRequest, authentication);
         URI locationOfNewMessage = ucb.path("/{messageId}").buildAndExpand(message.getId()).toUri();
         return ResponseEntity.created(locationOfNewMessage).build();
     }

@@ -1,4 +1,4 @@
-package sp.backend.user.security;
+package sp.backend.dto;
 
 public class LoginResponse {
     private Long id;

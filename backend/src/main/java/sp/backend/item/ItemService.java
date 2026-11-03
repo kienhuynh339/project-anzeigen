@@ -10,8 +10,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
+import sp.backend.dto.ItemCreateRequest;
+import sp.backend.dto.ItemResponse;
+import sp.backend.dto.ItemWithDistanceResponse;
+import sp.backend.dto.ItemUpdateRequest;
 import sp.backend.item.category.Category;
 import sp.backend.item.category.CategoryRepository;
 import sp.backend.item.item_image.ItemImage;
@@ -48,12 +51,12 @@ public class ItemService {
         this.itemImageRepository = itemImageRepository;
     }
 
-    public ItemDto findByItemId(Long itemId, Authentication authentication) {
+    public ItemResponse findByItemId(Long itemId, Authentication authentication) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
         return itemRepository.findItemById(itemId, loggedInUserId);
     }
 
-    public Page<ItemWithDistanceDto> search(
+    public Page<ItemWithDistanceResponse> search(
             String searchTerm,
             Short categoryId,
             Integer minPrice,
@@ -76,12 +79,12 @@ public class ItemService {
         return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, loggedInUserId, pageable);
     }
 
-    public Page<ItemDto> findByUserId(Long userId, Authentication authentication, Pageable pageable) {
+    public Page<ItemResponse> findByUserId(Long userId, Authentication authentication, Pageable pageable) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
         return itemRepository.findByUserId(userId, loggedInUserId, pageable);
     }
 
-    public Page<ItemDto> findFavoriteItems(Authentication authentication, Pageable pageable) {
+    public Page<ItemResponse> findFavoriteItems(Authentication authentication, Pageable pageable) {
         Long userId = getLoggedInUserId(authentication, userRepository, true);
         return itemRepository.findFavoriteItemsByUserId(userId, pageable);
     }
@@ -119,7 +122,7 @@ public class ItemService {
     }
 
     @Transactional
-    public Long createItem(CreateItemRequest request, Authentication authentication) {
+    public Long createItem(ItemCreateRequest request, Authentication authentication) {
         User poster = getLoggedInUser(authentication, userRepository, true);
 
         validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.DRAFT), request.getStatus());
@@ -139,7 +142,7 @@ public class ItemService {
     }
 
     @Transactional
-    public boolean updateItem(Long itemId, UpdateItemRequest request, Authentication authentication) {
+    public boolean updateItem(Long itemId, ItemUpdateRequest request, Authentication authentication) {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->

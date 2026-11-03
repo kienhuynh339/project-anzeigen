@@ -1,9 +1,11 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.location;
+package sp.backend.dto;
 
-public class GeodbLocationDto {
+import sp.backend.location.GeodbLocation;
+
+public class GeodbLocationResponse {
     private Integer id;
     private String name;
     // Für die Spalte postcode in items. In geodb_locations kann ein Ort mehrere PLZs haben. Eine Anzeige soll nur eine PLZ haben.
@@ -11,14 +13,14 @@ public class GeodbLocationDto {
     // Für die Spalte extraInfo in items.
     private String extraInfo;
 
-    public GeodbLocationDto(GeodbLocation geodbLocation, String extraInfo) {
+    public GeodbLocationResponse(GeodbLocation geodbLocation, String extraInfo) {
         this.id = geodbLocation.getId();
         this.name = geodbLocation.getName();
         this.postcode = geodbLocation.getPostcode();
         this.extraInfo = extraInfo;
     }
 
-    public GeodbLocationDto(Integer id, String name, String postcode, String extraInfo) {
+    public GeodbLocationResponse(Integer id, String name, String postcode, String extraInfo) {
         this.id = id;
         this.name = name;
         this.postcode = postcode;

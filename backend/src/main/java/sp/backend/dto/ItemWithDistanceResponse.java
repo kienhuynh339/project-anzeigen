@@ -1,24 +1,24 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item;
-
-import sp.backend.location.GeodbLocationDto;
+package sp.backend.dto;
 
 import java.time.OffsetDateTime;
 
-public class ItemWithDistanceDto {
+public class ItemWithDistanceResponse {
     private Long id;
+    private Long posterId;
     private String title;
     private String description;
     private int price;
-    private GeodbLocationDto location;
+    private GeodbLocationResponse location;
     private OffsetDateTime createdAt;
     private Double distance;
     private Boolean isFavorite;
 
-    public ItemWithDistanceDto(Long id, String title, String description, int price, GeodbLocationDto location, OffsetDateTime createdAt, Double distance, Boolean isFavorite) {
+    public ItemWithDistanceResponse(Long id, Long posterId, String title, String description, int price, GeodbLocationResponse location, OffsetDateTime createdAt, Double distance, Boolean isFavorite) {
         this.id = id;
+        this.posterId = posterId;
         this.title = title;
         this.description = description;
         this.price = price;
@@ -30,6 +30,10 @@ public class ItemWithDistanceDto {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getPosterId() {
+        return posterId;
     }
 
     public String getTitle() {
@@ -44,7 +48,7 @@ public class ItemWithDistanceDto {
         return price;
     }
 
-    public GeodbLocationDto getLocation() {
+    public GeodbLocationResponse getLocation() {
         return location;
     }
 

@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sp.backend.chat.Chat;
 import sp.backend.chat.ChatRepository;
 import sp.backend.chat.ChatWithUser;
+import sp.backend.dto.MessageCreateRequest;
+import sp.backend.dto.MessageResponse;
 import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
 import sp.backend.user.User;
@@ -40,14 +42,14 @@ public class MessageService {
         this.chatRepository = chatRepository;
     }
 
-    public MessageDto findByMessageId(Long messageId, Authentication authentication) {
+    public MessageResponse findByMessageId(Long messageId, Authentication authentication) {
         Message message = messageRepository.findById(messageId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND));
         checkIfUserIsParticipantOfChat(message.getChat().getId(), authentication, chatRepository, userRepository);
-        return new MessageDto(message);
+        return new MessageResponse(message);
     }
 
-    public Page<MessageDto> findByChatId(Long chatId, Authentication authentication, Pageable pageable) {
+    public Page<MessageResponse> findByChatId(Long chatId, Authentication authentication, Pageable pageable) {
         checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
         return messageRepository.findByChatId(chatId, pageable);
     }
@@ -81,7 +83,7 @@ public class MessageService {
     }
 
     @Transactional
-    public Message createMessage(CreateMessageRequest request, Authentication authentication) {
+    public Message createMessage(MessageCreateRequest request, Authentication authentication) {
         User messageSender = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(request.getItemId()).orElseThrow(() ->

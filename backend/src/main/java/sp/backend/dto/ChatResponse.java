@@ -1,23 +1,21 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.chat;
+package sp.backend.dto;
 
-import sp.backend.chat.message.MessageDto;
 import sp.backend.item.ItemStatus;
-import sp.backend.user.UserPublicDto;
 
-public class ChatDto {
+public class ChatResponse {
     private Long id;
     private Long itemId;
     private String itemTitle;
     private ItemStatus itemStatus;
-    private UserPublicDto poster;
-    private UserPublicDto interestedUser;
-    private MessageDto lastMessage;
+    private UserPublicResponse poster;
+    private UserPublicResponse interestedUser;
+    private MessageResponse lastMessage;
     private Long fistDeletedByUserId;
 
-    public ChatDto(Long id, Long itemId, String itemTitle, ItemStatus itemStatus, UserPublicDto poster, UserPublicDto interestedUser, MessageDto lastMessage, Long fistDeletedByUserId) {
+    public ChatResponse(Long id, Long itemId, String itemTitle, ItemStatus itemStatus, UserPublicResponse poster, UserPublicResponse interestedUser, MessageResponse lastMessage, Long fistDeletedByUserId) {
         this.id = id;
         this.itemId = itemId;
         this.itemTitle = itemTitle;
@@ -45,15 +43,15 @@ public class ChatDto {
         return itemStatus;
     }
 
-    public UserPublicDto getPoster() {
+    public UserPublicResponse getPoster() {
         return poster;
     }
 
-    public UserPublicDto getInterestedUser() {
+    public UserPublicResponse getInterestedUser() {
         return interestedUser;
     }
 
-    public MessageDto getLastMessage() {
+    public MessageResponse getLastMessage() {
         return lastMessage;
     }
 
@@ -61,7 +59,7 @@ public class ChatDto {
         return fistDeletedByUserId;
     }
 
-    public void setLastMessage(MessageDto lastMessage) {
+    public void setLastMessage(MessageResponse lastMessage) {
         this.lastMessage = lastMessage;
     }
 }

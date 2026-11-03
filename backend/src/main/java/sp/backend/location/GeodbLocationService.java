@@ -5,6 +5,7 @@ package sp.backend.location;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import sp.backend.dto.GeodbLocationResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +52,7 @@ public class GeodbLocationService {
         this.geodbLocationRepository = geodbLocationRepository;
     }
 
-    public List<GeodbLocationDto> findByPostcode(String postcode, Pageable pageable) {
+    public List<GeodbLocationResponse> findByPostcode(String postcode, Pageable pageable) {
         List<GeodbLocation> locations = geodbLocationRepository.findByPostcodeOrderByNameAsc(postcode, pageable);
 
         // Anzahl der Treffer pro Kombination aus Name, PLZ und Bundesland ermitteln.
@@ -74,7 +75,7 @@ public class GeodbLocationService {
                         extraInfo = "(" + TYPES.get(location.getType()) + ")" + " - " + FEDERALSTATES.get(location.getFederalState());
                     }
 
-                    return new GeodbLocationDto(location, extraInfo);
+                    return new GeodbLocationResponse(location, extraInfo);
                 })
                 .toList();
     }

@@ -1,9 +1,9 @@
-package sp.backend.item.item_favorite;
+package sp.backend.dto;
 
-public class ItemFavoriteDto {
+public class ItemFavoriteResponse {
     private Long itemId;
 
-    public ItemFavoriteDto(Long itemId) {
+    public ItemFavoriteResponse(Long itemId) {
         this.itemId = itemId;
     }
 

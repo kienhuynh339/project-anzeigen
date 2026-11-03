@@ -1,12 +1,13 @@
-package sp.backend.item;
+package sp.backend.dto;
 
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
+import sp.backend.item.ItemStatus;
 import sp.backend.utils.Utils.ExceptionMessage;
 
 import java.util.List;
 
-public class UpdateItemRequest {
+public class ItemCreateRequest {
     @NotBlank(message = ExceptionMessage.ITEM_TITEL_NOT_BLANK)
     @Size(min = 5, max = 100, message = ExceptionMessage.ITEM_TITEL_SIZE)
     private String title;

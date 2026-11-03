@@ -1,39 +1,39 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item;
+package sp.backend.dto;
 
-import sp.backend.location.GeodbLocationDto;
-import sp.backend.user.UserPublicDto;
+import sp.backend.item.Item;
+import sp.backend.item.ItemStatus;
 
 import java.time.OffsetDateTime;
 
-public class ItemDto {
+public class ItemResponse {
     private Long id;
     private Short categoryId;
-    private UserPublicDto poster;
+    private UserPublicResponse poster;
     private String title;
     private String description;
     private int price;
-    private GeodbLocationDto location;
+    private GeodbLocationResponse location;
     private ItemStatus status;
     private OffsetDateTime createdAt;
     private Boolean isFavorite;
 
-    public ItemDto(Item item, Boolean isFavorite){
-        this.id=item.getId();
-        this.categoryId=item.getCategory().getId();
-        this.poster =new UserPublicDto(item.getPoster());
-        this.title= item.getTitle();
+    public ItemResponse(Item item, Boolean isFavorite) {
+        this.id = item.getId();
+        this.categoryId = item.getCategory().getId();
+        this.poster = new UserPublicResponse(item.getPoster());
+        this.title = item.getTitle();
         this.description = item.getDescription();
         this.price = item.getPrice();
-        this.location= new GeodbLocationDto(item.getLocation().getId(), item.getLocation().getName(),item.getPostcode(),item.getLocationExtraInfo());
+        this.location = new GeodbLocationResponse(item.getLocation().getId(), item.getLocation().getName(), item.getPostcode(), item.getLocationExtraInfo());
         this.status = item.getStatus();
         this.createdAt = item.getCreatedAt();
-        this.isFavorite=isFavorite;
+        this.isFavorite = isFavorite;
     }
 
-    public ItemDto(Long id,Short categoryId, UserPublicDto poster, String title, String description, int price, GeodbLocationDto location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
+    public ItemResponse(Long id, Short categoryId, UserPublicResponse poster, String title, String description, int price, GeodbLocationResponse location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
         this.id = id;
         this.categoryId = categoryId;
         this.poster = poster;
@@ -58,7 +58,7 @@ public class ItemDto {
         return id;
     }
 
-    public UserPublicDto getPoster() {
+    public UserPublicResponse getPoster() {
         return poster;
     }
 
@@ -74,7 +74,7 @@ public class ItemDto {
         return price;
     }
 
-    public GeodbLocationDto getLocation() {
+    public GeodbLocationResponse getLocation() {
         return location;
     }
 

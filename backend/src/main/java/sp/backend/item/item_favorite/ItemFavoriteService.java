@@ -5,6 +5,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sp.backend.dto.ItemFavoriteResponse;
 import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
 import sp.backend.user.User;
@@ -28,7 +29,7 @@ public class ItemFavoriteService {
         this.itemRepository = itemRepository;
     }
 
-    public ItemFavoriteDto findById(Long itemFavoriteId, Authentication authentication) {
+    public ItemFavoriteResponse findById(Long itemFavoriteId, Authentication authentication) {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         ItemFavorite itemFavorite = itemFavoriteRepository.findById(itemFavoriteId).orElseThrow(() ->
@@ -38,7 +39,7 @@ public class ItemFavoriteService {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
-        return new ItemFavoriteDto(itemFavorite.getItem().getId());
+        return new ItemFavoriteResponse(itemFavorite.getItem().getId());
     }
 
     @Transactional
@@ -47,6 +48,10 @@ public class ItemFavoriteService {
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
+
+        if (item.getPoster().equals(user)) {
+            throw new IllegalArgumentException(ExceptionMessage.POSTER_CANNOT_FAVORITE_OWN_ITEM);
+        }
 
         Optional<ItemFavorite> itemFavoriteOptional = itemFavoriteRepository.findByUser_IdAndItem_Id(user.getId(), item.getId());
         if (itemFavoriteOptional.isPresent()) {

@@ -1,9 +1,10 @@
-package sp.backend.item;
+package sp.backend.dto;
 
 import jakarta.validation.constraints.NotNull;
+import sp.backend.item.ItemStatus;
 import sp.backend.utils.Utils.ExceptionMessage;
 
-public class UpdateItemStatusRequest {
+public class ItemStatusUpdateRequest {
     @NotNull(message = ExceptionMessage.STATUS_NOT_NULL)
     private ItemStatus status;
 

@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import sp.backend.dto.ItemFavoriteCreateRequest;
+import sp.backend.dto.ItemFavoriteResponse;
 
 import java.net.URI;
 
@@ -19,17 +21,17 @@ public class ItemFavoriteController {
     }
 
     @GetMapping("/{itemFavoriteId}")
-    private ResponseEntity<ItemFavoriteDto> findById(@PathVariable Long itemFavoriteId, Authentication authentication) {
+    private ResponseEntity<ItemFavoriteResponse> findById(@PathVariable Long itemFavoriteId, Authentication authentication) {
         try {
-            ItemFavoriteDto itemFavoriteDto = itemFavoriteService.findById(itemFavoriteId, authentication);
-            return ResponseEntity.ok(itemFavoriteDto);
+            ItemFavoriteResponse itemFavoriteResponse = itemFavoriteService.findById(itemFavoriteId, authentication);
+            return ResponseEntity.ok(itemFavoriteResponse);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
-    private ResponseEntity<Void> createItemFavorite(@Valid @RequestBody CreateItemFavoriteRequest request, UriComponentsBuilder ucb, Authentication authentication) {
+    private ResponseEntity<Void> createItemFavorite(@Valid @RequestBody ItemFavoriteCreateRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         ItemFavorite itemFavorite = itemFavoriteService.createItemFavorite(request.getItemId(), authentication);
         URI locationOfItemFavorite = ucb
                 .path("/api/item-favorites/{itemFavoriteId}")

@@ -14,6 +14,7 @@ public class Utils {
         public static final String ITEM_NOT_FOUND = "Die Anzeige wurde nicht gefunden.";
         public static final String FAVORITE_ITEM_NOT_FOUND = "Die Anzeige existiert nicht in der Merkliste.";
         public static final String FAVORITE_ITEM_ALREADY_EXISTS = "Die Anzeige existiert bereits in der Merkliste.";
+        public static final String POSTER_CANNOT_FAVORITE_OWN_ITEM = "Der Poster darf seine eigene Anzeige nicht zur Merkliste hinzufügen..";
         public static final String CATEGORY_NOT_FOUND = "Die Kategorie wurde nicht gefunden.";
         public static final String CHAT_NOT_FOUND = "Der Chat wurde nicht gefunden.";
         public static final String MESSAGE_NOT_FOUND = "Die Nachricht wurde nicht gefunden.";

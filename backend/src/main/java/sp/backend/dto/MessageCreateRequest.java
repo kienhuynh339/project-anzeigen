@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.chat.message;
+package sp.backend.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import sp.backend.utils.Utils.ExceptionMessage;
 
-public class CreateMessageRequest {
+public class MessageCreateRequest {
     @NotNull(message = ExceptionMessage.ITEM_ID_NOT_NULL)
     @Positive(message = ExceptionMessage.ITEM_ID_POSITIVE)
     private Long itemId;

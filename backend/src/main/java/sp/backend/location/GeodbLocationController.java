@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sp.backend.dto.GeodbLocationResponse;
 
 
 import java.util.List;
@@ -22,11 +23,11 @@ public class GeodbLocationController {
     }
 
     @GetMapping
-    private ResponseEntity<List<GeodbLocationDto>> findByPostcode(@RequestParam String postcode, @RequestParam(defaultValue = "15") int limit) {
+    private ResponseEntity<List<GeodbLocationResponse>> findByPostcode(@RequestParam String postcode, @RequestParam(defaultValue = "15") int limit) {
         int pageSize = Math.clamp(limit, 1, 100);
         Pageable pageable = PageRequest.of(0, pageSize);
 
-        List<GeodbLocationDto> locationList = geodbLocationService.findByPostcode(postcode, pageable);
+        List<GeodbLocationResponse> locationList = geodbLocationService.findByPostcode(postcode, pageable);
         return ResponseEntity.ok(locationList);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sp.backend.dto.ChatResponse;
 
 @RestController
 @RequestMapping("/api/chats")
@@ -19,8 +20,8 @@ public class ChatController {
     }
 
     @GetMapping
-    private ResponseEntity<Page<ChatDto>> findByUser(Authentication authentication, Pageable pageable) {
-        Page<ChatDto> page = chatService.findByUser(authentication, pageable);
+    private ResponseEntity<Page<ChatResponse>> findByUser(Authentication authentication, Pageable pageable) {
+        Page<ChatResponse> page = chatService.findByUser(authentication, pageable);
         return ResponseEntity.ok(page);
     }
 

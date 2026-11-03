@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import sp.backend.dto.*;
 
 import java.net.URI;
 
@@ -28,9 +29,9 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    private ResponseEntity<ItemDto> findById(@PathVariable Long itemId, Authentication authentication) {
+    private ResponseEntity<ItemResponse> findById(@PathVariable Long itemId, Authentication authentication) {
 
-        ItemDto item = itemService.findByItemId(itemId, authentication);
+        ItemResponse item = itemService.findByItemId(itemId, authentication);
         if (item != null) {
             return ResponseEntity.ok(item);
         } else {
@@ -39,7 +40,7 @@ public class ItemController {
     }
 
     @GetMapping
-    private ResponseEntity<Page<ItemWithDistanceDto>> search(
+    private ResponseEntity<Page<ItemWithDistanceResponse>> search(
             @RequestParam(required = false) String searchTerm,
             @RequestParam(required = false) Short categoryId,
             @RequestParam(required = false) Integer minPrice,
@@ -47,19 +48,19 @@ public class ItemController {
             @RequestParam(required = false) Integer locationId,
             @RequestParam(required = false) Integer radiusKm, Authentication authentication,
             Pageable pageable) {
-        Page<ItemWithDistanceDto> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, authentication, pageable);
+        Page<ItemWithDistanceResponse> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/user/{userId}")
-    private ResponseEntity<Page<ItemDto>> findByUserId(@PathVariable Long userId, Authentication authentication, Pageable pageable) {
-        Page<ItemDto> page = itemService.findByUserId(userId, authentication, pageable);
+    private ResponseEntity<Page<ItemResponse>> findByUserId(@PathVariable Long userId, Authentication authentication, Pageable pageable) {
+        Page<ItemResponse> page = itemService.findByUserId(userId, authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/user/favorites")
-    private ResponseEntity<Page<ItemDto>> findFavoriteItems(Authentication authentication, Pageable pageable) {
-        Page<ItemDto> page = itemService.findFavoriteItems(authentication, pageable);
+    private ResponseEntity<Page<ItemResponse>> findFavoriteItems(Authentication authentication, Pageable pageable) {
+        Page<ItemResponse> page = itemService.findFavoriteItems(authentication, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -76,7 +77,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     private ResponseEntity<Void> updateItemStatus(
             @PathVariable Long itemId,
-            @Valid @RequestBody UpdateItemStatusRequest request, Authentication authentication) {
+            @Valid @RequestBody ItemStatusUpdateRequest request, Authentication authentication) {
         try {
             itemService.updateItemStatus(itemId, request.getStatus(), authentication);
             return ResponseEntity.noContent().build();
@@ -86,14 +87,14 @@ public class ItemController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> createItem(@Valid @ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb, Authentication authentication) {
+    private ResponseEntity<Void> createItem(@Valid @ModelAttribute ItemCreateRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         Long itemId = itemService.createItem(request, authentication);
         URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
         return ResponseEntity.created(createdItemLocation).build();
     }
 
     @PutMapping(value = "/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @Valid @ModelAttribute UpdateItemRequest request, Authentication authentication) {
+    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @Valid @ModelAttribute ItemUpdateRequest request, Authentication authentication) {
         boolean result = itemService.updateItem(itemId, request, authentication);
         return ResponseEntity.noContent().build();
     }

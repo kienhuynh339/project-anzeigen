@@ -7,19 +7,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import sp.backend.dto.ItemResponse;
+import sp.backend.dto.ItemWithDistanceResponse;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("""
-            SELECT new sp.backend.item.ItemDto(
+            SELECT new sp.backend.dto.ItemResponse(
             i.id,
             i.category.id,
-            new sp.backend.user.UserPublicDto(u),
+            new sp.backend.dto.UserPublicResponse(u),
             i.title,
             i.description,
             i.price,
-            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
+            new sp.backend.dto.GeodbLocationResponse(l.id,l.name,i.postcode,i.locationExtraInfo),
             i.status,
             i.createdAt,
             CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
@@ -30,16 +31,17 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             LEFT JOIN ItemFavorite ifavorite ON i.id = ifavorite.item.id AND :loggedInUserId = ifavorite.user.id
             WHERE :itemId = i.id
             """)
-    ItemDto findItemById(Long itemId, Long loggedInUserId);
+    ItemResponse findItemById(Long itemId, Long loggedInUserId);
 
 
     @Query("""
-            SELECT new sp.backend.item.ItemWithDistanceDto(
+            SELECT new sp.backend.dto.ItemWithDistanceResponse(
                 i.id,
+                i.poster.id,
                 i.title,
                 i.description,
                 i.price,
-                new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
+                new sp.backend.dto.GeodbLocationResponse(l.id,l.name,i.postcode,i.locationExtraInfo),
                 i.createdAt,
                 CASE
                     WHEN :latitude IS NULL OR :longitude IS NULL OR l.id = :locationId
@@ -92,7 +94,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                     )) <= :radiusKm)
                 )
             """)
-    Page<ItemWithDistanceDto> search(
+    Page<ItemWithDistanceResponse> search(
             String searchTerm,
             Short categoryId,
             Integer minPrice,
@@ -106,14 +108,14 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     );
 
     @Query("""
-            SELECT new sp.backend.item.ItemDto(
+            SELECT new sp.backend.dto.ItemResponse(
             i.id,
             i.category.id,
-            new sp.backend.user.UserPublicDto(u),
+            new sp.backend.dto.UserPublicResponse(u),
             i.title,
             i.description,
             i.price,
-            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
+            new sp.backend.dto.GeodbLocationResponse(l.id,l.name,i.postcode,i.locationExtraInfo),
             i.status,
             i.createdAt,
             CASE WHEN :loggedInUserId = ifavorite.user.id THEN true ELSE false END
@@ -126,18 +128,18 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             AND (i.status = ItemStatus.ACTIVE OR (:userId = :loggedInUserId
                                                  AND i.status != ItemStatus.DELETED))
             """)
-    Page<ItemDto> findByUserId(Long userId, Long loggedInUserId, Pageable pageable);
+    Page<ItemResponse> findByUserId(Long userId, Long loggedInUserId, Pageable pageable);
 
 
     @Query("""
-            SElECT new sp.backend.item.ItemDto(
+            SElECT new sp.backend.dto.ItemResponse(
                         i.id,
                         i.category.id,
-                        new sp.backend.user.UserPublicDto(u),
+                        new sp.backend.dto.UserPublicResponse(u),
                         i.title,
                         i.description,
                         i.price,
-                        new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
+                        new sp.backend.dto.GeodbLocationResponse(l.id,l.name,i.postcode,i.locationExtraInfo),
                         i.status,
                         i.createdAt,
                         true
@@ -148,6 +150,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             JOIN ItemFavorite f ON i.id = f.item.id
             WHERE f.user.id = :userId
             """)
-    Page<ItemDto> findFavoriteItemsByUserId(Long userId, Pageable pageable);
+    Page<ItemResponse> findFavoriteItemsByUserId(Long userId, Pageable pageable);
 
 }

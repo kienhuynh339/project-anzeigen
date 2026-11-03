@@ -10,7 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sp.backend.chat.message.Message;
-import sp.backend.chat.message.MessageDto;
+import sp.backend.dto.ChatResponse;
+import sp.backend.dto.MessageResponse;
 import sp.backend.chat.message.MessageRepository;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
@@ -19,8 +20,6 @@ import sp.backend.utils.Utils.ExceptionMessage;
 import static sp.backend.chat.ChatWithUser.checkIfUserIsParticipantOfChat;
 import static sp.backend.utils.Utils.getLoggedInUser;
 import static sp.backend.utils.Utils.getLoggedInUserId;
-
-import java.util.Optional;
 
 @Service
 public class ChatService {
@@ -34,15 +33,15 @@ public class ChatService {
         this.userRepository = userRepository;
     }
 
-    public Page<ChatDto> findByUser(Authentication authentication, Pageable pageable) {
+    public Page<ChatResponse> findByUser(Authentication authentication, Pageable pageable) {
         Long userId = getLoggedInUserId(authentication, userRepository, true);
 
-        Page<ChatDto> chats = chatRepository.findByUserId(userId, pageable);
+        Page<ChatResponse> chats = chatRepository.findByUserId(userId, pageable);
         // Füge jedem Chat die letzte Nachricht hinzu
         chats.stream().forEach((chat) -> {
             Message lastMessage = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chat.getId()).orElseThrow(() ->
                     new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND));
-            chat.setLastMessage(new MessageDto(lastMessage));
+            chat.setLastMessage(new MessageResponse(lastMessage));
         });
         return chats;
     }
