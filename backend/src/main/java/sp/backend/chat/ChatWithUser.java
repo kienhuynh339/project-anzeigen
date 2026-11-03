@@ -22,11 +22,11 @@ public class ChatWithUser {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         Chat chat = chatRepository.findById(chatId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.CHAT_NOT_FOUND));
 
         // Prüfe, ob der User Teilnehmer des Chats ist.
         if (!chat.isParticipant(loggedInUser)) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
         return new ChatWithUser(chat, loggedInUser);
     }
