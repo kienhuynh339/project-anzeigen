@@ -46,7 +46,7 @@ VALUES (1, 'Alle Kategorien'),
 ALTER TABLE item_categories ALTER COLUMN id RESTART WITH 37;
 
 -- status: 1(DRAFT)/2(ACTIVE)/3(RESERVED)/4(DELETED)
-INSERT INTO items(id, poster_id, title, category_id, description, price, location_id,plz, status, created_at)
+INSERT INTO items(id, poster_id, title, category_id, description, price, location_id,postcode, status, created_at)
 VALUES (1, 1, 'Nintendo switch 2', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 100, 26488,'42103', 2,
     '2026-09-01 08:00:00+02'),
     (2, 1, 'Gaming Headset', 34, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 101, 26488,'42103', 2,
