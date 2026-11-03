@@ -32,10 +32,10 @@ public class ItemFavoriteService {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         ItemFavorite itemFavorite = itemFavoriteRepository.findById(itemFavoriteId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND));
 
         if (!itemFavorite.getUser().equals(loggedInUser)) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
         return new ItemFavoriteDto(itemFavorite.getItem().getId());
@@ -46,11 +46,11 @@ public class ItemFavoriteService {
         User user = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         Optional<ItemFavorite> itemFavoriteOptional = itemFavoriteRepository.findByUser_IdAndItem_Id(user.getId(), item.getId());
         if (itemFavoriteOptional.isPresent()) {
-            throw new IllegalArgumentException(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS.getMessage());
+            throw new IllegalArgumentException(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS);
         }
 
         ItemFavorite itemFavorite = new ItemFavorite(user, item);
@@ -62,8 +62,8 @@ public class ItemFavoriteService {
         Long userId = getLoggedInUserId(authentication, userRepository, true);
 
         ItemFavorite itemFavorite = itemFavoriteRepository.findByUser_IdAndItem_Id(userId, itemId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND.getMessage()));
-        
+                new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND));
+
         itemFavoriteRepository.delete(itemFavorite);
     }
 }
