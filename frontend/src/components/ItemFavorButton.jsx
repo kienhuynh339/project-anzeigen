@@ -6,7 +6,6 @@ import { createItemFavorite } from "../utils/createItemFavorite";
 import { deleteRequest } from "../utils/deleteRequest";
 import { useEffect } from "react";
 export default function ItemFavorButton({
-  userId,
   itemId,
   isFavorite,
   className = "btn btn-outline-danger",
@@ -23,7 +22,7 @@ export default function ItemFavorButton({
     setIsFavoriteChanging(true);
     if (favorite) {
       await deleteRequest(
-        `http://localhost:8080/api/item-favorites/user/${userId}/item/${itemId}`,
+        `http://localhost:8080/api/item-favorites/item/${itemId}`,
       )
         .then(() => {
           setFavorite(false);
@@ -32,7 +31,7 @@ export default function ItemFavorButton({
           console.log(error);
         });
     } else {
-      await createItemFavorite(itemId, userId)
+      await createItemFavorite(itemId)
         .then(() => {
           setFavorite(true);
         })
