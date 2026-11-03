@@ -39,7 +39,7 @@ public class MessageController {
 
     @PatchMapping("/chat/{chatId}")
     private ResponseEntity<Void> markMessagesAsRead(@PathVariable Long chatId, Authentication authentication) {
-        messageService.markMessagesAsReadByChat_IdAndSender_Id(chatId, authentication);
+        messageService.markMessagesAsRead(chatId, authentication);
         return ResponseEntity.noContent().build();
     }
 
