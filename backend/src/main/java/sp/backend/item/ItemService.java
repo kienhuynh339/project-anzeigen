@@ -57,7 +57,8 @@ public class ItemService {
             Integer minPrice,
             Integer maxPrice,
             Integer locationId,
-            Integer radiusKm, Authentication authentication,
+            Integer radiusKm,
+            Authentication authentication,
             Pageable pageable) {
 
         Float latitude = null;
@@ -65,8 +66,8 @@ public class ItemService {
         if (locationId != null && radiusKm != null) {
             Optional<GeodbLocation> location = geodbLocationRepository.findById(locationId);
             if (location.isPresent()) {
-                latitude = location.get().getBreite();
-                longtitude = location.get().getLaenge();
+                latitude = location.get().getLatitude();
+                longtitude = location.get().getLongitude();
             }
         }
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
