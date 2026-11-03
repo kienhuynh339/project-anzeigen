@@ -17,11 +17,11 @@ export default function ChatDeleteDialog({
     setIsChatDeleting(true);
     await Promise.all(
       deleteList.map((chatId) =>
-        deleteRequest(
-          `http://localhost:8080/api/chats/${chatId}/user/${user.id}`,
-        ).catch((error) => {
-          console.log(error);
-        }),
+        deleteRequest(`http://localhost:8080/api/chats/${chatId}`).catch(
+          (error) => {
+            console.log(error);
+          },
+        ),
       ),
     );
     setDeleteList([]);
