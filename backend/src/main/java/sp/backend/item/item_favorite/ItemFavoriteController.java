@@ -1,6 +1,7 @@
 package sp.backend.item.item_favorite;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class ItemFavoriteController {
     }
 
     @PostMapping
-    private ResponseEntity<Void> createItemFavorite(@RequestBody CreateItemFavoriteRequest request, UriComponentsBuilder ucb, Authentication authentication) {
+    private ResponseEntity<Void> createItemFavorite(@Valid @RequestBody CreateItemFavoriteRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         ItemFavorite itemFavorite = itemFavoriteService.createItemFavorite(request.getItemId(), authentication);
         URI locationOfItemFavorite = ucb
                 .path("/api/item-favorites/{itemFavoriteId}")
