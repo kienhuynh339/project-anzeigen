@@ -15,6 +15,7 @@ import sp.backend.dto.ItemCreateRequest;
 import sp.backend.dto.ItemResponse;
 import sp.backend.dto.ItemWithDistanceResponse;
 import sp.backend.dto.ItemUpdateRequest;
+import sp.backend.exception.ImageSavingException;
 import sp.backend.item.category.Category;
 import sp.backend.item.category.CategoryRepository;
 import sp.backend.item.item_image.ItemImage;
@@ -206,7 +207,7 @@ public class ItemService {
                     ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), itemId, order++);
                     itemImageRepository.save(itemImage);
                 } catch (IOException e) {
-                    throw new RuntimeException(ExceptionMessage.ERROR_SAVING_IMAGE, e);
+                    throw new ImageSavingException(ExceptionMessage.ERROR_SAVING_IMAGE, e);
                 }
             }
         }
