@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 import sp.backend.item.category.Category;
 import sp.backend.item.category.CategoryRepository;
@@ -27,6 +28,7 @@ import static sp.backend.utils.Utils.getLoggedInAccountName;
 import sp.backend.utils.Utils.ExceptionMessage;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,10 +91,10 @@ public class ItemService {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         if (!item.getPoster().equals(loggedInUser)) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
         item.setStatus(ItemStatus.DELETED);
@@ -103,11 +105,13 @@ public class ItemService {
     public void updateItemStatus(Long itemId, ItemStatus itemStatus, Authentication authentication) {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
+        validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.RESERVED, ItemStatus.DELETED), itemStatus);
+
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         if (!item.getPoster().equals(loggedInUser)) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
         item.setStatus(itemStatus);
@@ -118,11 +122,13 @@ public class ItemService {
     public Long createItem(CreateItemRequest request, Authentication authentication) {
         User poster = getLoggedInUser(authentication, userRepository, true);
 
+        validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.DRAFT), request.getStatus());
+
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND));
 
         GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND));
 
         Item item = new Item(poster, request.getTitle(), category, request.getDescription(), request.getPrice(), location, request.getPostcode(), request.getLocationExtraInfo(), request.getStatus());
         itemRepository.save(item);
@@ -137,23 +143,33 @@ public class ItemService {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         // Gelöschte Item darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
-            throw new IllegalStateException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED.getMessage());
+            throw new IllegalStateException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
+        }
+
+        // (Gilt für "Anzeige bearbeiten") Status einer entworfenen Anzeige darf nur in ACTIVE oder DRAFT geändert werden.
+        if (item.getStatus() == ItemStatus.DRAFT) {
+            validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.DRAFT), request.getStatus());
+        }
+
+        // (Gilt für "Anzeige bearbeiten") Status einer veröffentlichten Anzeige muss ACTIVE bleiben.
+        if (item.getStatus() == ItemStatus.ACTIVE) {
+            validateItemStatus(EnumSet.of(ItemStatus.ACTIVE), request.getStatus());
         }
 
         // Ist der eingeloggte User wirklich der Poster der Anzeige
         if (!item.getPoster().getAccountName().equals(loggedInUser.getAccountName())) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED.getMessage());
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND));
 
         GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND));
 
         // Lösche alle Bilder der Anzeige in der DB
         itemImageRepository.deleteAllByItemId(itemId);
@@ -187,9 +203,15 @@ public class ItemService {
                     ItemImage itemImage = new ItemImage(file.getBytes(), file.getContentType(), itemId, order++);
                     itemImageRepository.save(itemImage);
                 } catch (IOException e) {
-                    throw new RuntimeException(ExceptionMessage.ERROR_SAVING_IMAGE.getMessage(), e);
+                    throw new RuntimeException(ExceptionMessage.ERROR_SAVING_IMAGE, e);
                 }
             }
+        }
+    }
+
+    private void validateItemStatus(EnumSet<ItemStatus> enumSet, ItemStatus itemStatus) {
+        if (!enumSet.contains(itemStatus)) {
+            throw new IllegalArgumentException(ExceptionMessage.STATUS_NOT_VALID);
         }
     }
 }
