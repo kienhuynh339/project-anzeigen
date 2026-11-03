@@ -19,9 +19,7 @@ export default function EditItem() {
   let isItemIdValid = /^[1-9]\d*$/.test(itemId);
 
   const { data: fetchedItem, error: itemDataFetchError } = useFetch(
-    isItemIdValid
-      ? `http://localhost:8080/api/items/${itemId}?loggedInUserId=${userId}`
-      : null,
+    isItemIdValid ? `http://localhost:8080/api/items/${itemId}` : null,
     [itemId],
   );
 
@@ -94,7 +92,7 @@ export default function EditItem() {
       images,
       status,
     );
-    updateItemRequest(fetchedItem.id, userId, formData);
+    updateItemRequest(fetchedItem.id, formData);
   };
 
   const handleSaveDraft = () => {
