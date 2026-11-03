@@ -105,7 +105,7 @@ export default function ItemView() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Knöpfe für Interessenten */}
-              {user && user?.id != item.poster.id && (
+              {!!user && user?.id != item.poster.id && (
                 <>
                   {/* Nachricht schreiben */}
                   {item.status !== "DELETED" && (
@@ -122,7 +122,7 @@ export default function ItemView() {
                 </>
               )}
               {/* Knöpfe für Poster der Anzeige */}
-              {user && user?.id == item.poster.id && (
+              {!!user && user?.id == item.poster.id && (
                 <>
                   {item.status === "ACTIVE" ? (
                     <ItemReserveButton itemId={item.id}></ItemReserveButton>
