@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface GeodbLocationRepository extends JpaRepository<GeodbLocation, Integer> {
     @Query("""
-            SELECT g.id AS id, g.postcode AS typ, g.name AS name, g.postcode AS postcode, g.federalState as federalState
+            SELECT g
             FROM GeodbLocation g
             WHERE CONCAT(',', g.postcode, ',') LIKE CONCAT('%,', :postcode, ',%')
             ORDER BY g.name ASC
