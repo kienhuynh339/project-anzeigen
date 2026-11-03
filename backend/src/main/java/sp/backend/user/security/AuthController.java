@@ -3,6 +3,7 @@ package sp.backend.user.security;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +40,7 @@ public class AuthController {
 
     // REGISTRIEREN
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         // @Valid @RequestBody RegisterRequest request
 
         try {
@@ -56,7 +57,7 @@ public class AuthController {
     /*Ein wichtiger Sicherheitshinweis zum Login: Ergänze für eine produktive Anwendung eine Session-Fixation-Schutzstrategie beim manuellen Login. Beispielsweise kannst du vor der Authentifizierung eine bestehende Session invalidieren und nach erfolgreicher Authentifizierung eine neue erstellen. Alternativ lässt sich die Spring-Security-SessionAuthenticationStrategy explizit einbinden. Außerdem sollten Login-Versuche rate-limitiert werden.*/
     // ANMELDEN
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         //@Valid @RequestBody LoginRequest request
         try {
             Authentication authentication =
