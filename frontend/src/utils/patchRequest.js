@@ -1,6 +1,7 @@
 export function patchRequest(url, name, value) {
   return fetch(url, {
     method: "PATCH",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
