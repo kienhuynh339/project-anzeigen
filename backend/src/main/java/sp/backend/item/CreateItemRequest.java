@@ -1,18 +1,42 @@
 package sp.backend.item;
 
+import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
+import sp.backend.utils.Utils.ExceptionMessage;
 
 import java.util.List;
 
 public class CreateItemRequest {
+    @NotBlank(message = ExceptionMessage.ITEM_TITEL_NOT_BLANK)
+    @Size(min = 5, max = 100, message = ExceptionMessage.ITEM_TITEL_SIZE)
     private String title;
+
+    @NotNull(message = ExceptionMessage.CATEGORY_ID_NOT_NULL)
+    @Positive(message = ExceptionMessage.CATEGORY_ID_POSITIVE)
     private Short categoryId;
+
+    @Size(max = 4000, message = ExceptionMessage.DESCRIPTION_SIZE)
     private String description;
+
+    @NotNull(message = ExceptionMessage.LOCATION_ID_NOT_NULL)
+    @Positive(message = ExceptionMessage.LOCATION_ID_POSITIVE)
     private Integer locationId;
+
+    @NotBlank(message = ExceptionMessage.POSTCODE_NOT_BLANK)
+    @Pattern(regexp = "^[0-9]{5}$", message = ExceptionMessage.POSTCODE_PATTERN)
     private String postcode;
+
+    @Size(max = 50, message = ExceptionMessage.LOCATION_EXTRA_INFO_SIZE)
     private String locationExtraInfo;
+
+    @NotNull(message = ExceptionMessage.PRICE_NOT_NULL)
+    @PositiveOrZero(message = ExceptionMessage.PRICE_POSITIVE_OR_ZERO)
     private Integer price;
+
+    @NotNull(message = ExceptionMessage.STATUS_NOT_NULL)
     private ItemStatus status;
+
+    @Size(max = 10, message = ExceptionMessage.IMAGES_SIZE)
     private List<MultipartFile> images;
 
     public String getTitle() {
