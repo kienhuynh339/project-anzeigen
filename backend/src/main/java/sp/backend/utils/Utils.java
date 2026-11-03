@@ -2,6 +2,7 @@ package sp.backend.utils;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
 
@@ -90,7 +91,8 @@ public class Utils {
 
     private static Object handleUnauthenticatedUser(boolean throwOnUnauthenticatedUser) {
         if (throwOnUnauthenticatedUser) {
-            throw new EntityNotFoundException(ExceptionMessage.USER_NOT_AUTHENTICATED);
+            throw new AuthenticationException(ExceptionMessage.USER_NOT_AUTHENTICATED) {
+            };
         } else {
             return null;
         }
