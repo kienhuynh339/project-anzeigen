@@ -61,6 +61,9 @@ public class SecurityConfig {
                         // Alle anderen items-Anfragen
                         .requestMatchers("/api/items/**")
                         .authenticated()
+                        // chats
+                        .requestMatchers("/api/chats/**")
+                        .authenticated()
                         // messages
                         .requestMatchers("/api/messages/**")
                         .authenticated()
