@@ -5,6 +5,7 @@ package sp.backend.item;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-
 
 
 @RestController
@@ -76,7 +76,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     private ResponseEntity<Void> updateItemStatus(
             @PathVariable Long itemId,
-            @RequestBody UpdateItemStatusRequest request, Authentication authentication) {
+            @Valid @RequestBody UpdateItemStatusRequest request, Authentication authentication) {
         try {
             itemService.updateItemStatus(itemId, request.getStatus(), authentication);
             return ResponseEntity.noContent().build();
@@ -86,14 +86,14 @@ public class ItemController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> createItem(@ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb, Authentication authentication) {
+    private ResponseEntity<Void> createItem(@Valid @ModelAttribute CreateItemRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         Long itemId = itemService.createItem(request, authentication);
         URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
         return ResponseEntity.created(createdItemLocation).build();
     }
 
     @PutMapping(value = "/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @ModelAttribute UpdateItemRequest request, Authentication authentication) {
+    private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @Valid @ModelAttribute UpdateItemRequest request, Authentication authentication) {
         boolean result = itemService.updateItem(itemId, request, authentication);
         return ResponseEntity.noContent().build();
     }
