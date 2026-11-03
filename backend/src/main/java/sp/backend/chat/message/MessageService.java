@@ -72,7 +72,7 @@ public class MessageService {
     }
 
     @Transactional
-    public int markMessagesAsReadByChat_IdAndSender_Id(Long chatId, Authentication authentication) {
+    public int markMessagesAsRead(Long chatId, Authentication authentication) {
         ChatWithUser chatWithUser = checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
         User loggedInUser = chatWithUser.getUser();
         Chat chat = chatWithUser.getChat();
