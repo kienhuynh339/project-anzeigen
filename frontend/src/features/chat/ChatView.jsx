@@ -90,10 +90,10 @@ export default function ChatView() {
   const handleChatSelect = async (chat) => {
     if (!chat.lastMessage.read) {
       // Nachricht(en) als gelesen markieren
-      await fetch(
-        `http://localhost:8080/api/messages/chat/${chat.id}/sender/${chat.lastMessage.senderId}`,
-        { method: "PATCH" },
-      )
+      await fetch(`http://localhost:8080/api/messages/chat/${chat.id}`, {
+        method: "PATCH",
+        credentials: "include",
+      })
         .then((response) => {
           if (!response.ok) {
             throw new Error(
