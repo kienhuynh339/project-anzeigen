@@ -21,19 +21,15 @@ public class UserService {
 
     public UserPublicDto findPublicById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
         return new UserPublicDto(user);
     }
 
     public User register(RegisterRequest request) {
         if (userRepository.existsByAccountName(request.getAccountName())) {
-            throw new IllegalArgumentException(ExceptionMessage.ACCOUNT_NAME_ALREADY_EXISTS.getMessage());
+            throw new IllegalArgumentException(ExceptionMessage.ACCOUNT_NAME_ALREADY_EXISTS);
         }
 
-        if (request.getPassword().trim().length() < 6) {
-            throw new IllegalArgumentException((ExceptionMessage.PASSWORD_TOO_SHORT.getMessage()));
-        }
-        
         User user = new User();
         user.setProfileName(request.getProfileName());
         user.setAccountName(request.getAccountName());
@@ -44,7 +40,7 @@ public class UserService {
 
     public User findByAccountName(String accountName) {
         return userRepository.findByAccountName(accountName).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
     }
 
 }
