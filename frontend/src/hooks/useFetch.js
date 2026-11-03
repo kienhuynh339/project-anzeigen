@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useEffect, useState } from "react";
-
+const API_URL = "http://localhost:8080/api";
 export function useFetch(url, dependencies, initialData = null) {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
@@ -12,17 +12,15 @@ export function useFetch(url, dependencies, initialData = null) {
     if (!url) return;
     setLoading(true);
     setError(false);
-    fetch(url, {
+    fetch(`${API_URL}${url}`, {
       method: "GET",
       credentials: "include",
     })
-      .then((response) => {
+      .then(async (response) => {
+        const result = await response.json().catch(() => null);
         if (!response.ok) {
-          throw Error(`Fehler beim Datenabruf: ${url}`);
+          throw Error(result?.errorMessage || `Fehler beim Datenabruf: ${url}`);
         }
-        return response.json();
-      })
-      .then((result) => {
         setData(result);
       })
       .catch((error) => {
