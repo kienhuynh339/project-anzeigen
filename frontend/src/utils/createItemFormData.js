@@ -2,7 +2,6 @@ export function createItemFormData(
   title,
   categoryId,
   description,
-  posterId,
   locationId,
   postcode,
   locationExtraInfo,
@@ -14,7 +13,6 @@ export function createItemFormData(
   formData.append("title", title);
   formData.append("categoryId", categoryId);
   formData.append("description", description);
-  formData.append("posterId", posterId);
   formData.append("locationId", locationId);
   formData.append("postcode", postcode);
   formData.append("locationExtraInfo", locationExtraInfo);
