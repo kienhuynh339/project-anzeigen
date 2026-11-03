@@ -11,43 +11,43 @@ import sp.backend.user.User;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name="items")
+@Table(name = "items")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name="poster_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id")
     private User poster;
 
     private String title;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     private String description;
 
     private int price = 0;
 
-    @ManyToOne(optional = false, fetch=FetchType.LAZY)
-    @JoinColumn(name="location_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
     private GeodbLocation location;
 
-    @Column(name="plz")
     private String postcode;
 
-    @Column(name="location_extra_info")
+    @Column(name = "location_extra_info")
     private String locationExtraInfo;
 
     @Enumerated
     private ItemStatus status;
 
-    @Column(name="created_at", updatable = false, insertable = false)
+    @Column(name = "created_at", updatable = false, insertable = false)
     private OffsetDateTime createdAt;
 
-    protected Item(){}
+    protected Item() {
+    }
 
     public Item(User poster, String title, Category category,
                 String description, Integer price,
@@ -59,7 +59,7 @@ public class Item {
         this.price = price;
         this.location = location;
         this.postcode = postcode;
-        this.locationExtraInfo=locationExtraInfo;
+        this.locationExtraInfo = locationExtraInfo;
         this.status = status;
     }
 
