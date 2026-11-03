@@ -4,8 +4,8 @@
 
 import { createRequest } from "./createRequest";
 
-export function createItemFavorite(itemId, userId) {
-  const newItemFavorite = { itemId: itemId, userId: userId };
+export function createItemFavorite(itemId) {
+  const newItemFavorite = { itemId: itemId };
   return createRequest(
     "http://localhost:8080/api/item-favorites",
     newItemFavorite,
