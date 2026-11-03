@@ -47,13 +47,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                     ELSE
                         6371.0 * 2 * ASIN(SQRT(
                             POWER(
-                                SIN(RADIANS(l.breite - :latitude) / 2),
+                                SIN(RADIANS(l.latitude - :latitude) / 2),
                                 2
                             )
                             + COS(RADIANS(:latitude))
-                            * COS(RADIANS(l.breite))
+                            * COS(RADIANS(l.latitude))
                             * POWER(
-                                SIN(RADIANS(l.laenge - :longitude) / 2),
+                                SIN(RADIANS(l.longitude - :longitude) / 2),
                                 2
                             )
                         ))
@@ -79,28 +79,29 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                 AND :longitude IS NOT NULL
                 AND 6371.0 * 2 * ASIN(SQRT(
                         POWER(
-                            SIN(RADIANS(l.breite - :latitude) / 2),
+                            SIN(RADIANS(l.latitude - :latitude) / 2),
                             2
                         )
                         +
                         COS(RADIANS(:latitude))
-                        * COS(RADIANS(l.breite))
+                        * COS(RADIANS(l.latitude))
                         * POWER(
-                            SIN(RADIANS(l.laenge - :longitude) / 2),
+                            SIN(RADIANS(l.longitude - :longitude) / 2),
                             2
                         )
                     )) <= :radiusKm)
                 )
             """)
     Page<ItemWithDistanceDto> search(
-            @Param("searchTerm") String searchTerm,
-            @Param("categoryId") Short categoryId,
-            @Param("minPrice") Integer minPrice,
-            @Param("maxPrice") Integer maxPrice,
-            @Param("locationId") Integer locationId,
-            @Param("latitude") Float latitude,
-            @Param("longitude") Float longitude,
-            @Param("radiusKm") Integer radiusKm, Long loggedInUserId,
+            String searchTerm,
+            Short categoryId,
+            Integer minPrice,
+            Integer maxPrice,
+            Integer locationId,
+            Float latitude,
+            Float longitude,
+            Integer radiusKm,
+            Long loggedInUserId,
             Pageable pageable
     );
 
@@ -128,26 +129,25 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Page<ItemDto> findByUserId(Long userId, Long loggedInUserId, Pageable pageable);
 
 
-
     @Query("""
-SElECT new sp.backend.item.ItemDto(
-            i.id,
-            i.category.id,
-            new sp.backend.user.UserPublicDto(u),
-            i.title,
-            i.description,
-            i.price,
-            new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
-            i.status,
-            i.createdAt,
-            true
-            )
-FROM Item i
-JOIN i.poster u
-JOIN i.location l
-JOIN ItemFavorite f ON i.id = f.item.id
-WHERE f.user.id = :userId
-""")
+            SElECT new sp.backend.item.ItemDto(
+                        i.id,
+                        i.category.id,
+                        new sp.backend.user.UserPublicDto(u),
+                        i.title,
+                        i.description,
+                        i.price,
+                        new sp.backend.location.GeodbLocationDto(l.id,l.name,i.postcode,i.locationExtraInfo),
+                        i.status,
+                        i.createdAt,
+                        true
+                        )
+            FROM Item i
+            JOIN i.poster u
+            JOIN i.location l
+            JOIN ItemFavorite f ON i.id = f.item.id
+            WHERE f.user.id = :userId
+            """)
     Page<ItemDto> findFavoriteItemsByUserId(Long userId, Pageable pageable);
 
 }
