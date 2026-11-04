@@ -2,8 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useState } from "react";
-import { createItemFormData } from "../../utils/createItemFormData";
-import { createItemRequest } from "../../utils/createItemRequest";
+import { createItem } from "../../api/itemApi";
 import ItemForm from "./ItemForm";
 import { useNavigate } from "react-router";
 export default function CreateItem() {
@@ -21,7 +20,7 @@ export default function CreateItem() {
   const [images, setImages] = useState([]);
 
   const handleSubmit = async (status) => {
-    const formData = createItemFormData(
+    createItem(
       item.title,
       item.categoryId,
       item.description,
@@ -29,10 +28,9 @@ export default function CreateItem() {
       item.postcode,
       item.locationExtraInfo,
       item.price,
-      images,
       status,
+      images,
     );
-    return await createItemRequest(formData);
   };
 
   const handleSaveDraft = async () => {
