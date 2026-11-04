@@ -33,42 +33,45 @@ export default function MessageList() {
 
   return (
     <div
-      className="d-flex flex-column flex-grow-1 p-3 overflow-auto h-100"
+      className="d-flex flex-column flex-grow-1 p-3 overflow-auto"
       ref={chatContainerRef}
     >
-      {messages.map((message) => (
-        <div
-          key={message.id}
-          className={`d-flex align-items-end ${message.senderId == userId ? "align-self-end" : null}`}
-          style={{ maxWidth: "80%" }}
-        >
-          {message.senderId != userId ? (
-            <Link className="pb-1 pe-1" to={`/user/${message.senderId}`}>
-              <img
-                src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser.profileName.charAt(0)}`}
-                className="rounded-circle"
-                width="30"
-                height="30"
-                style={{ objectFit: "cover" }}
-              />
-            </Link>
-          ) : null}
+      {messages.map((message) => {
+        const senderId = message.senderId;
+        return (
           <div
-            className={`d-flex flex-column ${message.senderId == userId ? "align-self-end" : null}`}
+            key={message.id}
+            className={`d-flex align-items-end ${senderId == userId ? "align-self-end" : null}`}
+            style={{ maxWidth: "80%" }}
           >
+            {senderId != userId ? (
+              <Link className="pb-1 pe-1" to={`/user/${senderId}`}>
+                <img
+                  src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser.profileName.charAt(0)}`}
+                  className="rounded-circle"
+                  width="30"
+                  height="30"
+                  style={{ objectFit: "cover" }}
+                />
+              </Link>
+            ) : null}
             <div
-              className={`rounded p-2 ${message.senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
+              className={`d-flex flex-column ${senderId == userId ? "align-self-end" : null}`}
             >
-              {message.content}
+              <div
+                className={`rounded p-2 ${senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
+              >
+                {message.content}
+              </div>
+              <span
+                className={`text-secondary small ${senderId == userId ? "align-self-end" : null}`}
+              >
+                {formatTimestamp(message.createdAt, TimestampType.MESSAGE)}
+              </span>
             </div>
-            <span
-              className={`text-secondary small ${message.senderId == userId ? "align-self-end" : null}`}
-            >
-              {formatTimestamp(message.createdAt, TimestampType.MESSAGE)}
-            </span>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
