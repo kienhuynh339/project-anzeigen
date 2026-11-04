@@ -21,7 +21,7 @@ export const getPath = Object.freeze({
   itemsFavorites: () => `/items/user/favorites?`,
 });
 
-export function useFetch(url, dependencies, initialData = null) {
+export function useFetch(url, dependencies = [], initialData = null) {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -51,7 +51,7 @@ export function useFetch(url, dependencies, initialData = null) {
       .finally(() => {
         setLoading(false);
       });
-  }, dependencies);
+  }, [...dependencies]);
 
   return { data, loading, error };
 }
