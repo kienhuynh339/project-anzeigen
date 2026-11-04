@@ -3,18 +3,18 @@
  */
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
-import { initialSearchFilters } from "../../utils/initialSearchFilters";
 import { itemCardTypes } from "./itemCardTypes";
-import { useAuth } from "../../contexts/AuthContext";
+import { getPath } from "../../hooks/useFetch";
+import { useSearchContext } from "../../contexts/SearchContext";
 
-export default function MyFavoriteItems({ setSearchFilters }) {
-  const { user } = useAuth();
+export default function MyFavoriteItems() {
   const navigate = useNavigate();
+  const { resetSearchFilters } = useSearchContext();
   const handleSearchFiltersReset = () => {
-    setSearchFilters(initialSearchFilters);
+    resetSearchFilters();
   };
 
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/favorites?`;
+  const urlWithoutPaginationAndSorting = getPath.itemsFavorites();
   const PAGE_SIZE = 9999;
   const title = "Meine Merkliste";
   const additionalContentWhenItemAmountIsZero = (
