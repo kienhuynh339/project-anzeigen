@@ -9,13 +9,17 @@ export default function ChatDeleteButton() {
   const {
     isChatDeleteActive,
     deleteList,
-    chatListLength,
     setIsChatDeleteActive,
     setDeleteList,
     resetCurrentChat,
-  } = useChatContext;
+    chatListLength,
+  } = useChatContext();
   const handleOpenDialog = () => {
-    openDialog(ChatDeleteDialog);
+    openDialog(ChatDeleteDialog, {
+      deleteList,
+      setDeleteList,
+      setIsChatDeleteActive,
+    });
   };
 
   return (
