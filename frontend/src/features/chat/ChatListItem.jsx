@@ -1,6 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
+import ProfileImage from "../../components/ProfileImage";
 import { useAuth } from "../../contexts/AuthContext";
 import { useChatContext } from "../../contexts/ChatContext";
 import { truncateText } from "../../utils/truncatetext";
@@ -41,13 +42,15 @@ export default function ChatListItem({ chat }) {
 
       <div className="d-flex ">
         <div className="ps-2 pe-3 pt-2 pb-1 d-flex flex-column justify-content-center align-items-center">
-          <img
-            src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${user.id == chat.poster.id ? chat.interestedUser.profileName.charAt(0) : chat.poster.profileName.charAt(0)}`}
-            className="rounded-circle"
-            width="40"
-            height="40"
-            style={{ objectFit: "cover" }}
-          />
+          <ProfileImage
+            firstLetterOfName={
+              user.id == chat.poster.id
+                ? chat.interestedUser.profileName.charAt(0)
+                : chat.poster.profileName.charAt(0)
+            }
+            size={"40"}
+          ></ProfileImage>
+
           <span style={{ fontSize: "0.7rem" }}>
             {truncateText(
               user.id == chat.poster.id
