@@ -5,11 +5,9 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import ItemForm from "./ItemForm";
 import ErrorNotification from "../../components/ErrorNotification";
-import { updateItemFormData } from "../../utils/updateItemFormData";
-import { updateItemRequest } from "../../utils/UpdateItemRequest";
 import { useFetch } from "../../hooks/useFetch";
 import { useNavigate } from "react-router";
-import itemToUpdateItemRequestConverter from "../../utils/itemToUpdateItemRequestConverter";
+import { updateItem } from "../../api/itemApi";
 export default function EditItem() {
   const navigate = useNavigate();
   const { itemId } = useParams();
@@ -81,7 +79,8 @@ export default function EditItem() {
   }
 
   const handleSubmit = (status) => {
-    const formData = updateItemFormData(
+    updateItem(
+      fetchedItem.id,
       item.title,
       item.categoryId,
       item.description,
@@ -89,10 +88,9 @@ export default function EditItem() {
       item.postcode,
       item.locationExtraInfo,
       item.price,
-      images,
       status,
+      images,
     );
-    updateItemRequest(fetchedItem.id, formData);
   };
 
   const handleSaveDraft = () => {
