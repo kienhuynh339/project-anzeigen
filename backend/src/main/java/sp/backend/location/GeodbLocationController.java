@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/locations")
-@CrossOrigin(origins = "http://localhost:5173")
 public class GeodbLocationController {
     private final GeodbLocationService geodbLocationService;
 
@@ -23,10 +22,7 @@ public class GeodbLocationController {
     }
 
     @GetMapping
-    private ResponseEntity<List<GeodbLocationResponse>> findByPostcode(@RequestParam String postcode, @RequestParam(defaultValue = "15") int limit) {
-        int pageSize = Math.clamp(limit, 1, 100);
-        Pageable pageable = PageRequest.of(0, pageSize);
-
+    private ResponseEntity<List<GeodbLocationResponse>> findByPostcode(@RequestParam String postcode, Pageable pageable) {
         List<GeodbLocationResponse> locationList = geodbLocationService.findByPostcode(postcode, pageable);
         return ResponseEntity.ok(locationList);
     }
