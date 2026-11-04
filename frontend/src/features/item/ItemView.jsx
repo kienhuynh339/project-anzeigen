@@ -14,6 +14,7 @@ import ItemActivateButton from "../../components/ItemActivateButton";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
 import { useAuth } from "../../contexts/AuthContext";
+import ProfileImage from "../../components/ProfileImage";
 
 export default function ItemView() {
   const { user } = useAuth();
@@ -73,13 +74,10 @@ export default function ItemView() {
                 className="text-decoration-none text-dark"
                 to={`/user/${item.poster.id}`}
               >
-                <img
-                  src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${item.poster.profileName.charAt(0)}`}
-                  className="rounded-circle my-2"
-                  width="50"
-                  height="50"
-                  style={{ objectFit: "cover" }}
-                />
+                <ProfileImage
+                  firstLetterOfName={item.poster.profileName.charAt(0)}
+                  size={"50"}
+                ></ProfileImage>
                 <span className="fw-bold ms-2">{item.poster.profileName}</span>
               </Link>
             </div>
