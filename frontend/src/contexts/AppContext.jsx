@@ -1,8 +1,13 @@
-import React, { createContext, useContext, useState } from "react";
+/**
+ * @author Trung Kien Huynh
+ */
+import { createContext, useContext, useState } from "react";
 const AppContext = createContext(null);
 
 export function AppContextProvider({ children }) {
   const [dialog, setDialog] = useState(null);
+  // Hier ein State für "Neue Nachricht (roter Punkt)"
+
   const openDialog = (DialogComponent, props = {}) => {
     setDialog({ DialogComponent, props });
   };
