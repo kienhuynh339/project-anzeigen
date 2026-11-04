@@ -3,6 +3,7 @@
  */
 import { sendMessage as apiSendMessage } from "../../api/messageApi";
 import { useChatContext } from "../../contexts/ChatContext";
+import { useState } from "react";
 
 export default function MessageInput() {
   const [messageContent, setMessageContent] = useState("");
