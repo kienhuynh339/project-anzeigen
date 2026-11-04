@@ -3,13 +3,13 @@
  */
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
-import { createMessage } from "../utils/createMessage";
+import { sendMessage } from "../api/messageApi";
 export default function MessageInputDialog({ item, closeDialog }) {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const handleSend = async (itemId, interestedUserId, senderId, content) => {
+  const handleSend = async (itemId, interestedUserId, content) => {
     setIsSending(true);
-    await createMessage(itemId, interestedUserId, senderId, content);
+    await sendMessage(itemId, interestedUserId, content);
     setMessage("");
     setIsSending(false);
     closeDialog();
