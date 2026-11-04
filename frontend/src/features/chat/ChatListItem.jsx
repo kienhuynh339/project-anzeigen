@@ -25,7 +25,7 @@ export default function ChatListItem({ chat }) {
             ? "bg-primary-subtle"
             : null
       }`}
-      // style={{ height: "150px", flexShrink: 0 }}
+      // style={{ height: "110px", flexShrink: 0 }}
       type="button"
       onClick={() =>
         isChatDeleteActive ? selectChatToDelete(chat) : selectChat(chat)
