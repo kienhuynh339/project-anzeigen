@@ -3,17 +3,13 @@
  */
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
-import { deleteRequest } from "../utils/deleteRequest";
+import { deleteItem } from "../api/itemApi";
 export default function ItemDeleteDialog({ itemId, closeDialog }) {
   const [isItemDeleting, setIsItemDeleting] = useState(false);
   const handleItemDelete = async (event) => {
     event.preventDefault();
     setIsItemDeleting(true);
-    await deleteRequest(`http://localhost:8080/api/items/${itemId}`).catch(
-      (error) => {
-        console.log(error);
-      },
-    );
+    await deleteItem(itemId).catch((e) => console.error(e));
     setIsItemDeleting(false);
     closeDialog();
   };
