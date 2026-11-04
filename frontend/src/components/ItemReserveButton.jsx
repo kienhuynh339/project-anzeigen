@@ -1,15 +1,13 @@
 /**
  * @author Trung Kien Huynh
  */
-import { patchRequest } from "../utils/patchRequest";
+import { updateItemStatus } from "../api/itemApi";
 export default function ItemReserveButton({ itemId }) {
   const handleItemReserved = async (event) => {
     event.preventDefault();
-    await patchRequest(
-      `http://localhost:8080/api/items/${itemId}`,
-      "status",
-      "RESERVED",
-    ).catch((error) => console.log(error));
+    await updateItemStatus(itemId, "RESERVED").catch((error) =>
+      console.log(error),
+    );
   };
   return (
     <button
