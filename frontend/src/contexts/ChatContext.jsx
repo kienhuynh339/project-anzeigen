@@ -70,7 +70,7 @@ export function ChatContextProvider({ children }) {
   };
 
   const selectChat = async (chat) => {
-    if (!chat.lastMessage.read) {
+    if (!chat.lastMessage.read && chat.lastMessage.senderId !== user?.id) {
       // Nachricht(en) als gelesen markieren
 
       try {
