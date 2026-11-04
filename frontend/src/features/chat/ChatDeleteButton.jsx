@@ -3,24 +3,19 @@
  */
 import ChatDeleteDialog from "../../components/ChatDeleteDialog";
 import { useAppContext } from "../../contexts/AppContext";
-export default function ChatDeleteButton({
-  userId,
-  isChatDeleteActive,
-  handleChatDeleteDeactivate,
-  handleChatDeleteActivate,
-  deleteList,
-  chatListLength,
-  setDeleteList,
-  setIsChatDeleteActive,
-}) {
+import { useChatContext } from "../../contexts/ChatContext";
+export default function ChatDeleteButton() {
   const { openDialog } = useAppContext();
+  const {
+    isChatDeleteActive,
+    deleteList,
+    chatListLength,
+    setIsChatDeleteActive,
+    setDeleteList,
+    resetCurrentChat,
+  } = useChatContext;
   const handleOpenDialog = () => {
-    openDialog(ChatDeleteDialog, {
-      setIsChatDeleteActive,
-      setDeleteList,
-      deleteList,
-      userId,
-    });
+    openDialog(ChatDeleteDialog);
   };
 
   return (
@@ -29,14 +24,20 @@ export default function ChatDeleteButton({
       {isChatDeleteActive ? (
         <button /* "Chat löschen" abbrechen */
           className="btn btn-outline-danger"
-          onClick={handleChatDeleteDeactivate}
+          onClick={() => {
+            setIsChatDeleteActive(false);
+            setDeleteList([]);
+          }}
         >
           <i className="bi bi-x-lg"></i>
         </button>
       ) : chatListLength > 0 ? (
         <button /* "Chat löschen" aktivieren */
           className="btn btn-outline-danger"
-          onClick={handleChatDeleteActivate}
+          onClick={() => {
+            setIsChatDeleteActive(true);
+            resetCurrentChat();
+          }}
         >
           <i className="bi bi-trash"></i>
         </button>
