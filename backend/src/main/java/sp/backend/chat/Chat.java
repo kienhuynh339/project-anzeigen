@@ -49,7 +49,7 @@ public class Chat {
 
     public User otherParticipant(User user) {
         if (user == null) return null;
-        return user.equals(poster) ? poster : interestedUser;
+        return user.equals(poster) ? interestedUser : poster;
     }
 
     public Long getId() {
