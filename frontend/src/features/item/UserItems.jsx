@@ -9,6 +9,7 @@ import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useEffect } from "react";
 import { itemCardTypes } from "./itemCardTypes";
 import { useAuth } from "../../contexts/AuthContext";
+import ProfileImage from "../../components/ProfileImage";
 
 export default function UserItems() {
   const { user } = useAuth();
@@ -42,13 +43,10 @@ export default function UserItems() {
   return (
     <>
       <div className="d-flex justify-content-center align-items-center gap-2 border-bottom border-dark-subtle">
-        <img
-          src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser?.profileName?.charAt(0)}`}
-          className="rounded-circle my-2"
-          width="50"
-          height="50"
-          style={{ objectFit: "cover" }}
-        />
+        <ProfileImage
+          firstLetterOfName={otherUser?.profileName?.charAt(0)}
+          size={"50"}
+        ></ProfileImage>
         <span className="fw-bold">{otherUser.profileName}</span>
         <span>|</span>
         <span>
