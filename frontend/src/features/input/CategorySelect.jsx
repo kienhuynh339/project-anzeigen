@@ -1,11 +1,11 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useFetch } from "../../hooks/useFetch";
+import { getPath, useFetch } from "../../hooks/useFetch";
 
 export default function CategorySelect({ categoryId, setCategoryId }) {
   const { data: categories } = useFetch(
-    "http://localhost:8080/api/categories",
+    getPath.categories(),
     [],
     [{ id: 1, name: "" }],
   );
