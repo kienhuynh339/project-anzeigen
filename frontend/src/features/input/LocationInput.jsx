@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useState, useEffect, useRef } from "react";
-import { useFetch } from "../../hooks/useFetch";
+import { getPath, useFetch } from "../../hooks/useFetch";
 
 export default function LocationInput({
   postcode,
@@ -19,7 +19,7 @@ export default function LocationInput({
 
   // Orte abrufen
   const { data: locationsData } = useFetch(
-    `http://localhost:8080/api/locations?postcode=${postcode}`,
+    getPath.locationsByPostcode(postcode),
     [postcode],
     [],
   );
