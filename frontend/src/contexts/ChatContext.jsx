@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { markMessageAsRead } from "../api/messageApi";
-import { getPath } from "../hooks/useFetch";
+import { getPath, useFetch } from "../hooks/useFetch";
 import { useAuth } from "./AuthContext";
 
 const ChatContext = createContext(null);
@@ -33,22 +33,24 @@ export function ChatContextProvider({ children }) {
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
+  const [chatsFetchTrigger, setChatFetchTrigger] = useState(false);
   const { user } = useAuth();
 
-  const { data: chatPage } = useFetch(getPath.chats(), [user]);
+  const { data: chatPage } = useFetch(getPath.chats(), [chatsFetchTrigger]);
 
   const chats = chatPage?.content ?? [];
   const chatListLength = chats.length;
 
-  //   useEffect(() => {
-  //     if (!currentChat.id) return;
+  // // Aktualisiere currentChat
+  // useEffect(() => {
+  //   if (!currentChat.id) return;
 
-  //     const updatedChat = chats.find((chat) => chat.id === currentChat.id);
+  //   const updatedChat = chats.find((chat) => chat.id === currentChat.id);
 
-  //     if (updatedChat) {
-  //       setCurrentChat(updatedChat);
-  //     }
-  //   }, [chats, currentChat.id]);
+  //   if (updatedChat) {
+  //     setCurrentChat(updatedChat);
+  //   }
+  // }, [chats, currentChat.id]);
 
   const otherUser =
     user.id != currentChat.poster.id
@@ -70,9 +72,11 @@ export function ChatContextProvider({ children }) {
   const selectChat = async (chat) => {
     if (!chat.lastMessage.read) {
       // Nachricht(en) als gelesen markieren
+
       try {
         await markMessageAsRead(chat.id);
         chat.lastMessage.read = true;
+        // setChatFetchTrigger(!chatsFetchTrigger);
       } catch (e) {
         console.error(e);
       }
