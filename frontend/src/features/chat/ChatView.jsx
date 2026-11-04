@@ -3,9 +3,6 @@
  */
 import MessageList from "./MessageList";
 import { Link } from "react-router";
-import { useState } from "react";
-import ChatListItem from "./ChatListItem";
-import ChatDeleteButton from "./ChatDeleteButton";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import ItemReserveButton from "../../components/ItemReserveButton";
@@ -13,28 +10,11 @@ import ItemTitle from "../../components/ItemTitle";
 import { useAuth } from "../../contexts/AuthContext";
 import { useChatContext } from "../../contexts/ChatContext";
 import MessageInput from "./MessageInput";
-
-const chatFilterOptions = [
-  { label: "Alle Anzeigen", value: "all" },
-  { label: "Deine Anzeigen", value: "yours" },
-  { label: "Anzeigen anderer", value: "others" },
-];
+import ChatList from "./ChatList";
 
 export default function ChatView() {
   const { user } = useAuth();
-  const [chatFilter, setChatFilter] = useState(chatFilterOptions[0].value);
-  const { chats, currentChat } = useChatContext();
-
-  const filteredChats = chats.filter((chat) => {
-    switch (chatFilter) {
-      case "all":
-        return true;
-      case "yours":
-        return chat.poster.id == user.id;
-      case "others":
-        return chat.poster.id != user.id;
-    }
-  });
+  const { currentChat } = useChatContext();
 
   return (
     <div className="container-fluid">
@@ -45,44 +25,7 @@ export default function ChatView() {
       >
         {/* Linke Hälfte: Chatliste */}
         <div className="h-100 col-5 p-0 border-end border-dark-subtle">
-          <div className="h-100 list-group list-group-flush overflow-auto">
-            {/* Werkzeugleiste */}
-            <div
-              className="border-bottom border-dark-subtle  p-2 bg-secondary-subtle d-flex gap-2 align-items-center justify-content-between"
-              style={{ height: "3rem" }}
-            >
-              {/* Chat-Filter */}
-              <div>
-                <select
-                  id="chatFilter"
-                  name="chatFilter"
-                  className="form-select"
-                  value={chatFilter}
-                  onChange={(e) => {
-                    setChatFilter(e.target.value);
-                  }}
-                >
-                  {chatFilterOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* Chat löschen */}
-              <ChatDeleteButton></ChatDeleteButton>
-            </div>
-            {/* Chatliste */}
-            {filteredChats
-              .sort(
-                (a, b) =>
-                  new Date(b.lastMessage.createdAt).getTime() -
-                  new Date(a.lastMessage.createdAt).getTime(),
-              )
-              .map((chat) => (
-                <ChatListItem key={chat.id} chat={chat} />
-              ))}
-          </div>
+          <ChatList></ChatList>
         </div>
 
         {/* Rechte Hälfte: Chatverlauf */}
