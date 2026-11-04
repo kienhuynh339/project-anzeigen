@@ -1,8 +1,8 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState, useEffect } from "react";
-import { useFetch } from "../../hooks/useFetch";
+import { useState } from "react";
+import { useFetch, getPath } from "../../hooks/useFetch";
 
 export default function PostcodeInput({
   postcode,
@@ -15,7 +15,7 @@ export default function PostcodeInput({
 
   // Gefilterte PLZs abrufen
   const { data: postcodes } = useFetch(
-    `http://localhost:8080/api/postcodes?postcodePrefix=${encodeURIComponent(postcode)}`,
+    getPath.postcodesByPostcodePrefix(postcode),
     [postcode],
   );
 
