@@ -1,21 +1,24 @@
 /**
  * @author Trung Kien Huynh
  */
+import { useSearchContext } from "../../contexts/SearchContext";
 import { itemCardTypes } from "./itemCardTypes";
 import ItemList from "./ItemList";
+import { getPath } from "../../hooks/useFetch";
 
-export default function AllItems({ searchFilters, searchTrigger }) {
-  const {
+export default function AllItems() {
+  const { searchFilters, searchTrigger } = useSearchContext();
+  const { searchTerm, categoryId, locationId, radiusKm, priceMin, priceMax } =
+    searchFilters;
+
+  const urlWithoutPaginationAndSorting = getPath.items(
     searchTerm,
     categoryId,
-    postcode,
-    locationId,
-    radiusKm,
     priceMin,
     priceMax,
-  } = searchFilters;
-
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items?searchTerm=${searchTerm}&categoryId=${categoryId}&minPrice=${priceMin}&maxPrice=${priceMax}&locationId=${locationId}&radiusKm=${radiusKm}&`;
+    locationId,
+    radiusKm,
+  );
 
   return (
     <ItemList
