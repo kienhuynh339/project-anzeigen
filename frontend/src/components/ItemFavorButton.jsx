@@ -2,8 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useState } from "react";
-import { createItemFavorite } from "../utils/createItemFavorite";
-import { deleteRequest } from "../utils/deleteRequest";
+import { deleteFavoriteItem, addFavoriteItem } from "../api/favoriteItemApi";
 import { useEffect } from "react";
 export default function ItemFavorButton({
   itemId,
@@ -21,23 +20,19 @@ export default function ItemFavorButton({
     event.preventDefault();
     setIsFavoriteChanging(true);
     if (favorite) {
-      await deleteRequest(
-        `http://localhost:8080/api/item-favorites/item/${itemId}`,
-      )
-        .then(() => {
-          setFavorite(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      try {
+        await deleteFavoriteItem(itemId);
+        setFavorite(false);
+      } catch (e) {
+        console.error(error);
+      }
     } else {
-      await createItemFavorite(itemId)
-        .then(() => {
-          setFavorite(true);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      try {
+        await addFavoriteItem(itemId);
+        setFavorite(true);
+      } catch (e) {
+        console.error(error);
+      }
     }
     setIsFavoriteChanging(false);
   };
