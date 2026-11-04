@@ -7,6 +7,7 @@ import { Link } from "react-router";
 import { useRef, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useChatContext } from "../../contexts/ChatContext";
+import ProfileImage from "../../components/ProfileImage";
 
 export default function MessageList() {
   const { user } = useAuth();
@@ -45,14 +46,13 @@ export default function MessageList() {
             style={{ maxWidth: "80%" }}
           >
             {senderId != userId ? (
-              <Link className="pb-1 pe-1" to={`/user/${senderId}`}>
-                <img
-                  src={`https://placehold.co/600x400/${"ABABAB"}/000000?text=${otherUser.profileName.charAt(0)}`}
-                  className="rounded-circle"
-                  width="30"
-                  height="30"
-                  style={{ objectFit: "cover" }}
-                />
+              <Link
+                className="mb-1 me-1 rounded-circle"
+                to={`/user/${senderId}`}
+              >
+                <ProfileImage
+                  firstLetterOfName={otherUser.profileName.charAt(0)}
+                ></ProfileImage>
               </Link>
             ) : null}
             <div
