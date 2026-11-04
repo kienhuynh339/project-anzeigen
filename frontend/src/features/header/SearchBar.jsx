@@ -2,28 +2,18 @@
  * @author Trung Kien Huynh
  */
 import "../../styles/inputWhiteFocus.css";
-import { useState, useEffect } from "react";
 import PostcodeInput from "../input/PostCodeInput";
 import LocationInput from "../input/LocationInput";
 import CategorySelect from "../input/CategorySelect";
 import { useNavigate } from "react-router";
+import { useSearchContext } from "../../contexts/SearchContext";
 
-export default function SearchBar({
-  searchFilters,
-  setSearchFilters,
-  searchTrigger,
-  setSearchTrigger,
-}) {
+export default function SearchBar({}) {
   const navigate = useNavigate();
-  const {
-    searchTerm,
-    categoryId,
-    postcode,
-    locationId,
-    radiusKm,
-    priceMin,
-    priceMax,
-  } = searchFilters;
+  const { searchFilters, setSearchFilters, searchTrigger, setSearchTrigger } =
+    useSearchContext();
+  const { searchTerm, categoryId, postcode, radiusKm, priceMin, priceMax } =
+    searchFilters;
 
   const updateFilter = (key, value) => {
     setSearchFilters((prev) => ({
