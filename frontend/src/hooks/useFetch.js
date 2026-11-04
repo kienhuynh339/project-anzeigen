@@ -3,6 +3,24 @@
  */
 import { useEffect, useState } from "react";
 const API_URL = "http://localhost:8080/api";
+
+export const getPath = Object.freeze({
+  messagesByChatId: (chatId) =>
+    `/messages/chat/${chatId}?page=0&size=9999&sort=createdAt,asc`,
+  chats: () => `/chats`,
+  categories: () => `/categories`,
+  userByUserId: (userId) => `/users/${userId}`,
+  locationsByPostcode: (postcode) =>
+    `/locations?postcode=${postcode}&page=0&size=15`,
+  postcodesByPostcodePrefix: (postcodePrefix) =>
+    `/postcodes?postcodePrefix=${postcodePrefix}&page=0&size=15`,
+  itemByItemId: (itemId) => `/items/${itemId}`,
+  items: (searchTerm, categoryId, priceMin, priceMax, locationId, radiusKm) =>
+    `/items?searchTerm=${searchTerm}&categoryId=${categoryId}&minPrice=${priceMin}&maxPrice=${priceMax}&locationId=${locationId}&radiusKm=${radiusKm}&`,
+  itemsByUserId: (userId) => `/items/user/${userId}?`,
+  itemsFavorites: () => `/items/user/favorites?`,
+});
+
 export function useFetch(url, dependencies, initialData = null) {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
@@ -19,7 +37,9 @@ export function useFetch(url, dependencies, initialData = null) {
       .then(async (response) => {
         const result = await response.json().catch(() => null);
         if (!response.ok) {
-          throw Error(result?.errorMessage || `Fehler beim Datenabruf: ${url}`);
+          throw Error(
+            `Fehler beim Datenabruf: ${url}. ${result?.errorMessage}`,
+          );
         }
         setData(result);
       })
