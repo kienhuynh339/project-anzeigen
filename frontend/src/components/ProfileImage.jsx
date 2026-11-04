@@ -9,13 +9,30 @@ const profileImages = Object.fromEntries(
     return [name.toLowerCase(), image];
   }),
 );
+
+const normalizeGerman = (str) =>
+  str
+    .replace("ä", "ae")
+    .replace("ö", "oe")
+    .replace("ü", "ue")
+    .replace("ß", "ss");
+
 export default function ProfileImage({
   firstLetterOfName,
-  backgroundColor = "ABABAB",
+  size = "30",
+  backgroundColor = "#ABABAB",
 }) {
   return (
-    <div className="">
-      <img src={profileImages[firstLetterOfName]} />
+    <div
+      className="rounded-circle"
+      style={{ backgroundColor: backgroundColor }}
+    >
+      <img
+        src={profileImages[normalizeGerman(firstLetterOfName.toLowerCase())]}
+        width={size}
+        height={size}
+        style={{ objectFit: "cover" }}
+      />
     </div>
   );
 }
