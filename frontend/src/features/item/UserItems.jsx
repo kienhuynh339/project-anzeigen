@@ -4,7 +4,7 @@
 import ItemList from "./ItemList";
 import { Link, useNavigate } from "react-router";
 import { useParams } from "react-router";
-import { useFetch } from "../../hooks/useFetch";
+import { useFetch, getPath } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useEffect } from "react";
 import { itemCardTypes } from "./itemCardTypes";
@@ -15,7 +15,7 @@ export default function UserItems() {
   const navigate = useNavigate();
   // ItemList-Props
   const { otherUserId } = useParams();
-  const urlWithoutPaginationAndSorting = `http://localhost:8080/api/items/user/${otherUserId}?`;
+  const urlWithoutPaginationAndSorting = getPath.itemsByUserId(otherUserId);
   const PAGE_SIZE = 9999;
   const additionalContentWhenItemAmountIsZero = (
     <div className="d-flex flex-column gap-2">
