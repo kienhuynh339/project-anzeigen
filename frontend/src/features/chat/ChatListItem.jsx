@@ -6,7 +6,13 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { truncateText } from "../../utils/truncatetext";
 export default function ChatListItem({ chat }) {
   const { user } = useAuth();
-  const { deleteList, currentChat, isChatDeleteActive } = useChatContext();
+  const {
+    deleteList,
+    currentChat,
+    isChatDeleteActive,
+    selectChat,
+    selectChatToDelete,
+  } = useChatContext();
   return (
     <button
       key={chat.id}
