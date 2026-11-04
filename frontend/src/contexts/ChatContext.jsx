@@ -33,10 +33,9 @@ export function ChatContextProvider({ children }) {
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
-  const [chatsFetchTrigger, setChatFetchTrigger] = useState(false);
   const { user } = useAuth();
 
-  const { data: chatPage } = useFetch(getPath.chats(), [chatsFetchTrigger]);
+  const { data: chatPage } = useFetch(getPath.chats(), []);
 
   const chats = chatPage?.content ?? [];
   const chatListLength = chats.length;
@@ -76,7 +75,6 @@ export function ChatContextProvider({ children }) {
       try {
         await markMessageAsRead(chat.id);
         chat.lastMessage.read = true;
-        // setChatFetchTrigger(!chatsFetchTrigger);
       } catch (e) {
         console.error(e);
       }
