@@ -3,10 +3,13 @@
  */
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
-import { useChatContext } from "../contexts/ChatContext";
 import { deleteChat } from "../api/chatApi";
-export default function ChatDeleteDialog({ closeDialog }) {
-  const { deleteList, setDeleteList, setIsChatDeleteActive } = useChatContext();
+export default function ChatDeleteDialog({
+  deleteList,
+  setDeleteList,
+  setIsChatDeleteActive,
+  closeDialog,
+}) {
   const [deletingChat, setDeletingChat] = useState(false);
   const handleDeleteChat = async () => {
     setDeletingChat(true);
