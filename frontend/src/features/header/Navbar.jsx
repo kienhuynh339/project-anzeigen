@@ -5,14 +5,12 @@ import HamburgerMenu from "../../components/HamburgerMenu";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
-import { initialSearchFilters } from "../../utils/initialSearchFilters";
 import { useAuth } from "../../contexts/AuthContext";
+import { useSearchContext } from "../../contexts/SearchContext";
 
-export default function Navbar({
-  setSearchFilters,
-  searchTrigger,
-  setSearchTrigger,
-}) {
+export default function Navbar() {
+  const { searchTrigger, setSearchTrigger, resetSearchFilters } =
+    useSearchContext();
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
   const options = [
@@ -29,7 +27,7 @@ export default function Navbar({
   }
 
   const handleLogoClick = () => {
-    setSearchFilters(initialSearchFilters);
+    resetSearchFilters();
     setSearchTrigger(!searchTrigger);
   };
 
