@@ -4,23 +4,22 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import ItemForm from "./ItemForm";
-import ErrorNotification from "../../components/ErrorNotification";
 import { getPath, useFetch } from "../../hooks/useFetch";
 import { useNavigate } from "react-router";
 import { updateItem } from "../../api/itemApi";
+import { getImage } from "../../api/imageApi";
+import { Navigate } from "react-router";
 
-const itemToUpdateItemRequestConverter = (item) => {
-  return {
-    title: item.title,
-    categoryId: item.categoryId,
-    description: item.description,
-    locationId: item.location?.id ?? "",
-    postcode: item.location?.postcode ?? "",
-    locationExtraInfo: item.location?.extraInfo ?? "",
-    price: item.price,
-    status: item.status,
-  };
-};
+const mapItemToFormData = (item) => ({
+  title: item.title,
+  categoryId: item.categoryId,
+  description: item.description,
+  locationId: item.location?.id ?? "",
+  postcode: item.location?.postcode ?? "",
+  locationExtraInfo: item.location?.extraInfo ?? "",
+  price: item.price,
+  status: item.status,
+});
 
 export default function EditItem() {
   const navigate = useNavigate();
@@ -41,28 +40,13 @@ export default function EditItem() {
     [],
   );
 
+  // Bilder abrufen
   useEffect(() => {
     if (imageIds.length === 0) {
       setImages([]);
       return;
     }
-    Promise.all(
-      imageIds.map((id) =>
-        fetch(`http://localhost:8080/api/images/${id}`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Bild ${id} konnte nicht geladen werden.`);
-            }
-            return response.blob();
-          })
-          .then(
-            (blob) =>
-              new File([blob], `image-${id}`, {
-                type: blob.type,
-              }),
-          ),
-      ),
-    )
+    Promise.all(imageIds.map((id) => getImage(id)))
       .then((fetchedImages) => {
         setImages(fetchedImages);
       })
@@ -73,23 +57,21 @@ export default function EditItem() {
 
   useEffect(() => {
     if (fetchedItem !== null) {
-      setItem(itemToUpdateItemRequestConverter(fetchedItem));
+      // fetchedItem hat eine andere Struktur als item
+      setItem(mapItemToFormData(fetchedItem));
     }
   }, [fetchedItem]);
 
+  if (!isItemIdValid || itemDataFetchError) {
+    return <Navigate to="/404" replace />;
+  }
+
+  // inputValue von <LocationInput> besteht aus location.name (und location.extraInfo, wenn location.extraInfo nicht leer ist)
   let initialLocationInputValue = "";
   if (fetchedItem !== null) {
     initialLocationInputValue = fetchedItem.location.extraInfo
       ? `${fetchedItem.location.name} ${fetchedItem.location.extraInfo}`
       : `${fetchedItem.location.name}`;
-  }
-
-  if (!isItemIdValid || itemDataFetchError) {
-    return (
-      <ErrorNotification
-        description={"Diese Seite gibt es nicht."}
-      ></ErrorNotification>
-    );
   }
 
   const handleSubmit = (status) => {
@@ -111,6 +93,7 @@ export default function EditItem() {
     handleSubmit("DRAFT");
     navigate("/meine-anzeigen");
   };
+
   const handlePublishItem = () => {
     handleSubmit("ACTIVE");
     navigate("/meine-anzeigen");
