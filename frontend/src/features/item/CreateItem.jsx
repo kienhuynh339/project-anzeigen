@@ -5,22 +5,24 @@ import { useState } from "react";
 import { createItem } from "../../api/itemApi";
 import ItemForm from "./ItemForm";
 import { useNavigate } from "react-router";
+
+const initialItem = {
+  title: "",
+  categoryId: 1,
+  description: "",
+  locationId: "",
+  postcode: "",
+  locationExtraInfo: "",
+  price: "",
+  status: "DRAFT",
+};
 export default function CreateItem() {
   const navigate = useNavigate();
-  const [item, setItem] = useState({
-    title: "",
-    categoryId: 1,
-    description: "",
-    locationId: "",
-    postcode: "",
-    locationExtraInfo: "",
-    price: "",
-    status: "DRAFT",
-  });
+  const [item, setItem] = useState(initialItem);
   const [images, setImages] = useState([]);
 
-  const handleSubmit = async (status) => {
-    createItem(
+  const handleSubmit = (status) => {
+    return createItem(
       item.title,
       item.categoryId,
       item.description,
