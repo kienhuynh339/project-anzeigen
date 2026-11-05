@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useSearchContext } from "../../contexts/SearchContext";
-import { itemCardTypes } from "./itemCardTypes";
+import { itemCardTypes } from "./ItemCard";
 import ItemList from "./ItemList";
 import { getPath } from "../../hooks/useFetch";
 
