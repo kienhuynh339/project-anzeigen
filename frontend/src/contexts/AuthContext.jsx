@@ -13,7 +13,6 @@ export function AuthContextProvider({ children }) {
     async function checkAuthentication() {
       try {
         const currentUser = await authApi.getCurrentUser();
-
         setUser(currentUser);
       } catch (error) {
         setUser(null);
@@ -27,22 +26,18 @@ export function AuthContextProvider({ children }) {
 
   // Anmelden
   async function login(accountName, password) {
-    const loggedInUser = await authApi.login(accountName, password);
-
+    await authApi.login(accountName, password);
     setUser(loggedInUser);
-
-    return loggedInUser;
   }
 
   // Registrieren
-  async function register(profileName, accountName, password) {
+  function register(profileName, accountName, password) {
     return authApi.register(profileName, accountName, password);
   }
 
   // Abmelden
   async function logout() {
     await authApi.logout();
-
     setUser(null);
   }
 
