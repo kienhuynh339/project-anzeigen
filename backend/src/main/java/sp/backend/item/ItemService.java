@@ -57,6 +57,18 @@ public class ItemService {
         return itemRepository.findItemById(itemId, loggedInUserId);
     }
 
+    public ItemResponse findByItemIdToEdit(Long itemId, Authentication authentication) {
+        Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
+
+        ItemResponse item = itemRepository.findItemById(itemId, loggedInUserId);
+
+        if (!item.getPoster().getId().equals(loggedInUserId)) {
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
+        }
+        
+        return itemRepository.findItemById(itemId, loggedInUserId);
+    }
+
     public Page<ItemWithDistanceResponse> search(
             String searchTerm,
             Short categoryId,
