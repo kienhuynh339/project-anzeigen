@@ -1,56 +1,27 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState, useEffect } from "react";
 import "../../styles/hoverEffect.css";
-import { useFetch } from "../../hooks/useFetch";
 import ItemCard from "./ItemCard";
+import { useItemListContext } from "../../contexts/ItemListContext";
 
 export default function ItemList({
-  urlWithoutPaginationAndSorting,
-  additionalDependencies = [],
-  pageSize = 10,
   title = "",
   showItemAmount = false,
   additionalContentWhenItemAmountIsZero = "",
   itemCardType,
 }) {
-  const [page, setPage] = useState(0);
-
-  const sortOption = Object.freeze({
-    CREATED_AT_DESC: "createdAt,desc",
-    PRICE_ASC: "price,asc",
-    PRICE_DESC: "price,desc",
-  });
-  const [sortMode, setSortMode] = useState(sortOption.CREATED_AT_DESC);
-
-  // Bei einer neuen Suche oder Sortierung wieder auf Seite 1.
-  useEffect(() => {
-    setPage(0);
-  }, [sortMode, ...additionalDependencies]);
-
-  const { data: response } = useFetch(
-    `${urlWithoutPaginationAndSorting}page=${page}&size=${pageSize}&sort=${sortMode}`,
-    [sortMode, page, ...additionalDependencies],
-  );
-
-  const items = response?.content ?? [];
-  const totalElements = response?.totalElements ?? 0;
-  const totalPages = Math.ceil(totalElements / pageSize);
-
-  // Aktuelle Seite innerhalb der gültigen Grenzen halten.
-  const currentPage = Math.min(totalPages, Math.max(0, page));
-
-  // Seitenzahlen für die Pagination erzeugen.
-  const visiblePages = Array.from(
-    { length: totalPages },
-    (_, index) => index,
-  ).filter(
-    (pageNumber) =>
-      pageNumber === 0 ||
-      pageNumber === totalPages - 1 ||
-      Math.abs(pageNumber - currentPage) <= 2,
-  );
+  const {
+    items,
+    totalElements,
+    sortMode,
+    setSortMode,
+    sortOption,
+    totalPages,
+    currentPage,
+    visiblePages,
+    setPage,
+  } = useItemListContext();
   return (
     <div className="p-2">
       <div
