@@ -5,6 +5,7 @@ import CategorySelect from "../input/CategorySelect";
 import ImageInput from "./ImageInput";
 import PostcodeInput from "../input/PostCodeInput";
 import LocationInput from "../input/LocationInput";
+
 export default function ItemForm({
   item,
   setItem,
