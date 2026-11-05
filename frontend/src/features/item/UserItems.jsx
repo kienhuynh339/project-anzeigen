@@ -7,7 +7,7 @@ import { useParams } from "react-router";
 import { useFetch, getPath } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useEffect } from "react";
-import { itemCardTypes } from "./itemCardTypes";
+import { itemCardTypes } from "./ItemCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
@@ -25,7 +25,7 @@ export default function UserItems() {
   );
   // Daten des anderen Users
   const { data: otherUser } = useFetch(
-    `http://localhost:8080/api/users/${otherUserId}`,
+    getPath.userByUserId(otherUserId),
     [otherUserId],
     { profileName: "", createdAt: "" },
   );
@@ -42,7 +42,7 @@ export default function UserItems() {
 
   return (
     <>
-      <div className="d-flex justify-content-center align-items-center gap-2 border-bottom border-dark-subtle">
+      <div className="d-flex justify-content-center align-items-center gap-2 border-bottom border-dark-subtle py-2">
         <ProfileImage
           firstLetterOfName={otherUser?.profileName?.charAt(0)}
           size={"50"}
