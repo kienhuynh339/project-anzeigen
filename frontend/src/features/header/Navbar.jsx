@@ -35,11 +35,7 @@ export default function Navbar() {
     <div className="container-fluid pb-2 bg-dark">
       <div className="row align-items-center justify-content-between gap-3">
         <Link to="/" className="col-auto ps-1 pe-0" onClick={handleLogoClick}>
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ maxWidth: "150px", maxHeight: "60px" }}
-          />
+          <img src={logo} alt="Logo" width="150" height="60" />
         </Link>
         <div className="col-auto pe-0 ps-0">
           <div className="d-flex flex-nowrap align-items-center gap-2">
