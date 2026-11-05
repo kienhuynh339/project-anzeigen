@@ -33,6 +33,7 @@ export default function LocationInput({
 
   // States bei Änderung der PLZ zurücksetzen
   useEffect(() => {
+    // if verhindert, dass die Resets beim ersten Rendern ausgeführt werden
     if (previousPostcode.current !== postcode) {
       previousPostcode.current = postcode;
       setInputValue("");
@@ -40,12 +41,6 @@ export default function LocationInput({
       setLocationExtraInfo?.("");
     }
   }, [postcode]);
-
-  useEffect(() => {
-    if (initialInputValue) {
-      setInputValue(initialInputValue);
-    }
-  }, [initialInputValue]);
 
   // Ort-Optionen aktualisieren
   const options = locations.filter((location) =>
