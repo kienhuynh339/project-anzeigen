@@ -15,10 +15,12 @@ export const getPath = Object.freeze({
   postcodesByPostcodePrefix: (postcodePrefix) =>
     `/postcodes?postcodePrefix=${postcodePrefix}&page=0&size=15`,
   itemByItemId: (itemId) => `/items/${itemId}`,
+  itemByItemIdToEdit: (itemId) => `/items/${itemId}/edit`,
   items: (searchTerm, categoryId, priceMin, priceMax, locationId, radiusKm) =>
     `/items?searchTerm=${searchTerm}&categoryId=${categoryId}&minPrice=${priceMin}&maxPrice=${priceMax}&locationId=${locationId}&radiusKm=${radiusKm}&`,
   itemsByUserId: (userId) => `/items/user/${userId}?`,
   itemsFavorites: () => `/items/user/favorites?`,
+  imageIdsByItemId: (itemId) => `/images/item/${itemId}`,
 });
 
 export function useFetch(url, dependencies = [], initialData = null) {
@@ -51,7 +53,7 @@ export function useFetch(url, dependencies = [], initialData = null) {
       .finally(() => {
         setLoading(false);
       });
-  }, [url, ...dependencies]);
+  }, [...dependencies]);
 
   return { data, loading, error };
 }
