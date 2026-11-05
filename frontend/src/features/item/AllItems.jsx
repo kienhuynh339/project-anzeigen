@@ -22,9 +22,6 @@ export default function AllItems() {
 
   return (
     <ItemList
-      urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
-      additionalDependencies={[searchTrigger]}
-      pageSize={10}
       showItemAmount={true}
       itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
     ></ItemList>
