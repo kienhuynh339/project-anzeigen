@@ -51,7 +51,7 @@ export function useFetch(url, dependencies = [], initialData = null) {
       .finally(() => {
         setLoading(false);
       });
-  }, [...dependencies]);
+  }, [url, ...dependencies]);
 
   return { data, loading, error };
 }
