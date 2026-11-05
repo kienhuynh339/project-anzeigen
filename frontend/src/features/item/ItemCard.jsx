@@ -4,7 +4,6 @@
 import { Link } from "react-router";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import ItemFavorButton from "../../components/ItemFavorButton";
-import { itemCardTypes } from "./itemCardTypes";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
@@ -16,6 +15,12 @@ import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
+
+export const itemCardTypes = Object.freeze({
+  MY_FAVORITE_ITEM: "MY_FAVORITE_ITEM",
+  MY_ITEM: "MY_ITEM",
+  ITEM_WITH_FAVOR_BUTTON: "ITEM_WITH_FAVOR_BUTTON",
+});
 
 export default function ItemCard({ item, itemCardType }) {
   const { user } = useAuthContext();
