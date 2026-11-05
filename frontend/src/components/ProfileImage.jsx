@@ -24,11 +24,16 @@ export default function ProfileImage({
 }) {
   return (
     <div
-      className="rounded-circle"
-      style={{ backgroundColor: backgroundColor }}
+      className="rounded-circle "
+      style={{
+        backgroundColor: backgroundColor,
+        width: `${size}px`,
+        height: `${size}px`,
+      }}
     >
       <img
         src={profileImages[normalizeGerman(firstLetterOfName.toLowerCase())]}
+        className="rounded-circle"
         width={size}
         height={size}
         style={{ objectFit: "cover" }}
