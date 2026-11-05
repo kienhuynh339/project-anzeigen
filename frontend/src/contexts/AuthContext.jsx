@@ -26,7 +26,7 @@ export function AuthContextProvider({ children }) {
 
   // Anmelden
   async function login(accountName, password) {
-    await authApi.login(accountName, password);
+    const loggedInUser = await authApi.login(accountName, password);
     setUser(loggedInUser);
   }
 
