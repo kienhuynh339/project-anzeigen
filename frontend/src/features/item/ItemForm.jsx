@@ -16,7 +16,7 @@ export default function ItemForm({
   if (item === null) {
     return;
   }
-  // wenn value eine Funktion ist, wird prev[key] an value (eine Funktion) übergeben und diese wird aufgerufen
+  // value(prev[key]) ist für "set((prev)=>{...})"
   const updateItemDetails = (key, value) => {
     setItem((prev) => ({
       ...prev,
