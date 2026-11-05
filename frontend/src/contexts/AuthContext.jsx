@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import * as authService from "../services/authService";
+import * as authApi from "../api/authApi";
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+export function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function checkAuthentication() {
       try {
-        const currentUser = await authService.getCurrentUser();
+        const currentUser = await authApi.getCurrentUser();
 
         setUser(currentUser);
       } catch (error) {
@@ -25,23 +25,23 @@ export function AuthProvider({ children }) {
     checkAuthentication();
   }, []);
 
-  // ANMELDEN
+  // Anmelden
   async function login(accountName, password) {
-    const loggedInUser = await authService.login(accountName, password);
+    const loggedInUser = await authApi.login(accountName, password);
 
     setUser(loggedInUser);
 
     return loggedInUser;
   }
 
-  // REGISTRIEREN
+  // Registrieren
   async function register(profileName, accountName, password) {
-    return authService.register(profileName, accountName, password);
+    return authApi.register(profileName, accountName, password);
   }
 
-  // ABMELDEN
+  // Abmelden
   async function logout() {
-    await authService.logout();
+    await authApi.logout();
 
     setUser(null);
   }
@@ -62,6 +62,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuthContext() {
   return useContext(AuthContext);
 }
