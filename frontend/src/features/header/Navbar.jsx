@@ -5,14 +5,14 @@ import HamburgerMenu from "../../components/HamburgerMenu";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useSearchContext } from "../../contexts/SearchContext";
 
 export default function Navbar() {
   const { searchTrigger, setSearchTrigger, resetSearchFilters } =
     useSearchContext();
   const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated } = useAuthContext();
   const options = [
     { label: "Meine Anzeigen", action: () => navigate("/meine-anzeigen") },
     { label: "Nachrichten", action: () => navigate("/nachrichten") },

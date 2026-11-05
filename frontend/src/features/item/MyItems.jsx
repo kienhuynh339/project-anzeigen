@@ -4,11 +4,11 @@
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
 import { itemCardTypes } from "./itemCardTypes";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { getPath } from "../../hooks/useFetch";
 
 export default function MyItems() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
 
   const urlWithoutPaginationAndSorting = getPath.itemsByUserId(user.id);

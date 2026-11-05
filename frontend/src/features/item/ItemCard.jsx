@@ -15,10 +15,10 @@ import { translateItemStatus } from "../../utils/translateItemStatus";
 import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 export default function ItemCard({ item, itemCardType }) {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   return (
     <>
       <Link

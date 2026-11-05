@@ -2,7 +2,7 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { useState } from "react";
 import ChatListItem from "./ChatListItem";
 import ChatDeleteButton from "./ChatDeleteButton";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const chatFilterOptions = [
   { label: "Alle Anzeigen", value: "all" },
@@ -13,7 +13,7 @@ const chatFilterOptions = [
 export default function ChatList() {
   const [chatFilter, setChatFilter] = useState(chatFilterOptions[0].value);
   const { chats } = useChatContext();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
 
   const filteredChats = chats.filter((chat) => {
     switch (chatFilter) {

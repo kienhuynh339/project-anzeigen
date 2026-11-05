@@ -13,11 +13,11 @@ import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
 export default function ItemView() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const { itemId } = useParams();
 
   const { data: item } = useFetch(

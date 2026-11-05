@@ -8,11 +8,11 @@ import { useFetch, getPath } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 import { useEffect } from "react";
 import { itemCardTypes } from "./itemCardTypes";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
 export default function UserItems() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
   // ItemList-Props
   const { otherUserId } = useParams();

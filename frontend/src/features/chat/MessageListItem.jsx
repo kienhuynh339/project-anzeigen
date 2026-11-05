@@ -1,11 +1,11 @@
 import { useChatContext } from "../../contexts/ChatContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 import { Link } from "react-router";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
 
 export default function MessageListItem({ message }) {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const { otherUser } = useChatContext();
 
   const userId = user?.id;

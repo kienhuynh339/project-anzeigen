@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
 export default function Register() {
-  const { register } = useAuth();
+  const { register } = useAuthContext();
   const navigate = useNavigate();
 
   const [profileName, setProfileName] = useState("");

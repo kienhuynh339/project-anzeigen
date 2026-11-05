@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { markMessageAsRead } from "../api/messageApi";
 import { getPath, useFetch } from "../hooks/useFetch";
-import { useAuth } from "./AuthContext";
+import { useAuthContext } from "./AuthContext";
 
 const ChatContext = createContext(null);
 const initialChat = {
@@ -33,7 +33,7 @@ export function ChatContextProvider({ children }) {
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
-  const { user } = useAuth();
+  const { user } = useAuthContext();
 
   const { data: chatPage } = useFetch(getPath.chats(), []);
 

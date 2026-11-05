@@ -7,13 +7,13 @@ import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemActivateButton from "../../components/ItemActivateButton";
 import ItemReserveButton from "../../components/ItemReserveButton";
 import ItemTitle from "../../components/ItemTitle";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useChatContext } from "../../contexts/ChatContext";
 import MessageInput from "./MessageInput";
 import ChatList from "./ChatList";
 
 export default function ChatView() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const { currentChat } = useChatContext();
 
   return (

@@ -2,11 +2,11 @@
  * @author Trung Kien Huynh
  */
 import ProfileImage from "../../components/ProfileImage";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useChatContext } from "../../contexts/ChatContext";
 import { truncateText } from "../../utils/truncatetext";
 export default function ChatListItem({ chat }) {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const {
     deleteList,
     currentChat,

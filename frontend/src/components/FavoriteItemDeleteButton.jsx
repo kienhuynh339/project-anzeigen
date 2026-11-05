@@ -2,9 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { deleteFavoriteItem } from "../api/favoriteItemApi";
-import { useAuth } from "../contexts/AuthContext";
 export default function FavoriteItemDeleteButton({ itemId }) {
-  const { user } = useAuth();
   const handleOnclick = async (event) => {
     event.preventDefault();
     await deleteFavoriteItem(itemId).catch((error) => {
