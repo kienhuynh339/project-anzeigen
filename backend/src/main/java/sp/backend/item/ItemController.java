@@ -39,6 +39,17 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/{itemId}/edit")
+    private ResponseEntity<ItemResponse> findByIdToEdit(@PathVariable Long itemId, Authentication authentication) {
+
+        ItemResponse item = itemService.findByItemIdToEdit(itemId, authentication);
+        if (item != null) {
+            return ResponseEntity.ok(item);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping
     private ResponseEntity<Page<ItemWithDistanceResponse>> search(
             @RequestParam(required = false) String searchTerm,
