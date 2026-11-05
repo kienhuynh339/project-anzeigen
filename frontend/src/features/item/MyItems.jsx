@@ -28,8 +28,6 @@ export default function MyItems() {
 
   return (
     <ItemList
-      urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
-      pageSize={PAGE_SIZE}
       title={title}
       showItemAmount={false}
       additionalContentWhenItemAmountIsZero={
