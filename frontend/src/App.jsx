@@ -17,6 +17,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { ChatContextProvider } from "./contexts/ChatContext";
+import NotFound from "./components/NotFound";
+import { Navigate } from "react-router";
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
       </header>
       <main className="min-vh-100 d-flex flex-column">
         <Routes>
+          <Route path="/404" element={<NotFound />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<AllItems />} />
@@ -84,6 +87,8 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
+          {/* Alle unbekannten Pfade */}
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </main>
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
