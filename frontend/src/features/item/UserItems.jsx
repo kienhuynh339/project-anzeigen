@@ -54,8 +54,6 @@ export default function UserItems() {
         </span>
       </div>
       <ItemList
-        urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
-        pageSize={PAGE_SIZE}
         showItemAmount={false}
         additionalContentWhenItemAmountIsZero={
           additionalContentWhenItemAmountIsZero
