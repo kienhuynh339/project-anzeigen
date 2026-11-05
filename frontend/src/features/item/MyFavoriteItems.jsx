@@ -3,7 +3,7 @@
  */
 import ItemList from "./ItemList";
 import { useNavigate } from "react-router";
-import { itemCardTypes } from "./itemCardTypes";
+import { itemCardTypes } from "./ItemCard";
 import { getPath } from "../../hooks/useFetch";
 import { useSearchContext } from "../../contexts/SearchContext";
 
