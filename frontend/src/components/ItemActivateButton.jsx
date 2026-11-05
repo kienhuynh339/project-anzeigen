@@ -8,7 +8,7 @@ export default function ItemActivateButton({ itemId }) {
   const handleItemActivate = async (event) => {
     event.preventDefault();
     await updateItemStatus(itemId, "ACTIVE").catch((error) =>
-      console.log(error),
+      console.error(error),
     );
   };
   return (
