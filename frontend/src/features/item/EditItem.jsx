@@ -5,9 +5,23 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import ItemForm from "./ItemForm";
 import ErrorNotification from "../../components/ErrorNotification";
-import { useFetch } from "../../hooks/useFetch";
+import { getPath, useFetch } from "../../hooks/useFetch";
 import { useNavigate } from "react-router";
 import { updateItem } from "../../api/itemApi";
+
+const itemToUpdateItemRequestConverter = (item) => {
+  return {
+    title: item.title,
+    categoryId: item.categoryId,
+    description: item.description,
+    locationId: item.location?.id ?? "",
+    postcode: item.location?.postcode ?? "",
+    locationExtraInfo: item.location?.extraInfo ?? "",
+    price: item.price,
+    status: item.status,
+  };
+};
+
 export default function EditItem() {
   const navigate = useNavigate();
   const { itemId } = useParams();
@@ -17,12 +31,12 @@ export default function EditItem() {
   let isItemIdValid = /^[1-9]\d*$/.test(itemId);
 
   const { data: fetchedItem, error: itemDataFetchError } = useFetch(
-    isItemIdValid ? `http://localhost:8080/api/items/${itemId}` : null,
+    isItemIdValid ? getPath.itemByItemIdToEdit(itemId) : null,
     [itemId],
   );
 
   const { data: imageIds } = useFetch(
-    isItemIdValid ? `http://localhost:8080/api/images/item/${itemId}` : null,
+    isItemIdValid ? getPath.imageIdsByItemId(itemId) : null,
     [itemId],
     [],
   );
@@ -64,7 +78,7 @@ export default function EditItem() {
   }, [fetchedItem]);
 
   let initialLocationInputValue = "";
-  if (fetchedItem !== null && fetchedItem.location !== null) {
+  if (fetchedItem !== null) {
     initialLocationInputValue = fetchedItem.location.extraInfo
       ? `${fetchedItem.location.name} ${fetchedItem.location.extraInfo}`
       : `${fetchedItem.location.name}`;
@@ -128,17 +142,15 @@ export default function EditItem() {
         >
           Abbrechen
         </button>
+        {/* Entwurf speichern */}
         {fetchedItem?.status === "DRAFT" && (
-          <>
-            {/* Entwurf speichern */}
-            <button
-              className="btn btn-outline-success"
-              type="button"
-              onClick={handleSaveDraft}
-            >
-              Entwurf speichern
-            </button>
-          </>
+          <button
+            className="btn btn-outline-success"
+            type="button"
+            onClick={handleSaveDraft}
+          >
+            Entwurf speichern
+          </button>
         )}
         {/* Anzeige veröffentlichen/speichern */}
         <button
