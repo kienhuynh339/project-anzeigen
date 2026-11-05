@@ -20,8 +20,8 @@ export default function ChatDeleteDialog({
     );
     setDeleteList([]);
     setIsChatDeleteActive(false);
-    setDeletingChat(false);
     closeDialog();
+    setDeletingChat(false);
   };
   return (
     <DialogWindow
@@ -33,6 +33,7 @@ export default function ChatDeleteDialog({
           type="button"
           className="btn btn-secondary"
           onClick={closeDialog}
+          disabled={deletingChat}
         >
           Abbrechen
         </button>,
@@ -41,6 +42,7 @@ export default function ChatDeleteDialog({
           type="button"
           className="btn btn-danger"
           onClick={handleDeleteChat}
+          disabled={deletingChat}
         >
           Bestätigen
         </button>,
