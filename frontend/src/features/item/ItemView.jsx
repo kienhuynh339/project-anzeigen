@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router";
 import MessageButton from "../../components/MessageButton";
-import { useFetch } from "../../hooks/useFetch";
+import { getPath, useFetch } from "../../hooks/useFetch";
 import ItemDeleteButton from "../../components/ItemDeleteButton";
 import ItemTitle from "../../components/ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
@@ -20,26 +20,18 @@ export default function ItemView() {
   const { user } = useAuthContext();
   const { itemId } = useParams();
 
-  const { data: item } = useFetch(
-    `http://localhost:8080/api/items/${itemId}`,
-    [],
-    {
-      id: "",
-      poster: { profileName: "", id: "" },
-      title: "",
-      description: "",
-      location: { name: "", plz: "", extraInfo: "" },
-      price: 0,
-      createdAt: "",
-      status: "",
-    },
-  );
+  const { data: item } = useFetch(getPath.itemByItemId(itemId), [], {
+    id: "",
+    poster: { profileName: "", id: "" },
+    title: "",
+    description: "",
+    location: { name: "", plz: "", extraInfo: "" },
+    price: 0,
+    createdAt: "",
+    status: "",
+  });
 
-  const { data: imageIds } = useFetch(
-    `http://localhost:8080/api/images/item/${itemId}`,
-    [],
-    [],
-  );
+  const { data: imageIds } = useFetch(getPath.imageIdsByItemId(itemId), [], []);
 
   return (
     <>
@@ -69,16 +61,21 @@ export default function ItemView() {
             </h4>
             <div className="border-top"></div>
             {/* Anbieter */}
-            <div className="align-items-center">
+            <div className="d-flex align-items-center my-2">
               <Link
-                className="text-decoration-none text-dark"
+                className="text-decoration-none "
                 to={`/user/${item.poster.id}`}
               >
                 <ProfileImage
                   firstLetterOfName={item.poster.profileName.charAt(0)}
                   size={"50"}
                 ></ProfileImage>
-                <span className="fw-bold ms-2">{item.poster.profileName}</span>
+              </Link>
+              <Link
+                className="text-decoration-none text-dark   "
+                to={`/user/${item.poster.id}`}
+              >
+                <span className="fw-bold ms-2 ">{item.poster.profileName}</span>
               </Link>
             </div>
             <div className="border-top"></div>
