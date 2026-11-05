@@ -33,6 +33,7 @@ export default function ItemList({
     `${urlWithoutPaginationAndSorting}page=${page}&size=${pageSize}&sort=${sortMode}`,
     [sortMode, page, ...additionalDependencies],
   );
+
   const items = response?.content ?? [];
   const totalElements = response?.totalElements ?? 0;
   const totalPages = Math.ceil(totalElements / pageSize);
