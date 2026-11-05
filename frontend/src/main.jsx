@@ -5,17 +5,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { AppContextProvider } from "./contexts/AppContext.jsx";
-import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { AuthContextProvider } from "./contexts/AuthContext.jsx";
 import { SearchContextProvider } from "./contexts/SearchContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
+    <AuthContextProvider>
       <AppContextProvider>
         <SearchContextProvider>
           <App />
         </SearchContextProvider>
       </AppContextProvider>
-    </AuthProvider>
+    </AuthContextProvider>
   </StrictMode>,
 );
