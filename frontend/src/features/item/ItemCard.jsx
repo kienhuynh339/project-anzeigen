@@ -15,6 +15,7 @@ import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "../../components/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { useItemListContext } from "../../contexts/ItemListContext";
 
 export const itemCardTypes = Object.freeze({
   MY_FAVORITE_ITEM: "MY_FAVORITE_ITEM",
@@ -24,6 +25,7 @@ export const itemCardTypes = Object.freeze({
 
 export default function ItemCard({ item, itemCardType }) {
   const { user } = useAuthContext();
+  const { deleteItem, updateItemStatus } = useItemListContext();
   return (
     <>
       <Link
@@ -107,16 +109,25 @@ export default function ItemCard({ item, itemCardType }) {
               <div className="d-flex justify-content-between">
                 {itemCardType === itemCardTypes.MY_ITEM && (
                   <>
-                    <ItemDeleteButton itemId={item.id}></ItemDeleteButton>
+                    <ItemDeleteButton
+                      itemId={item.id}
+                      deleteItem={deleteItem}
+                    ></ItemDeleteButton>
                     {item.status === "DRAFT" ? (
                       <ItemEditButton
                         itemId={item.id}
                         itemStatus={item.status}
                       ></ItemEditButton>
                     ) : item.status === "ACTIVE" ? (
-                      <ItemReserveButton itemId={item.id}></ItemReserveButton>
+                      <ItemReserveButton
+                        itemId={item.id}
+                        updateItemStatus={updateItemStatus}
+                      ></ItemReserveButton>
                     ) : item.status === "RESERVED" ? (
-                      <ItemActivateButton itemId={item.id}></ItemActivateButton>
+                      <ItemActivateButton
+                        itemId={item.id}
+                        updateItemStatus={updateItemStatus}
+                      ></ItemActivateButton>
                     ) : null}
                   </>
                 )}
@@ -124,7 +135,7 @@ export default function ItemCard({ item, itemCardType }) {
                   <>
                     <FavoriteItemDeleteButton
                       itemId={item.id}
-                      userId={user.id}
+                      deleteItem={deleteItem}
                     ></FavoriteItemDeleteButton>
                     {item.status !== "DELETED" && (
                       <MessageButton item={item}></MessageButton>
