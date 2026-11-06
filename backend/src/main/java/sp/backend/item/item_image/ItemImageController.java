@@ -42,7 +42,6 @@ public class ItemImageController {
             MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
             return ResponseEntity.ok()
                     .contentType(mediaType)
-                    .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
                     .body(itemImage.getImage());
         } else {
             return ResponseEntity.noContent().build();
