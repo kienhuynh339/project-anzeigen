@@ -2,20 +2,29 @@
  * @author Trung Kien Huynh
  */
 
-import { updateItemStatus } from "../api/itemApi";
+import { useState } from "react";
+import { updateItemStatus as apiUpdateItemStatus } from "../api/itemApi";
 
-export default function ItemActivateButton({ itemId }) {
+export default function ItemActivateButton({ itemId, updateItemStatus }) {
+  const [activating, setActivating] = useState(false);
+
   const handleItemActivate = async (event) => {
+    setActivating(true);
+
     event.preventDefault();
-    await updateItemStatus(itemId, "ACTIVE").catch((error) =>
+    await apiUpdateItemStatus(itemId, "ACTIVE").catch((error) =>
       console.error(error),
     );
+    updateItemStatus(itemId, "ACTIVE");
+
+    setActivating(false);
   };
   return (
     <button
       type="button"
       className={`btn btn-outline-success`}
       onClick={handleItemActivate}
+      disabled={activating}
     >
       Aktivieren
     </button>
