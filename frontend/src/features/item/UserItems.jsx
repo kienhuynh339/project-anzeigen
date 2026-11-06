@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import ItemList from "./ItemList";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 import { useFetch, getPath } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
@@ -12,12 +12,14 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
 export default function UserItems() {
-  const { user } = useAuthContext();
   const navigate = useNavigate();
-  // ItemList-Props
+
   const { otherUserId } = useParams();
-  const urlWithoutPaginationAndSorting = getPath.itemsByUserId(otherUserId);
+
+  const { user } = useAuthContext();
+
   const PAGE_SIZE = 9999;
+  const urlWithoutPaginationAndSorting = getPath.itemsByUserId(otherUserId);
   const additionalContentWhenItemAmountIsZero = (
     <div className="d-flex flex-column gap-2">
       <div>Dieser Nutzer hat derzeit keine Anzeigen online.</div>
@@ -36,6 +38,7 @@ export default function UserItems() {
       navigate("/meine-anzeigen", { replace: true });
     }
   }, [otherUserId, user]);
+
   if (String(otherUserId) === String(user?.id)) {
     return null;
   }
@@ -54,6 +57,8 @@ export default function UserItems() {
         </span>
       </div>
       <ItemList
+        pageSize={PAGE_SIZE}
+        urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
         showItemAmount={false}
         additionalContentWhenItemAmountIsZero={
           additionalContentWhenItemAmountIsZero
