@@ -14,7 +14,7 @@ export default function ItemDeleteDialog({ itemId, deleteItem, closeDialog }) {
 
     await apiDeleteItem(itemId).catch((e) => console.error(e));
     setIsItemDeleting(false);
-    deleteItem(itemId);
+    deleteItem();
     closeDialog();
 
     setIsItemDeleting(false);
