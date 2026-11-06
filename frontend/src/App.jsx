@@ -61,6 +61,16 @@ function App() {
             }
           />
           <Route
+            path="/meine-merkliste"
+            element={
+              <ProtectedRoute>
+                <ItemListContextProvider>
+                  <MyFavoriteItems />
+                </ItemListContextProvider>
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
             path="/nachrichten"
             element={
               <ProtectedRoute>
@@ -88,16 +98,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/meine-merkliste"
-            element={
-              <ProtectedRoute>
-                <ItemListContextProvider>
-                  <MyFavoriteItems />
-                </ItemListContextProvider>
-              </ProtectedRoute>
-            }
-          ></Route>
           <Route
             path="/einstellungen"
             element={
