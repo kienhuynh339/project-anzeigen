@@ -35,7 +35,7 @@ export default function ItemList({
     setPage(0);
   }, [sortMode, searchTrigger]);
 
-  const { data: response } = useFetch(
+  const { data: response, loading } = useFetch(
     `${urlWithoutPaginationAndSorting}page=${page}&size=${pageSize}&sort=${sortMode}`,
     [sortMode, page, searchTrigger],
   );
@@ -45,6 +45,10 @@ export default function ItemList({
     // Aktualisiert totalElements anhand von response nur bei Änderung an response
     setTotalElements(response?.totalElements ?? 0);
   }, [response]);
+
+  if (loading) {
+    return <p>Lade...</p>;
+  }
 
   return (
     <div className="p-2">
@@ -78,7 +82,6 @@ export default function ItemList({
           </div>
         )}
       </div>
-
       <div className="d-flex gap-2 flex-wrap justify-content-center">
         {/* Anderer Inhalt, wenn es keine Anzeigen gibt */}
         {totalElements == 0 && additionalContentWhenItemAmountIsZero}
