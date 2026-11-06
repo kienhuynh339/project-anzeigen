@@ -23,12 +23,12 @@ export default function ItemList({
   additionalContentWhenItemAmountIsZero = "",
   itemCardType,
 }) {
-  const { items, setItems } = useItemListContext();
+  const { items, setItems, totalElements, setTotalElements } =
+    useItemListContext();
   const { searchTrigger } = useSearchContext();
 
   const [page, setPage] = useState(0);
   const [sortMode, setSortMode] = useState(sortOption.CREATED_AT_DESC);
-  const [totalElements, setTotalElements] = useState(0);
 
   // Bei einer neuen Suche oder Sortierung wieder auf Seite 1.
   useEffect(() => {
