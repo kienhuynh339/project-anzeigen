@@ -6,8 +6,6 @@ import { useNavigate } from "react-router";
 import { itemCardTypes } from "./ItemCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { getPath } from "../../hooks/useFetch";
-import { useItemListContext } from "../../contexts/ItemListContext";
-import { useEffect } from "react";
 
 export default function MyItems() {
   const navigate = useNavigate();
