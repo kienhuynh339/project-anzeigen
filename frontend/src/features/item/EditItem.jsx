@@ -75,7 +75,7 @@ export default function EditItem() {
   }
 
   const handleSubmit = (status) => {
-    updateItem(
+    return updateItem(
       fetchedItem.id,
       item.title,
       item.categoryId,
@@ -89,18 +89,18 @@ export default function EditItem() {
     );
   };
 
-  const handleSaveDraft = () => {
-    handleSubmit("DRAFT");
+  const handleSaveDraft = async () => {
+    await handleSubmit("DRAFT");
     navigate("/meine-anzeigen");
   };
 
-  const handlePublishItem = () => {
-    handleSubmit("ACTIVE");
+  const handlePublishItem = async () => {
+    await handleSubmit("ACTIVE");
     navigate("/meine-anzeigen");
   };
 
-  const handleSaveItem = () => {
-    handleSubmit(fetchedItem.status);
+  const handleSaveItem = async () => {
+    await handleSubmit(fetchedItem.status);
     navigate("/meine-anzeigen");
   };
 
