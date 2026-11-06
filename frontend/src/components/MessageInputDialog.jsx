@@ -4,15 +4,20 @@
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
 import { sendMessage } from "../api/messageApi";
+import { useAuthContext } from "../contexts/AuthContext";
 export default function MessageInputDialog({ item, closeDialog }) {
+  const { user } = useAuthContext();
+
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const handleSend = async (itemId, interestedUserId, content) => {
     setIsSending(true);
+
     await sendMessage(itemId, interestedUserId, content);
     setMessage("");
-    setIsSending(false);
+
     closeDialog();
+    setIsSending(false);
   };
   return (
     <DialogWindow
@@ -23,6 +28,7 @@ export default function MessageInputDialog({ item, closeDialog }) {
           key="message-button-abbrechen"
           className="btn btn-secondary"
           onClick={closeDialog}
+          disabled={isSending}
         >
           Abbrechen
         </button>,
@@ -31,7 +37,7 @@ export default function MessageInputDialog({ item, closeDialog }) {
           className="btn btn-primary"
           disabled={isSending}
           onClick={() => {
-            handleSend(item.id, userId, userId, message);
+            handleSend(item.id, user.id, message);
           }}
         >
           Senden
