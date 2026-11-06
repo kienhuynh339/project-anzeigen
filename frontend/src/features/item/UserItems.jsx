@@ -25,20 +25,21 @@ export default function UserItems() {
       <div>Dieser Nutzer hat derzeit keine Anzeigen online.</div>
     </div>
   );
+
   // Daten des anderen Users
   const { data: otherUser } = useFetch(
     getPath.userByUserId(otherUserId),
     [otherUserId],
-    { profileName: "", createdAt: "" },
+    { id: "", profileName: "", createdAt: "" },
   );
 
   // "/meine-anzeigen" aufrufen statt "user/:userId", wenn otherUser = user
   useEffect(() => {
-    if (String(otherUserId) == String(user?.id)) {
+    if (String(otherUserId) === String(user?.id)) {
       navigate("/meine-anzeigen", { replace: true });
     }
   }, [otherUserId, user]);
-
+  // nichts rendern
   if (String(otherUserId) === String(user?.id)) {
     return null;
   }
@@ -47,7 +48,7 @@ export default function UserItems() {
     <>
       <div className="d-flex justify-content-center align-items-center gap-2 border-bottom border-dark-subtle py-2">
         <ProfileImage
-          firstLetterOfName={otherUser?.profileName?.charAt(0)}
+          firstLetterOfName={otherUser.profileName.charAt(0)}
           size={"50"}
         ></ProfileImage>
         <span className="fw-bold">{otherUser.profileName}</span>
