@@ -4,7 +4,10 @@
 import { useState } from "react";
 import { updateItemStatus as apiUpdateItemStatus } from "../api/itemApi";
 
-export default function ItemReserveButton({ itemId, updateItemStatus }) {
+export default function ItemReserveButton({
+  itemId,
+  updateItemStatus = () => {},
+}) {
   const [reserving, setReserving] = useState(false);
 
   const handleItemReserved = async (event) => {
@@ -14,7 +17,7 @@ export default function ItemReserveButton({ itemId, updateItemStatus }) {
     await apiUpdateItemStatus(itemId, "RESERVED").catch((error) =>
       console.log(error),
     );
-    updateItemStatus(itemId, "RESERVED");
+    updateItemStatus();
 
     setReserving(false);
   };
