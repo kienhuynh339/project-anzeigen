@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router";
 import MessageButton from "../../components/MessageButton";
 import { getPath, useFetch } from "../../hooks/useFetch";
