@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DialogWindow from "./DialogWindow";
 export default function SettingsDialog({ initialValue, field, closeDialog }) {
   const [value, setValue] = useState(initialValue);
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+
   const handleCancel = () => {
     closeDialog();
   };
+
   const handleSave = () => {
     closeDialog();
   };
+
   return (
     <DialogWindow
       dialogTitle={`${field.label} ändern`}
