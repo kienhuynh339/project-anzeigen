@@ -5,11 +5,13 @@ import { useSearchContext } from "../../contexts/SearchContext";
 import { itemCardTypes } from "./ItemCard";
 import ItemList from "./ItemList";
 import { getPath } from "../../hooks/useFetch";
+import { useItemListContext } from "../../contexts/ItemListContext";
 
 export default function AllItems() {
-  const { searchFilters, searchTrigger } = useSearchContext();
+  const { searchFilters } = useSearchContext();
   const { searchTerm, categoryId, locationId, radiusKm, priceMin, priceMax } =
     searchFilters;
+  const { setUrlWithoutPaginationAndSorting } = useItemListContext();
 
   const urlWithoutPaginationAndSorting = getPath.items(
     searchTerm,
