@@ -2,19 +2,22 @@
  * @author Trung Kien Huynh
  */
 import { useState } from "react";
-import { deleteFavoriteItem } from "../api/favoriteItemApi";
+import { deleteFavoriteItem as apiDeleteFavoriteItem } from "../api/favoriteItemApi";
 
-export default function FavoriteItemDeleteButton({ itemId, deleteItem }) {
+export default function FavoriteItemDeleteButton({
+  itemId,
+  deleteItem: deleteFavoriteItem,
+}) {
   const [deletingFavorite, setDeletingFavorite] = useState(false);
 
   const handleOnclick = async (event) => {
     setDeletingFavorite(true);
 
     event.preventDefault();
-    await deleteFavoriteItem(itemId).catch((error) => {
+    await apiDeleteFavoriteItem(itemId).catch((error) => {
       console.error(error);
     });
-    deleteItem(itemId);
+    deleteFavoriteItem();
 
     setDeletingFavorite(false);
   };
