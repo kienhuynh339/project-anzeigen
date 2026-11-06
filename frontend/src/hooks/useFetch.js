@@ -48,7 +48,7 @@ export function useFetch(url, dependencies = [], initialData = null) {
       .catch((error) => {
         console.log(error);
         setError(true);
-        setData(null);
+        setData(initialData);
       })
       .finally(() => {
         setLoading(false);
