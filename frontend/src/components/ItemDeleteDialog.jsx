@@ -3,16 +3,23 @@
  */
 import DialogWindow from "./DialogWindow";
 import { useState } from "react";
-import { deleteItem } from "../api/itemApi";
-export default function ItemDeleteDialog({ itemId, closeDialog }) {
+import { deleteItem as apiDeleteItem } from "../api/itemApi";
+
+export default function ItemDeleteDialog({ itemId, deleteItem, closeDialog }) {
   const [isItemDeleting, setIsItemDeleting] = useState(false);
+
   const handleItemDelete = async (event) => {
-    event.preventDefault();
     setIsItemDeleting(true);
-    await deleteItem(itemId).catch((e) => console.error(e));
+    event.preventDefault();
+
+    await apiDeleteItem(itemId).catch((e) => console.error(e));
     setIsItemDeleting(false);
+    deleteItem(itemId);
     closeDialog();
+
+    setIsItemDeleting(false);
   };
+
   return (
     <DialogWindow
       dialogWidth={"50ch"}
