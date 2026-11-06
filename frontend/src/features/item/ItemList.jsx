@@ -4,16 +4,48 @@
 import "../../styles/hoverEffect.css";
 import ItemCard from "./ItemCard";
 import { useItemListContext } from "../../contexts/ItemListContext";
-import Pagination from "../../components/Pagination";
+import { useSearchContext } from "../../contexts/SearchContext";
+import ItemPagination from "./ItemPagination";
+import { useEffect, useState } from "react";
+import { useFetch } from "../../hooks/useFetch";
+
+const sortOption = Object.freeze({
+  CREATED_AT_DESC: "createdAt,desc",
+  PRICE_ASC: "price,asc",
+  PRICE_DESC: "price,desc",
+});
 
 export default function ItemList({
   title = "",
+  pageSize = 10,
+  urlWithoutPaginationAndSorting,
   showItemAmount = false,
   additionalContentWhenItemAmountIsZero = "",
   itemCardType,
 }) {
-  const { items, totalElements, sortMode, setSortMode, sortOption } =
-    useItemListContext();
+  const { items, setItems } = useItemListContext();
+  const { searchTrigger } = useSearchContext();
+
+  const [page, setPage] = useState(0);
+  const [sortMode, setSortMode] = useState(sortOption.CREATED_AT_DESC);
+  const [totalElements, setTotalElements] = useState(0);
+
+  // Bei einer neuen Suche oder Sortierung wieder auf Seite 1.
+  useEffect(() => {
+    setPage(0);
+  }, [sortMode, searchTrigger]);
+
+  const { data: response } = useFetch(
+    `${urlWithoutPaginationAndSorting}page=${page}&size=${pageSize}&sort=${sortMode}`,
+    [sortMode, page, searchTrigger],
+  );
+
+  useEffect(() => {
+    setItems(response?.content ?? []);
+    // Aktualisiert totalElements anhand von response nur bei Änderung an response
+    setTotalElements(response?.totalElements ?? 0);
+  }, [response]);
+
   return (
     <div className="p-2">
       <div
@@ -56,7 +88,12 @@ export default function ItemList({
         ))}
       </div>
       {/* Pagination */}
-      <Pagination></Pagination>
+      <ItemPagination
+        page={page}
+        setPage={setPage}
+        totalElements={totalElements}
+        pageSize={pageSize}
+      ></ItemPagination>
     </div>
   );
 }
