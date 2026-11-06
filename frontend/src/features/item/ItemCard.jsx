@@ -56,7 +56,7 @@ export default function ItemCard({ item, itemCardType }) {
             />
             {/* Favorite-Knopf */}
             {user &&
-              user?.id != item.posterId &&
+              user?.id !== item.posterId &&
               itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
                 <ItemFavorButton
                   itemId={item.id}
@@ -95,7 +95,7 @@ export default function ItemCard({ item, itemCardType }) {
             <div className="d-flex flex-column gap-2">
               <div className="d-flex justify-content-between align-items-end">
                 <p className="fs-5 fw-bold m-0">
-                  {item.price == 0
+                  {item.price === 0
                     ? ""
                     : item.price.toLocaleString("de-DE", {
                         style: "currency",
@@ -111,7 +111,7 @@ export default function ItemCard({ item, itemCardType }) {
                   <>
                     <ItemDeleteButton
                       itemId={item.id}
-                      deleteItem={deleteItem}
+                      deleteItem={() => deleteItem(item.id)}
                     ></ItemDeleteButton>
                     {item.status === "DRAFT" ? (
                       <ItemEditButton
@@ -121,12 +121,16 @@ export default function ItemCard({ item, itemCardType }) {
                     ) : item.status === "ACTIVE" ? (
                       <ItemReserveButton
                         itemId={item.id}
-                        updateItemStatus={updateItemStatus}
+                        updateItemStatus={() =>
+                          updateItemStatus(item.id, "RESERVED")
+                        }
                       ></ItemReserveButton>
                     ) : item.status === "RESERVED" ? (
                       <ItemActivateButton
                         itemId={item.id}
-                        updateItemStatus={updateItemStatus}
+                        updateItemStatus={() =>
+                          updateItemStatus(item.id, "ACTIVE")
+                        }
                       ></ItemActivateButton>
                     ) : null}
                   </>
@@ -135,7 +139,7 @@ export default function ItemCard({ item, itemCardType }) {
                   <>
                     <FavoriteItemDeleteButton
                       itemId={item.id}
-                      deleteItem={deleteItem}
+                      deleteItem={() => deleteItem(item.id)}
                     ></FavoriteItemDeleteButton>
                     {item.status !== "DELETED" && (
                       <MessageButton item={item}></MessageButton>
