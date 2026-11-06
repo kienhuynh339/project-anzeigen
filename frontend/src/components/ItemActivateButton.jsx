@@ -5,7 +5,10 @@
 import { useState } from "react";
 import { updateItemStatus as apiUpdateItemStatus } from "../api/itemApi";
 
-export default function ItemActivateButton({ itemId, updateItemStatus }) {
+export default function ItemActivateButton({
+  itemId,
+  updateItemStatus = () => {},
+}) {
   const [activating, setActivating] = useState(false);
 
   const handleItemActivate = async (event) => {
@@ -15,7 +18,7 @@ export default function ItemActivateButton({ itemId, updateItemStatus }) {
     await apiUpdateItemStatus(itemId, "ACTIVE").catch((error) =>
       console.error(error),
     );
-    updateItemStatus(itemId, "ACTIVE");
+    updateItemStatus();
 
     setActivating(false);
   };
