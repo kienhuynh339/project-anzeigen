@@ -13,9 +13,11 @@ export default function ItemFavorButton({
 }) {
   const [isFavoriteChanging, setIsFavoriteChanging] = useState(false);
   const [favorite, setFavorite] = useState(isFavorite);
+
   useEffect(() => {
     setFavorite(isFavorite);
   }, [isFavorite]);
+
   const handleFavoriteButtonClick = async (event) => {
     event.preventDefault();
     setIsFavoriteChanging(true);
@@ -36,6 +38,7 @@ export default function ItemFavorButton({
     }
     setIsFavoriteChanging(false);
   };
+
   return (
     <button
       className={className}
