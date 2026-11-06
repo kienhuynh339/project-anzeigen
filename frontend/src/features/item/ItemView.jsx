@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import MessageButton from "../../components/MessageButton";
 import { getPath, useFetch } from "../../hooks/useFetch";
@@ -16,22 +16,45 @@ import ItemEditButton from "../../components/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
+const initialItem = {
+  id: "",
+  poster: { profileName: "", id: "" },
+  title: "",
+  description: "",
+  location: { name: "", plz: "", extraInfo: "" },
+  price: 0,
+  createdAt: "",
+  status: "",
+};
+
 export default function ItemView() {
   const { user } = useAuthContext();
   const { itemId } = useParams();
+  const [item, setItem] = useState(initialItem);
 
-  const { data: item } = useFetch(getPath.itemByItemId(itemId), [], {
-    id: "",
-    poster: { profileName: "", id: "" },
-    title: "",
-    description: "",
-    location: { name: "", plz: "", extraInfo: "" },
-    price: 0,
-    createdAt: "",
-    status: "",
-  });
+  const { data: fetchedItem } = useFetch(
+    getPath.itemByItemId(itemId),
+    [],
+    initialItem,
+  );
+
+  useEffect(() => {
+    setItem(fetchedItem);
+  }, [fetchedItem]);
 
   const { data: imageIds } = useFetch(getPath.imageIdsByItemId(itemId), [], []);
+
+  const deleteItem = () => {
+    setItem((prev) => ({ ...prev, status: "DELETED" }));
+  };
+
+  const reserveItem = () => {
+    setItem((prev) => ({ ...prev, status: "RESERVED" }));
+  };
+
+  const activateItem = () => {
+    setItem((prev) => ({ ...prev, status: "ACTIVE" }));
+  };
 
   return (
     <>
@@ -100,7 +123,7 @@ export default function ItemView() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Knöpfe für Interessenten */}
-              {!!user && user?.id != item.poster.id && (
+              {user && user?.id !== item.poster.id && (
                 <>
                   {/* Nachricht schreiben */}
                   {item.status !== "DELETED" && (
@@ -117,20 +140,32 @@ export default function ItemView() {
                 </>
               )}
               {/* Knöpfe für Poster der Anzeige */}
-              {!!user && user?.id == item.poster.id && (
+              {user && user?.id === item.poster.id && (
                 <>
+                  {/* Reservieren/Aktivieren */}
                   {item.status === "ACTIVE" ? (
-                    <ItemReserveButton itemId={item.id}></ItemReserveButton>
+                    <ItemReserveButton
+                      itemId={item.id}
+                      updateItemStatus={reserveItem}
+                    ></ItemReserveButton>
                   ) : item.status === "RESERVED" ? (
-                    <ItemActivateButton itemId={item.id}></ItemActivateButton>
+                    <ItemActivateButton
+                      itemId={item.id}
+                      updateItemStatus={activateItem}
+                    ></ItemActivateButton>
                   ) : null}
                   {item.status !== "DELETED" && (
                     <>
+                      {/* Anzeige Bearbeiten/Fortsetzen */}
                       <ItemEditButton
                         itemId={item.id}
                         itemStatus={item.status}
                       ></ItemEditButton>
-                      <ItemDeleteButton itemId={item.id}>
+                      {/* Anzeige löschen */}
+                      <ItemDeleteButton
+                        itemId={item.id}
+                        deleteItem={deleteItem}
+                      >
                         <span className="ps-1">Anzeige löschen</span>
                       </ItemDeleteButton>
                     </>
@@ -151,7 +186,7 @@ function ImageGallery({ imageIds, itemStatus }) {
   const hasImages = imageIds.length > 0;
 
   const previousImage = () => {
-    setCurrentIndex((index) => (index - 1 + imageIds.length) % imageIds.length);
+    setCurrentIndex((prev) => (prev - 1 + imageIds.length) % imageIds.length);
   };
   const nextImage = () => {
     setCurrentIndex((currentIndex + 1) % imageIds.length);
@@ -176,11 +211,13 @@ function ImageGallery({ imageIds, itemStatus }) {
                   : "none",
             }}
           />
+          {/* Das erste Bild zeigt den Anzeige-Zustand (Reserviert/Entwurf/Gelöscht) */}
           {currentIndex === 0 && itemStatus && itemStatus !== "ACTIVE" && (
             <span className="text-white position-absolute top-50 start-50 translate-middle">
               {translateItemStatus(itemStatus)}
             </span>
           )}
+          {/* Nächstes/Vorheriges Bild */}
           {imageIds.length > 1 && (
             <>
               <button
@@ -204,6 +241,7 @@ function ImageGallery({ imageIds, itemStatus }) {
           )}
         </>
       ) : (
+        // Kein Bild
         <img className="h-100" src={noImage}></img>
       )}
     </div>
