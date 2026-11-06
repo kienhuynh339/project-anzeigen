@@ -55,7 +55,7 @@ export default function ItemCard({ item, itemCardType }) {
               }}
             />
             {/* Favorite-Knopf */}
-            {!!user &&
+            {user &&
               user?.id != item.posterId &&
               itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
                 <ItemFavorButton
