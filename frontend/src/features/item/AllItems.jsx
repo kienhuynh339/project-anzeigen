@@ -5,14 +5,13 @@ import { useSearchContext } from "../../contexts/SearchContext";
 import { itemCardTypes } from "./ItemCard";
 import ItemList from "./ItemList";
 import { getPath } from "../../hooks/useFetch";
-import { useItemListContext } from "../../contexts/ItemListContext";
 
 export default function AllItems() {
   const { searchFilters } = useSearchContext();
+
   const { searchTerm, categoryId, locationId, radiusKm, priceMin, priceMax } =
     searchFilters;
-  const { setUrlWithoutPaginationAndSorting } = useItemListContext();
-
+  const PAGE_SIZE = 10;
   const urlWithoutPaginationAndSorting = getPath.items(
     searchTerm,
     categoryId,
@@ -24,6 +23,8 @@ export default function AllItems() {
 
   return (
     <ItemList
+      pageSize={PAGE_SIZE}
+      urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
       showItemAmount={true}
       itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
     ></ItemList>
