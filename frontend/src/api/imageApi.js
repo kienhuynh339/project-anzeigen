@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 export function getImage(imageId) {
   return fetch(`http://localhost:8080/api/images/${imageId}`)
     .then((response) => {
