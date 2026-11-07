@@ -45,7 +45,7 @@ public class ItemUpdateRequest {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = title.trim();
     }
 
     public Short getCategoryId() {
