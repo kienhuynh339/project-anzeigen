@@ -50,7 +50,7 @@ public class Utils {
         public static final String PASSWORD_NOT_BLANK = "Das Passwort ist erforderlich.";
         public static final String PASSWORD_SIZE = "Das Passwort muss zwischen 5 und 30 Zeichen lang sein.";
         public static final String MESSAGE_NOT_EMPTY = "Die Nachricht darf nicht leer sein.";
-        public static final String MESSAGE_SIZE = "Die Nachricht darf maximal 4000 Zeichen lang sein.";
+        public static final String MESSAGE_SIZE = "Die Nachricht muss zwischen 1 und 4000 Zeichen lang sein.";
 
     }
 
