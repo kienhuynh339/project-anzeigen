@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { createContext, useContext, useEffect, useState } from "react";
 
 import * as authApi from "../api/authApi";
