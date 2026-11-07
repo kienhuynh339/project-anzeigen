@@ -2,22 +2,22 @@
  * @author Trung Kien Huynh
  */
 import { Route, BrowserRouter, Routes } from "react-router";
-import Navbar from "./features/header/Navbar";
-import SearchBar from "./features/header/SearchBar";
-import ItemView from "./features/item/ItemView";
-import ChatView from "./features/chat/ChatView";
-import UserItems from "./features/item/UserItems";
-import CreateItem from "./features/item/CreateItem";
-import MyFavoriteItems from "./features/item/MyFavoriteItems";
-import AllItems from "./features/item/AllItems";
-import MyItems from "./features/item/MyItems";
-import EditItem from "./features/item/EditItem";
-import Settings from "./features/profile/Settings";
+import Navbar from "./components/Navbar";
+import SearchBar from "./features/search/SearchBar";
+import ItemDetails from "./pages/item/ItemDetails";
+import Chat from "./pages/chat/Chat";
+import UserItems from "./pages/item/UserItems";
+import CreateItem from "./pages/item/CreateItem";
+import MyFavoriteItems from "./pages/item/MyFavoriteItems";
+import AllItems from "./pages/item/AllItems";
+import MyItems from "./pages/item/MyItems";
+import EditItem from "./pages/item/EditItem";
+import Settings from "./pages/setting/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/authentication/Login";
+import Register from "./pages/authentication/Register";
 import { ChatContextProvider } from "./contexts/ChatContext";
-import NotFound from "./components/NotFound";
+import NotFound from "./pages/not-found/NotFound";
 import { Navigate } from "react-router";
 import { ItemListContextProvider } from "./contexts/ItemListContext";
 
@@ -41,7 +41,7 @@ function App() {
               </ItemListContextProvider>
             }
           />
-          <Route path="/anzeigen/:itemId" element={<ItemView />} />
+          <Route path="/anzeigen/:itemId" element={<ItemDetails />} />
           <Route
             path="/meine-anzeigen"
             element={
@@ -75,7 +75,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <ChatContextProvider>
-                  <ChatView />
+                  <Chat />
                 </ChatContextProvider>
               </ProtectedRoute>
             }

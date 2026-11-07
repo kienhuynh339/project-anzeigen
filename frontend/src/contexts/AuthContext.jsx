@@ -3,7 +3,7 @@
  */
 import { createContext, useContext, useEffect, useState } from "react";
 
-import * as authApi from "../api/authApi";
+import * as authApi from "../apis/authApi";
 
 const AuthContext = createContext(null);
 

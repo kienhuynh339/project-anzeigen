@@ -3,17 +3,17 @@
  */
 import { Link } from "react-router";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
-import ItemFavorButton from "../../components/ItemFavorButton";
-import ItemDeleteButton from "../../components/ItemDeleteButton";
-import ItemReserveButton from "../../components/ItemReserveButton";
-import ItemActivateButton from "../../components/ItemActivateButton";
-import FavoriteItemDeleteButton from "../../components/FavoriteItemDeleteButton";
-import MessageButton from "../../components/MessageButton";
-import ItemTitle from "../../components/ItemTitle";
+import ItemFavorButton from "./buttons/ItemFavorButton";
+import ItemDeleteButton from "./buttons/ItemDeleteButton";
+import ItemReserveButton from "./buttons/ItemReserveButton";
+import ItemActivateButton from "./buttons/ItemActivateButton";
+import FavoriteItemDeleteButton from "./buttons/FavoriteItemDeleteButton";
+import MessageButton from "../chat/buttons/MessageButton";
+import ItemTitle from "./ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
 import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
-import ItemEditButton from "../../components/ItemEditButton";
+import ItemEditButton from "./buttons/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useItemListContext } from "../../contexts/ItemListContext";
 

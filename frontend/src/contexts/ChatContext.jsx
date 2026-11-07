@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { createContext, useContext, useState, useEffect } from "react";
-import { markMessageAsRead } from "../api/messageApi";
+import { markMessageAsRead } from "../apis/messageApi";
 import { getPath, useFetch } from "../hooks/useFetch";
 import { useAuthContext } from "./AuthContext";
 

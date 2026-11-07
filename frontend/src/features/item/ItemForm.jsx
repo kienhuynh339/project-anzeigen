@@ -1,10 +1,10 @@
 /**
  * @author Trung Kien Huynh
  */
-import CategorySelect from "../input/CategorySelect";
-import ImageInput from "./ImageInput";
-import PostcodeInput from "../input/PostCodeInput";
-import LocationInput from "../input/LocationInput";
+import CategorySelect from "./input/CategorySelect";
+import ImageInput from "../image/ImageInput";
+import PostcodeInput from "./input/PostcodeInput";
+import LocationInput from "./input/LocationInput";
 
 export default function ItemForm({
   item,

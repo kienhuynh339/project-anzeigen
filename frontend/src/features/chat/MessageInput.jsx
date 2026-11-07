@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { sendMessage as apiSendMessage } from "../../api/messageApi";
+import { sendMessage as apiSendMessage } from "../../apis/messageApi";
 import { useChatContext } from "../../contexts/ChatContext";
 import { useState } from "react";
 import {
