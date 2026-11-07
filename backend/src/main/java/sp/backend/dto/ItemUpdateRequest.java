@@ -37,7 +37,7 @@ public class ItemUpdateRequest {
     @NotNull(message = ExceptionMessage.STATUS_NOT_NULL)
     private ItemStatus status;
 
-    @Size(max = 10, message = ExceptionMessage.IMAGES_SIZE)
+    @Size(max = 10, message = ExceptionMessage.IMAGES_AMOUNT)
     private List<MultipartFile> images;
 
     public String getTitle() {
