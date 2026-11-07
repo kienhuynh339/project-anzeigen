@@ -4,7 +4,7 @@
 import SettingsDialog from "../../components/SettingsDialog";
 import { useAppContext } from "../../contexts/AppContext";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { USER_DATA_KEYS } from "../../utils/inputValidation";
+import { FIELD_KEYS } from "../../utils/inputValidation";
 
 export default function Settings() {
   const { openDialog } = useAppContext();
@@ -30,7 +30,7 @@ export default function Settings() {
             <button
               className="btn btn-outline-primary border-0"
               type="button"
-              onClick={() => handleDialogOpen(USER_DATA_KEYS.PROFILE_NAME)}
+              onClick={() => handleDialogOpen(FIELD_KEYS.PROFILE_NAME)}
             >
               Ändern
             </button>
@@ -44,7 +44,7 @@ export default function Settings() {
             <button
               className="btn btn-outline-primary border-0"
               type="button"
-              onClick={() => handleDialogOpen(USER_DATA_KEYS.ACCOUNT_NAME)}
+              onClick={() => handleDialogOpen(FIELD_KEYS.ACCOUNT_NAME)}
             >
               Ändern
             </button>
@@ -58,7 +58,7 @@ export default function Settings() {
             <button
               className="btn btn-outline-primary border-0"
               type="button"
-              onClick={() => handleDialogOpen(USER_DATA_KEYS.PASSWORD)}
+              onClick={() => handleDialogOpen(FIELD_KEYS.PASSWORD)}
             >
               Ändern
             </button>
