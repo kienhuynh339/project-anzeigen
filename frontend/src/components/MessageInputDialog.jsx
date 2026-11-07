@@ -5,19 +5,36 @@ import DialogWindow from "./DialogWindow";
 import { useState } from "react";
 import { sendMessage } from "../api/messageApi";
 import { useAuthContext } from "../contexts/AuthContext";
+import {
+  FIELD_KEYS,
+  INPUT_NOTICES,
+  validateInput,
+} from "../utils/inputValidation";
+
 export default function MessageInputDialog({ item, closeDialog }) {
   const { user } = useAuthContext();
 
   const [message, setMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [notification, setNotification] = useState("");
+
   const handleSend = async (itemId, interestedUserId, content) => {
-    setIsSending(true);
+    if (!validateInput(content, FIELD_KEYS.MESSAGE)) {
+      setNotification(INPUT_NOTICES[FIELD_KEYS.MESSAGE]);
+      return;
+    }
 
-    await sendMessage(itemId, interestedUserId, content);
-    setMessage("");
+    setSubmitting(true);
 
-    closeDialog();
-    setIsSending(false);
+    try {
+      await sendMessage(itemId, interestedUserId, content);
+      setMessage("");
+      closeDialog();
+    } catch (e) {
+      setNotification(e.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
   return (
     <DialogWindow
@@ -28,14 +45,14 @@ export default function MessageInputDialog({ item, closeDialog }) {
           key="message-button-abbrechen"
           className="btn btn-secondary"
           onClick={closeDialog}
-          disabled={isSending}
+          disabled={submitting}
         >
           Abbrechen
         </button>,
         <button
           key="message-button-senden"
           className="btn btn-primary"
-          disabled={isSending}
+          disabled={submitting || !message}
           onClick={() => {
             handleSend(item.id, user.id, message);
           }}
@@ -58,10 +75,19 @@ export default function MessageInputDialog({ item, closeDialog }) {
         <textarea
           className="form-control mt-3"
           value={message}
-          disabled={isSending}
+          disabled={submitting}
           onChange={(e) => setMessage(e.target.value)}
           rows={4}
+          maxLength={4000}
         />
+        <p className="text-end mb-0">
+          <small className="text-muted">{message.length}/4000 Zeichen</small>
+        </p>
+        {notification && (
+          <p className="bg-danger-subtle my-0 border border-danger-subtle rounded p-1 text-danger">
+            {notification}
+          </p>
+        )}
       </div>
     </DialogWindow>
   );
