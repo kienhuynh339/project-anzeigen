@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import CategorySelect from "./input/CategorySelect";
-import ImageInput from "../image/ImageInput";
+import ImageInput from "./input/ImageInput";
 import PostcodeInput from "./input/PostcodeInput";
 import LocationInput from "./input/LocationInput";
 
@@ -98,7 +98,7 @@ export default function ItemForm({
         </div>
       </div>
       {/* Bilder Input*/}
-      <div className={"row mx-1 my-3 align-items-center"}>
+      <div className={"row mx-1 mt-3 align-items-center"}>
         <label className="fw-bold col-2">Bilder</label>
         <div className="col">
           <ImageInput images={images} setImages={setImages}></ImageInput>
