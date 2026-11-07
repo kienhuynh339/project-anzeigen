@@ -1,6 +1,5 @@
 package sp.backend.utils;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import sp.backend.user.User;
@@ -42,7 +41,8 @@ public class Utils {
         public static final String PRICE_POSITIVE_OR_ZERO = "Der Preis muss mindestens 0 betragen.";
         public static final String STATUS_NOT_NULL = "Der Status ist erforderlich.";
         public static final String STATUS_NOT_VALID = "Der Status ist ungültig.";
-        public static final String IMAGES_SIZE = "Es dürfen maximal 10 Bilder hochgeladen werden.";
+        public static final String IMAGES_AMOUNT = "Es dürfen maximal 10 Bilder hochgeladen werden.";
+        public static final String IMAGES_TOTAL_SIZE = "Die Gesamtgröße der Bilder darf maximal 50 MB betragen.";
         public static final String PROFILE_NAME_NOT_BLANK = "Der Profilname ist erforderlich.";
         public static final String PROFILE_NAME_SIZE = "Der Profilname muss zwischen 1 und 30 Zeichen lang sein.";
         public static final String ACCOUNT_NAME_NOT_BLANK = "Der Benutzername ist erforderlich.";
