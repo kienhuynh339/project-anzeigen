@@ -4,20 +4,21 @@
 import SettingsDialog from "../../components/SettingsDialog";
 import { useAppContext } from "../../contexts/AppContext";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { USER_DATA_KEYS } from "../../utils/inputValidation";
 
 const fields = [
   {
-    key: "profileName",
+    key: USER_DATA_KEYS.PROFILE_NAME,
     label: "Profilname",
     type: "text",
   },
   {
-    key: "accountName",
+    key: USER_DATA_KEYS.ACCOUNT_NAME,
     label: "Benutzername",
     type: "text",
   },
   {
-    key: "password",
+    key: USER_DATA_KEYS.PASSWORD,
     label: "Passwort",
     type: "password",
   },
@@ -28,7 +29,7 @@ export default function Settings() {
   const { user } = useAuthContext();
 
   const handleDialogOpen = (field) => {
-    const initialValue = user[field.key];
+    const initialValue = user[field.key] ?? "";
     openDialog(SettingsDialog, { initialValue, field });
   };
 
