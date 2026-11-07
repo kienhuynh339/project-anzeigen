@@ -2,21 +2,21 @@ import { useState } from "react";
 import DialogWindow from "./DialogWindow";
 import * as userApi from "../api/userApi";
 import {
-  USER_DATA_KEYS,
-  userDataInputNotice,
-  validateUserDataInput,
+  FIELD_KEYS,
+  INPUT_NOTICES,
+  validateInput,
 } from "../utils/inputValidation";
 
 const fields = {
-  [USER_DATA_KEYS.PROFILE_NAME]: {
+  [FIELD_KEYS.PROFILE_NAME]: {
     label: "Profilname",
     type: "text",
   },
-  [USER_DATA_KEYS.ACCOUNT_NAME]: {
+  [FIELD_KEYS.ACCOUNT_NAME]: {
     label: "Benutzername",
     type: "text",
   },
-  [USER_DATA_KEYS.PASSWORD]: {
+  [FIELD_KEYS.PASSWORD]: {
     label: "Passwort",
     type: "password",
   },
@@ -29,34 +29,38 @@ export default function SettingsDialog({
 }) {
   const [value, setValue] = useState(initialValue);
   const [notification, setNotification] = useState("");
+  const [updating, setUpdating] = useState(false);
 
   const handleCancel = () => {
     closeDialog();
   };
 
   const handleSave = async () => {
-    if (!validateUserDataInput(value, fieldKey)) {
-      setNotification(userDataInputNotice(fieldKey));
+    if (!validateInput(value, fieldKey)) {
+      setNotification(INPUT_NOTICES[fieldKey]);
       return;
     }
+
+    setUpdating(true);
     try {
       switch (fieldKey) {
-        case USER_DATA_KEYS.PROFILE_NAME:
+        case FIELD_KEYS.PROFILE_NAME:
           await userApi.updateProfileName(value);
           break;
-        case USER_DATA_KEYS.ACCOUNT_NAME:
+        case FIELD_KEYS.ACCOUNT_NAME:
           await userApi.updateAccountName(value);
           break;
-        case USER_DATA_KEYS.PASSWORD:
+        case FIELD_KEYS.PASSWORD:
           await userApi.updatePassword(value);
           break;
       }
+      setNotification("");
+      closeDialog();
+      setUpdating(false);
     } catch (e) {
-      setNotification("oawjdoawjdo");
+      setNotification(e.message);
+      setUpdating(false);
     }
-
-    setNotification("");
-    closeDialog();
   };
 
   return (
@@ -69,6 +73,7 @@ export default function SettingsDialog({
           className="btn btn-secondary"
           type="button"
           onClick={handleCancel}
+          disabled={updating}
         >
           Abbrechen
         </button>,
@@ -77,6 +82,7 @@ export default function SettingsDialog({
           className="btn btn-primary"
           type="button"
           onClick={handleSave}
+          disabled={updating}
         >
           Speichern
         </button>,
@@ -87,6 +93,7 @@ export default function SettingsDialog({
         className="form-control"
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        disabled={updating}
       ></input>
       {notification && (
         <p className="bg-danger-subtle mt-1 border border-danger-subtle rounded p-1 text-danger">
