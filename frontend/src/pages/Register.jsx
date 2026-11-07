@@ -13,7 +13,6 @@ export default function Register() {
   const [error, setError] = useState("");
 
   async function handleSubmit(e) {
-    e.preventDefault();
     setError("");
 
     try {
@@ -30,10 +29,7 @@ export default function Register() {
       <div className="border border-dark-subtle rounded shadow-sm">
         <div className="m-4">
           <h2 className="text-center mb-3">Registrieren</h2>
-          <form
-            className="d-flex flex-column gap-2 align-items-center"
-            onSubmit={handleSubmit}
-          >
+          <div className="d-flex flex-column gap-2 align-items-center">
             <div className="form-floating">
               <input
                 id="profileName"
@@ -43,15 +39,8 @@ export default function Register() {
                 value={profileName}
                 onChange={(e) => {
                   setProfileName(e.target.value);
-                  e.target.setCustomValidity(
-                    e.target.value.trim().length < 1
-                      ? "Der Profilname muss mindestens 1 Zeichen enthalten."
-                      : "",
-                  );
                 }}
-                minLength={1}
                 style={{ width: "20rem" }}
-                required
               />
               <label htmlFor="profileName">Profilname</label>
             </div>
@@ -64,15 +53,8 @@ export default function Register() {
                 value={accountName}
                 onChange={(e) => {
                   setAccountName(e.target.value);
-                  e.target.setCustomValidity(
-                    e.target.value.trim().length < 6
-                      ? "Der Benutzername muss mindestens 6 Zeichen enthalten."
-                      : "",
-                  );
                 }}
-                minLength={6}
                 style={{ width: "20rem" }}
-                required
               />
               <label htmlFor="accountName">Benutzername</label>
             </div>
@@ -85,15 +67,8 @@ export default function Register() {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  e.target.setCustomValidity(
-                    e.target.value.trim().length < 6
-                      ? "Das Passwort muss mindestens 6 Zeichen enthalten."
-                      : "",
-                  );
                 }}
-                minLength={6}
                 style={{ width: "20rem" }}
-                required
               />
               <label htmlFor="password">Passwort</label>
             </div>
@@ -106,12 +81,13 @@ export default function Register() {
 
             <button
               className="btn btn-primary mt-3"
-              type="submit"
+              type="button"
               style={{ width: "15rem" }}
+              onClick={handleSubmit}
             >
               Konto erstellen
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
