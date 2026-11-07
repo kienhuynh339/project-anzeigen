@@ -11,6 +11,7 @@ export default function ItemForm({
   setItem,
   images,
   setImages,
+  notification,
   initialLocationInputValue = "",
   children,
 }) {
@@ -30,9 +31,9 @@ export default function ItemForm({
       style={{ width: "70rem" }}
     >
       {/* Titel */}
-      <div className={"row mx-1 my-3 align-items-center"}>
+      <div className={"row mx-1 mt-3 align-items-center"}>
         <label htmlFor="title" className="fw-bold col-2">
-          Titel
+          Titel *
         </label>
         <div className="col">
           <input
@@ -40,11 +41,15 @@ export default function ItemForm({
             id="title"
             name="title"
             className="form-control border-dark-subtle"
+            maxLength={100}
             value={item.title}
             onChange={(e) => updateItemDetails("title", e.target.value)}
           />
         </div>
       </div>
+      <p className="text-muted text-end me-3">
+        <small>{item.title.trim().length}/100 Zeichen</small>
+      </p>
       {/* Kategorie */}
       <div className={"row mx-1 my-3 align-items-center"}>
         <label className="fw-bold col-2">Kategorie</label>
@@ -56,7 +61,7 @@ export default function ItemForm({
         </div>
       </div>
       {/* Beschreibung */}
-      <div className={"row mx-1 my-3 align-items-center"}>
+      <div className={"row mx-1 mt-3 align-items-center"}>
         <label htmlFor="description" className="fw-bold col-2">
           Beschreibung
         </label>
@@ -66,15 +71,19 @@ export default function ItemForm({
             name="description"
             rows="4"
             className="form-control border-dark-subtle"
+            maxLength={4000}
             value={item.description}
             onChange={(e) => updateItemDetails("description", e.target.value)}
           />
         </div>
       </div>
+      <p className="text-muted text-end me-3">
+        <small>{item.description.length}/4000 Zeichen</small>
+      </p>
       {/* Preis */}
       <div className={"row mx-1 my-3 align-items-center"}>
         <label htmlFor="price" className="fw-bold col-2">
-          Preis
+          Preis *
         </label>
         <div className="col-5 d-flex align-items-center">
           <input
@@ -98,7 +107,7 @@ export default function ItemForm({
 
       {/* Ort */}
       <div className={"row mx-1 my-3 align-items-center"}>
-        <span className="fw-bold col-2">Ort</span>
+        <span className="fw-bold col-2">Ort *</span>
         {/* PLZ */}
         <div className="col-2">
           <PostcodeInput
@@ -122,7 +131,14 @@ export default function ItemForm({
           ></LocationInput>
         </div>
       </div>
-
+      {notification && (
+        <div className={"row mx-1 my-3 align-items-center"}>
+          <span className="bg-danger-subtle border rounded py-2 border-danger-subtle  text-danger">
+            {notification}
+          </span>
+        </div>
+      )}
+      <p className="text-muted small text-end pe-3">* Pflichtfeld</p>
       {/*Knöpfe */}
       <div
         className={
