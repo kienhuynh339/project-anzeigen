@@ -16,6 +16,7 @@ import sp.backend.dto.ItemResponse;
 import sp.backend.dto.ItemWithDistanceResponse;
 import sp.backend.dto.ItemUpdateRequest;
 import sp.backend.exception.ImageSavingException;
+import sp.backend.exception.ImageSizeExceededException;
 import sp.backend.item.category.Category;
 import sp.backend.item.category.CategoryRepository;
 import sp.backend.item.item_image.ItemImage;
@@ -44,6 +45,8 @@ public class ItemService {
     private final UserRepository userRepository;
     private final ItemImageRepository itemImageRepository;
 
+    private static final long MAX_IMAGES_SIZE = 50L * 1024 * 1024;
+
     public ItemService(ItemRepository itemRepository, GeodbLocationRepository geodbLocationRepository, CategoryRepository categoryRepository, UserRepository userRepository, ItemImageRepository itemImageRepository) {
         this.itemRepository = itemRepository;
         this.geodbLocationRepository = geodbLocationRepository;
@@ -65,7 +68,7 @@ public class ItemService {
         if (!item.getPoster().getId().equals(loggedInUserId)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
-        
+
         return itemRepository.findItemById(itemId, loggedInUserId);
     }
 
@@ -140,6 +143,8 @@ public class ItemService {
 
         validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.DRAFT), request.getStatus());
 
+        validateImages(request.getImages());
+
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND));
 
@@ -149,7 +154,7 @@ public class ItemService {
         Item item = new Item(poster, request.getTitle(), category, request.getDescription(), request.getPrice(), location, request.getPostcode(), request.getLocationExtraInfo(), request.getStatus());
         itemRepository.save(item);
 
-        saveImage(request.getImages(), item.getId());
+        saveImages(request.getImages(), item.getId());
 
         return item.getId();
     }
@@ -160,6 +165,8 @@ public class ItemService {
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
+
+        validateImages(request.getImages());
 
         // Gelöschte Item darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
@@ -203,12 +210,26 @@ public class ItemService {
         itemRepository.save(item);
 
         // Bilder speichern
-        saveImage(request.getImages(), item.getId());
+        saveImages(request.getImages(), item.getId());
 
         return true;
     }
 
-    private void saveImage(List<MultipartFile> images, Long itemId) {
+    private void validateImages(List<MultipartFile> images) {
+        if (images != null) {
+            // Gesamtgröße der Bilder
+            long totalSize = images.stream()
+                    .filter((file) -> file != null && !file.isEmpty())
+                    .mapToLong(MultipartFile::getSize)
+                    .sum();
+
+            if (totalSize > MAX_IMAGES_SIZE) {
+                throw new ImageSizeExceededException(ExceptionMessage.IMAGES_TOTAL_SIZE);
+            }
+        }
+    }
+
+    private void saveImages(List<MultipartFile> images, Long itemId) {
         if (images != null) {
             short order = 0;
             for (MultipartFile file : images) {
