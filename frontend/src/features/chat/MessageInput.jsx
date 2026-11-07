@@ -4,23 +4,38 @@
 import { sendMessage as apiSendMessage } from "../../api/messageApi";
 import { useChatContext } from "../../contexts/ChatContext";
 import { useState } from "react";
+import {
+  FIELD_KEYS,
+  INPUT_NOTICES,
+  validateInput,
+} from "../../utils/inputValidation";
 
 export default function MessageInput() {
   const [messageContent, setMessageContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { currentChat, otherUser } = useChatContext();
+  const [notification, setNotification] = useState("");
 
   const handleSubmit = async () => {
+    if (!validateInput(messageContent, FIELD_KEYS.MESSAGE)) {
+      setNotification(INPUT_NOTICES[FIELD_KEYS.MESSAGE]);
+      return;
+    }
+
     setSubmitting(true);
 
-    await apiSendMessage(
-      currentChat.itemId,
-      currentChat.interestedUser.id,
-      messageContent,
-    );
-    setMessageContent("");
-
-    setSubmitting(false);
+    try {
+      await apiSendMessage(
+        currentChat.itemId,
+        currentChat.interestedUser.id,
+        messageContent,
+      );
+      setMessageContent("");
+    } catch (e) {
+      setNotification(e.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
   return (
     <div>
@@ -31,7 +46,7 @@ export default function MessageInput() {
       ) : (
         <div className="d-flex flex-column">
           <div className="d-flex gap-2">
-            <input
+            <textarea
               type="text"
               className="form-control border-dark-subtle"
               placeholder="Nachricht schreiben..."
@@ -39,6 +54,7 @@ export default function MessageInput() {
               value={messageContent}
               onChange={(e) => setMessageContent(e.target.value)}
               disabled={submitting}
+              rows={1}
             />
             <button
               type="button"
@@ -53,6 +69,11 @@ export default function MessageInput() {
             <small className="text-muted">
               {messageContent.length}/4000 Zeichen
             </small>
+          )}
+          {notification && (
+            <p className="bg-danger-subtle mt-1 mb-0 border border-danger-subtle rounded p-1 text-danger">
+              {notification}
+            </p>
           )}
         </div>
       )}
