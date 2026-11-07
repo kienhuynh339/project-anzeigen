@@ -47,8 +47,10 @@ public class SecurityConfig {
                         // Authentifizierung
                         .requestMatchers("/api/auth/**")
                         .permitAll()
-                        // Angemeldeter Nutzer
+                        // users
                         .requestMatchers("/api/users/me")
+                        .authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/users/*")
                         .authenticated()
                         // GET items
                         .requestMatchers(
