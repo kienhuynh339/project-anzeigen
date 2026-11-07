@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useState } from "react";
 import DialogWindow from "./DialogWindow";
 import * as userApi from "../api/userApi";
