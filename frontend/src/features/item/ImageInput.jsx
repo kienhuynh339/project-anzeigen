@@ -5,9 +5,10 @@ import { useState } from "react";
 
 export default function ImageInput({ images, setImages }) {
   const [inputId, setInputId] = useState(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
-  const handleImageChange = (event) => {
-    const files = Array.from(event.target.files || []);
+  const handleUpload = (event) => {
+    const files = Array.from(event.target.files ?? []);
 
     if (files.length > 0) {
       setImages((prev) => [...prev, ...files]);
@@ -17,12 +18,11 @@ export default function ImageInput({ images, setImages }) {
 
   const handleDeleteImage = (indexToDelete) => {
     setImages((prevImages) =>
-      prevImages.filter((_, index) => index !== indexToDelete),
+      prevImages.filter((image, index) => index !== indexToDelete),
     );
   };
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
-  const handleImageOrder = (index) => {
+  const handleChangeImageOrder = (index) => {
     if (selectedImageIndex === null) {
       // Erstes Bild auswählen
       setSelectedImageIndex(index);
@@ -54,10 +54,11 @@ export default function ImageInput({ images, setImages }) {
     <div
       className={`border-dark-subtle rounded d-flex flex-wrap gap-2 justify-content-start ${images.length > 0 && "p-2"}`}
       style={{
-        border: images.length != 0 && "1px dashed",
+        border: images.length > 0 && "1px dashed",
       }}
     >
-      <div className={`p-0 m-0 ${images.length == 0 && "container-fluid"}`}>
+      <div className={`p-0 m-0 ${images.length === 0 && "container-fluid"}`}>
+        {/* key ändert sich -> aktuelles <input> entfernen und ein neues <input> erstellen */}
         <input
           key={inputId}
           id={`images-${inputId}`}
@@ -66,15 +67,14 @@ export default function ImageInput({ images, setImages }) {
           multiple
           accept="image/*"
           className="d-none"
-          onChange={handleImageChange}
+          onChange={handleUpload}
         />
-
         <label
           htmlFor={`images-${inputId}`}
           className="btn btn-outline-light text-dark d-flex justify-content-center align-items-center p-0 m-0"
           style={{
             cursor: "pointer",
-            width: images.length == 0 ? "100%" : "12rem",
+            width: images.length === 0 ? "100%" : "12rem",
             height: "12rem",
             border: "1px solid #adb5bd",
           }}
@@ -82,6 +82,7 @@ export default function ImageInput({ images, setImages }) {
           <i className="bi bi-images me-2"></i>Bilder hinzufügen
         </label>
       </div>
+      {/* Hochgeladene Bilder */}
       {images.map((image, index) => {
         const imageUrl = URL.createObjectURL(image);
         return (
@@ -94,7 +95,7 @@ export default function ImageInput({ images, setImages }) {
                   ? "border border-primary border-4"
                   : ""
               }`}
-              onClick={() => handleImageOrder(index)}
+              onClick={() => handleChangeImageOrder(index)}
               style={{
                 width: "12rem",
                 height: "12rem",
@@ -107,6 +108,7 @@ export default function ImageInput({ images, setImages }) {
             <span className="position-absolute top-0 start-0 m-2 badge text-bg-light">
               {index + 1}
             </span>
+            {/* Bild löschen */}
             <button
               className="top-0 end-0 m-2 position-absolute btn
               btn-outline-light d-flex justify-content-center align-items-center"
