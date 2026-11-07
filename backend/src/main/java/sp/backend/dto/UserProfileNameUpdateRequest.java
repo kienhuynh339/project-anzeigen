@@ -14,7 +14,7 @@ public class UserProfileNameUpdateRequest {
     }
 
     public void setProfileName(String profileName) {
-        this.profileName = profileName;
+        this.profileName = profileName.trim();
     }
 
 }
