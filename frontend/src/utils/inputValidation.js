@@ -35,7 +35,8 @@ export const INPUT_NOTICES = Object.freeze({
     "Die Beschreibung darf maximal 4000 Zeichen lang sein.",
   [FIELD_KEYS.PRICE]: "Der Preis muss mindestens 0 betragen.",
   [FIELD_KEYS.POSTCODE]: "Die Postleitzahl muss genau 5 Ziffern enthalten.",
-  [FIELD_KEYS.LOCATION_ID]: "Der Standort ist ungültig.",
+  [FIELD_KEYS.LOCATION_ID]:
+    "Der Standort ist ungültig. Bitte überprüfe deine Angabe (Postleitzahl und Ort).",
   [FIELD_KEYS.IMAGES_AMOUNT]: "Es dürfen maximal 10 Bilder hochgeladen werden.",
   [FIELD_KEYS.IMAGES_TOTAL_SIZE]:
     "Die Gesamtgröße der Bilder darf maximal 50 MB betragen.",
