@@ -7,11 +7,28 @@ import {
   validateUserDataInput,
 } from "../utils/inputValidation";
 
-export default function SettingsDialog({ initialValue, field, closeDialog }) {
+const fields = {
+  [USER_DATA_KEYS.PROFILE_NAME]: {
+    label: "Profilname",
+    type: "text",
+  },
+  [USER_DATA_KEYS.ACCOUNT_NAME]: {
+    label: "Benutzername",
+    type: "text",
+  },
+  [USER_DATA_KEYS.PASSWORD]: {
+    label: "Passwort",
+    type: "password",
+  },
+};
+
+export default function SettingsDialog({
+  initialValue,
+  fieldKey,
+  closeDialog,
+}) {
   const [value, setValue] = useState(initialValue);
   const [notification, setNotification] = useState("");
-
-  const fieldKey = field.key;
 
   const handleCancel = () => {
     closeDialog();
@@ -44,7 +61,7 @@ export default function SettingsDialog({ initialValue, field, closeDialog }) {
 
   return (
     <DialogWindow
-      dialogTitle={`${field.label} ändern`}
+      dialogTitle={`${fields[fieldKey].label} ändern`}
       dialogWidth={"30rem"}
       dialogButtons={[
         <button
@@ -66,7 +83,7 @@ export default function SettingsDialog({ initialValue, field, closeDialog }) {
       ]}
     >
       <input
-        type={field.type}
+        type={fields[fieldKey].type}
         className="form-control"
         value={value}
         onChange={(e) => setValue(e.target.value)}
