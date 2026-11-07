@@ -12,7 +12,7 @@ import ItemActivateButton from "../../features/item/buttons/ItemActivateButton";
 import ItemEditButton from "../../features/item/buttons/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
-import ImageGallery from "../../features/image/ImageGallery";
+import ImageGallery from "../../features/item/ImageGallery";
 import MessageButton from "../../features/chat/buttons/MessageButton";
 
 const initialItem = {
