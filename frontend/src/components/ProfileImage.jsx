@@ -1,4 +1,7 @@
-const profileImages = Object.fromEntries(
+/**
+ * @author Trung Kien Huynh
+ */
+const PROFILE_IMAGES = Object.fromEntries(
   Object.entries(
     import.meta.glob("../assets/profile_images/*.svg", {
       eager: true,
@@ -32,7 +35,7 @@ export default function ProfileImage({
       }}
     >
       <img
-        src={profileImages[normalizeGerman(firstLetterOfName.toLowerCase())]}
+        src={PROFILE_IMAGES[normalizeGerman(firstLetterOfName.toLowerCase())]}
         className="rounded-circle"
         width={size}
         height={size}
