@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useChatContext } from "../../contexts/ChatContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
@@ -28,8 +31,12 @@ export default function MessageListItem({ message }) {
       >
         <div
           className={`rounded p-2 ${senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
+          style={{ whiteSpace: "pre-line" }}
         >
-          {message.content}
+          {message.content.replace(
+            /\\n/g /*"\\n" funktioniert nur für das erste Vorkommen*/,
+            "\n",
+          )}
         </div>
         <span
           className={`text-secondary small ${senderId == userId ? "align-self-end" : null}`}
