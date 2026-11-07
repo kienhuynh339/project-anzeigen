@@ -25,6 +25,7 @@ export default function PostcodeInput({
         type="text"
         className="form-control white-focus w-100"
         placeholder="PLZ"
+        maxLength={5}
         value={postcode}
         onChange={(e) => {
           setPostcode(e.target.value);
