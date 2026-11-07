@@ -10,30 +10,30 @@ import sp.backend.user.User;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name="messages")
+@Table(name = "messages")
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="chat_id")
+    @JoinColumn(name = "chat_id")
     private Chat chat;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="sender_id")
+    @JoinColumn(name = "sender_id")
     private User sender;
 
-    @Column(name="content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name="is_read")
+    @Column(name = "is_read")
     private boolean isRead;
 
-    @Column(name="created_at", insertable = false, updatable = false)
+    @Column(name = "created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    protected Message() {}
+    protected Message() {
+    }
 
     public Message(Chat chat, User sender, String content, boolean isRead) {
         this.chat = chat;
