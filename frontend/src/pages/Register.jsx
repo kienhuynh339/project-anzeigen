@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
+import {
+  FIELD_KEYS,
+  INPUT_NOTICES,
+  validateInput,
+} from "../utils/inputValidation";
 
 export default function Register() {
   const { register } = useAuthContext();
@@ -10,17 +15,28 @@ export default function Register() {
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
 
-  const [error, setError] = useState("");
+  const [notification, setNotification] = useState("");
 
   async function handleSubmit(e) {
-    setError("");
+    if (!validateInput(profileName, FIELD_KEYS.PROFILE_NAME)) {
+      setNotification(INPUT_NOTICES[FIELD_KEYS.PROFILE_NAME]);
+      return;
+    }
+    if (!validateInput(accountName, FIELD_KEYS.ACCOUNT_NAME)) {
+      setNotification(INPUT_NOTICES[FIELD_KEYS.ACCOUNT_NAME]);
+      return;
+    }
+    if (!validateInput(password, FIELD_KEYS.PASSWORD)) {
+      setNotification(INPUT_NOTICES[FIELD_KEYS.PASSWORD]);
+      return;
+    }
 
     try {
       await register(profileName, accountName, password);
 
       navigate("/login");
     } catch (error) {
-      setError(error.message);
+      setNotification(error.message);
     }
   }
 
@@ -73,9 +89,12 @@ export default function Register() {
               <label htmlFor="password">Passwort</label>
             </div>
 
-            {error && (
-              <p className="text-danger m-0" style={{ width: "20rem" }}>
-                {error}
+            {notification && (
+              <p
+                className="bg-danger-subtle mt-1 border border-danger-subtle rounded p-1 text-danger"
+                style={{ width: "20rem" }}
+              >
+                {notification}
               </p>
             )}
 
