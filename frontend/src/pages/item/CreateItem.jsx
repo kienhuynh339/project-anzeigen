@@ -26,6 +26,8 @@ const fieldKeys = [
   FIELD_KEYS.TITLE,
   FIELD_KEYS.DESCRIPTION,
   FIELD_KEYS.PRICE,
+  FIELD_KEYS.IMAGES_AMOUNT,
+  FIELD_KEYS.IMAGES_TOTAL_SIZE,
   FIELD_KEYS.POSTCODE,
   FIELD_KEYS.LOCATION_ID,
 ];
@@ -39,7 +41,11 @@ export default function CreateItem() {
 
   const handleSubmit = async (status) => {
     for (const key of fieldKeys) {
-      if (!validateInput(item[key], key)) {
+      const inputValue =
+        key === FIELD_KEYS.IMAGES_AMOUNT || key === FIELD_KEYS.IMAGES_TOTAL_SIZE
+          ? images
+          : item[key];
+      if (!validateInput(inputValue, key)) {
         setNotification(INPUT_NOTICES[key]);
         return false;
       }
