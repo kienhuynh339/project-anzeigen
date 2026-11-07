@@ -22,7 +22,7 @@ public class RegisterRequest {
     }
 
     public void setProfileName(String profileName) {
-        this.profileName = profileName;
+        this.profileName = profileName.trim();
     }
 
     public String getAccountName() {
@@ -30,7 +30,7 @@ public class RegisterRequest {
     }
 
     public void setAccountName(String accountName) {
-        this.accountName = accountName;
+        this.accountName = accountName.trim();
     }
 
     public String getPassword() {
@@ -38,6 +38,6 @@ public class RegisterRequest {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 }
