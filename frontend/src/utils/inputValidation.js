@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 export const FIELD_KEYS = Object.freeze({
   // Userdaten
   PROFILE_NAME: "profileName",
@@ -33,7 +36,8 @@ export const INPUT_NOTICES = Object.freeze({
   [FIELD_KEYS.LOCATION_ID]: "Der Standort ist ungültig.",
 
   // Chat
-  [FIELD_KEYS.MESSAGE]: "Die Nachricht darf maximal 4000 Zeichen lang sein.",
+  [FIELD_KEYS.MESSAGE]:
+    "Die Nachricht muss zwischen 1 und 4000 Zeichen lang sein.",
 });
 
 export const validateInput = (inputValue, key) => {
@@ -69,7 +73,7 @@ export const validateInput = (inputValue, key) => {
 
     // Chat
     case FIELD_KEYS.MESSAGE:
-      return inputValue.length <= 4000;
+      return inputValue.length >= 1 && inputValue.length <= 4000;
 
     default:
       return false;
