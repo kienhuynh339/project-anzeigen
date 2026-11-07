@@ -1,3 +1,7 @@
+/**
+ * @author Trung Kien Huynh
+ */
+
 import { request } from "./request";
 
 // Registrieren
