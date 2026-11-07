@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { Navigate } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
 
