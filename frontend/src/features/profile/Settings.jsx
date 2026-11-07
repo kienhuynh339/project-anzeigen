@@ -6,31 +6,13 @@ import { useAppContext } from "../../contexts/AppContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { USER_DATA_KEYS } from "../../utils/inputValidation";
 
-const fields = [
-  {
-    key: USER_DATA_KEYS.PROFILE_NAME,
-    label: "Profilname",
-    type: "text",
-  },
-  {
-    key: USER_DATA_KEYS.ACCOUNT_NAME,
-    label: "Benutzername",
-    type: "text",
-  },
-  {
-    key: USER_DATA_KEYS.PASSWORD,
-    label: "Passwort",
-    type: "password",
-  },
-];
-
 export default function Settings() {
   const { openDialog } = useAppContext();
   const { user } = useAuthContext();
 
-  const handleDialogOpen = (field) => {
-    const initialValue = user[field.key] ?? "";
-    openDialog(SettingsDialog, { initialValue, field });
+  const handleDialogOpen = (fieldKey) => {
+    const initialValue = user[fieldKey] ?? "";
+    openDialog(SettingsDialog, { initialValue, fieldKey });
   };
 
   return (
@@ -40,29 +22,48 @@ export default function Settings() {
         className="container border-dark-subtle border rounded mx-auto mt-3 shadow-sm "
         style={{ width: "120ch" }}
       >
-        {fields.map((field, index) => (
-          <div
-            className={`border-dark-subtle row mx-1 py-4 align-items-center ${index === fields.length - 1 ? "" : "border-bottom"}`}
-            key={field.key}
-          >
-            {/* Beschriftung  */}
-            <span className="fw-bold col-2">{field.label}</span>
-            {/* Userdaten */}
-            <span className="text-secondary ps-5 col">
-              {field.key !== "password" ? user[field.key] : "********"}
-            </span>
-            {/* Ändern */}
-            <div className="col text-end">
-              <button
-                className="btn btn-outline-primary border-0"
-                type="button"
-                onClick={() => handleDialogOpen(field)}
-              >
-                Ändern
-              </button>
-            </div>
+        {/* Profilname */}
+        <div className="border-dark-subtle row mx-1 py-4 align-items-center border-bottom">
+          <span className="fw-bold col-2">Profilname</span>
+          <span className="text-secondary ps-5 col">{user.profileName}</span>
+          <div className="col text-end">
+            <button
+              className="btn btn-outline-primary border-0"
+              type="button"
+              onClick={() => handleDialogOpen(USER_DATA_KEYS.PROFILE_NAME)}
+            >
+              Ändern
+            </button>
           </div>
-        ))}
+        </div>
+        {/* Benutzername */}
+        <div className="border-dark-subtle row mx-1 py-4 align-items-center border-bottom">
+          <span className="fw-bold col-2">Benutzername</span>
+          <span className="text-secondary ps-5 col">{user.accountName}</span>
+          <div className="col text-end">
+            <button
+              className="btn btn-outline-primary border-0"
+              type="button"
+              onClick={() => handleDialogOpen(USER_DATA_KEYS.ACCOUNT_NAME)}
+            >
+              Ändern
+            </button>
+          </div>
+        </div>
+        {/* Passwort */}
+        <div className="border-dark-subtle row mx-1 py-4 align-items-center">
+          <span className="fw-bold col-2">Passwort</span>
+          <span className="text-secondary ps-5 col">******</span>
+          <div className="col text-end">
+            <button
+              className="btn btn-outline-primary border-0"
+              type="button"
+              onClick={() => handleDialogOpen(USER_DATA_KEYS.PASSWORD)}
+            >
+              Ändern
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
