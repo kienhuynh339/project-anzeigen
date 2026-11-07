@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 export function translateItemStatus(status) {
   let translatedStatus = null;
   switch (status) {
