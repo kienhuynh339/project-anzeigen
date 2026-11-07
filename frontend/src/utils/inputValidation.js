@@ -13,6 +13,8 @@ export const FIELD_KEYS = Object.freeze({
   PRICE: "price",
   POSTCODE: "postcode",
   LOCATION_ID: "locationId",
+  IMAGES_AMOUNT: "imagesAmount",
+  IMAGES_TOTAL_SIZE: "imagesTotalSize",
 
   // Chat
   MESSAGE: "messageContent",
@@ -34,6 +36,9 @@ export const INPUT_NOTICES = Object.freeze({
   [FIELD_KEYS.PRICE]: "Der Preis muss mindestens 0 betragen.",
   [FIELD_KEYS.POSTCODE]: "Die Postleitzahl muss genau 5 Ziffern enthalten.",
   [FIELD_KEYS.LOCATION_ID]: "Der Standort ist ungültig.",
+  [FIELD_KEYS.IMAGES_AMOUNT]: "Es dürfen maximal 10 Bilder hochgeladen werden.",
+  [FIELD_KEYS.IMAGES_TOTAL_SIZE]:
+    "Die Gesamtgröße der Bilder darf maximal 50 MB betragen.",
 
   // Chat
   [FIELD_KEYS.MESSAGE]:
@@ -70,6 +75,14 @@ export const validateInput = (inputValue, key) => {
 
     case FIELD_KEYS.LOCATION_ID:
       return Boolean(inputValue);
+
+    case FIELD_KEYS.IMAGES_AMOUNT:
+      return inputValue.length <= 10;
+    case FIELD_KEYS.IMAGES_TOTAL_SIZE:
+      return (
+        inputValue.reduce((sum, image) => sum + image.size, 0) <=
+        50 * 1024 * 1024
+      );
 
     // Chat
     case FIELD_KEYS.MESSAGE:
