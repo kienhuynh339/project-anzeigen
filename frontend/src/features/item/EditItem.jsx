@@ -9,6 +9,11 @@ import { useNavigate } from "react-router";
 import { updateItem } from "../../api/itemApi";
 import { getImage } from "../../api/imageApi";
 import { Navigate } from "react-router";
+import {
+  FIELD_KEYS,
+  INPUT_NOTICES,
+  validateInput,
+} from "../../utils/inputValidation";
 
 const mapItemToFormData = (item) => ({
   title: item.title,
@@ -21,11 +26,21 @@ const mapItemToFormData = (item) => ({
   status: item.status,
 });
 
+const fieldKeys = [
+  FIELD_KEYS.TITLE,
+  FIELD_KEYS.DESCRIPTION,
+  FIELD_KEYS.PRICE,
+  FIELD_KEYS.POSTCODE,
+  FIELD_KEYS.LOCATION_ID,
+];
+
 export default function EditItem() {
   const navigate = useNavigate();
   const { itemId } = useParams();
   const [item, setItem] = useState(null);
   const [images, setImages] = useState([]);
+  const [notification, setNotification] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   let isItemIdValid = /^[1-9]\d*$/.test(itemId);
 
@@ -74,37 +89,65 @@ export default function EditItem() {
       : `${fetchedItem.location.name}`;
   }
 
-  const handleSubmit = (status) => {
-    return updateItem(
-      fetchedItem.id,
-      item.title,
-      item.categoryId,
-      item.description,
-      item.locationId,
-      item.postcode,
-      item.locationExtraInfo,
-      item.price,
-      status,
-      images,
-    );
+  const handleSubmit = async (status) => {
+    for (const key of fieldKeys) {
+      if (!validateInput(item[key], key)) {
+        setNotification(INPUT_NOTICES[key]);
+        return false;
+      }
+    }
+
+    setSubmitting(true);
+
+    try {
+      await updateItem(
+        fetchedItem.id,
+        item.title,
+        item.categoryId,
+        item.description,
+        item.locationId,
+        item.postcode,
+        item.locationExtraInfo,
+        item.price,
+        status,
+        images,
+      );
+      return true;
+    } catch (e) {
+      setNotification(e.message);
+      return false;
+    }
   };
 
   const handleSaveDraft = async () => {
-    await handleSubmit("DRAFT");
+    const success = await handleSubmit("DRAFT");
+
+    setSubmitting(false);
+    if (!success) return;
+
     navigate("/meine-anzeigen");
   };
 
   const handlePublishItem = async () => {
-    await handleSubmit("ACTIVE");
+    const success = await handleSubmit("ACTIVE");
+
+    setSubmitting(false);
+    if (!success) return;
+
     navigate("/meine-anzeigen");
   };
 
   const handleSaveItem = async () => {
-    await handleSubmit(fetchedItem.status);
+    const success = await handleSubmit(fetchedItem.status);
+
+    setSubmitting(false);
+    if (!success) return;
+
     navigate("/meine-anzeigen");
   };
 
   const handleCancel = () => {
+    setSubmitting(false);
     navigate("/meine-anzeigen");
   };
 
@@ -116,12 +159,14 @@ export default function EditItem() {
         setItem={setItem}
         images={images}
         setImages={setImages}
+        notification={notification}
         initialLocationInputValue={initialLocationInputValue}
       >
         <button
           className="btn btn-secondary"
           type="button"
           onClick={handleCancel}
+          disabled={submitting}
         >
           Abbrechen
         </button>
@@ -131,6 +176,7 @@ export default function EditItem() {
             className="btn btn-outline-success"
             type="button"
             onClick={handleSaveDraft}
+            disabled={submitting}
           >
             Entwurf speichern
           </button>
@@ -145,6 +191,7 @@ export default function EditItem() {
               ? handleSaveItem
               : handlePublishItem
           }
+          disabled={submitting}
         >
           {fetchedItem?.status === "DRAFT"
             ? "Anzeige veröffentlichen"
