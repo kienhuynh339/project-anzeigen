@@ -5,6 +5,11 @@ import { useState } from "react";
 import { createItem } from "../../api/itemApi";
 import ItemForm from "./ItemForm";
 import { useNavigate } from "react-router";
+import {
+  FIELD_KEYS,
+  INPUT_NOTICES,
+  validateInput,
+} from "../../utils/inputValidation";
 
 const initialItem = {
   title: "",
@@ -13,34 +18,69 @@ const initialItem = {
   locationId: "",
   postcode: "",
   locationExtraInfo: "",
-  price: "",
+  price: 0,
   status: "DRAFT",
 };
+
+const fieldKeys = [
+  FIELD_KEYS.TITLE,
+  FIELD_KEYS.DESCRIPTION,
+  FIELD_KEYS.PRICE,
+  FIELD_KEYS.POSTCODE,
+  FIELD_KEYS.LOCATION_ID,
+];
+
 export default function CreateItem() {
   const navigate = useNavigate();
   const [item, setItem] = useState(initialItem);
   const [images, setImages] = useState([]);
+  const [notification, setNotification] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (status) => {
-    return createItem(
-      item.title,
-      item.categoryId,
-      item.description,
-      item.locationId,
-      item.postcode,
-      item.locationExtraInfo,
-      item.price,
-      status,
-      images,
-    );
+  const handleSubmit = async (status) => {
+    for (const key of fieldKeys) {
+      if (!validateInput(item[key], key)) {
+        setNotification(INPUT_NOTICES[key]);
+        return false;
+      }
+    }
+
+    setSubmitting(true);
+
+    try {
+      await createItem(
+        item.title,
+        item.categoryId,
+        item.description,
+        item.locationId,
+        item.postcode,
+        item.locationExtraInfo,
+        item.price,
+        status,
+        images,
+      );
+      return true;
+    } catch (e) {
+      setNotification(e.message);
+      return false;
+    }
   };
 
   const handleSaveDraft = async () => {
-    await handleSubmit("DRAFT");
+    const success = await handleSubmit("DRAFT");
+
+    setSubmitting(false);
+    if (!success) return;
+
     navigate("/meine-anzeigen");
   };
+
   const handlePublishItem = async () => {
-    await handleSubmit("ACTIVE");
+    const success = await handleSubmit("ACTIVE");
+
+    setSubmitting(false);
+    if (!success) return;
+
     navigate("/meine-anzeigen");
   };
 
@@ -52,12 +92,14 @@ export default function CreateItem() {
         setItem={setItem}
         images={images}
         setImages={setImages}
+        notification={notification}
       >
         {/* Entwurf speichern */}
         <button
           className="btn btn-outline-success"
           type="button"
           onClick={handleSaveDraft}
+          disabled={submitting}
         >
           Entwurf speichern
         </button>
@@ -66,6 +108,7 @@ export default function CreateItem() {
           className="btn btn-primary"
           type="button"
           onClick={handlePublishItem}
+          disabled={submitting}
         >
           Anzeige veröffentlichen
         </button>
