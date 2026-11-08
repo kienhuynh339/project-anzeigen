@@ -6,18 +6,17 @@ import { useState } from "react";
 import { deleteItem as apiDeleteItem } from "../../apis/itemApi";
 
 export default function ItemDeleteDialog({ itemId, deleteItem, closeDialog }) {
-  const [isItemDeleting, setIsItemDeleting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleItemDelete = async (event) => {
-    setIsItemDeleting(true);
+    setDeleting(true);
     event.preventDefault();
 
     await apiDeleteItem(itemId).catch((e) => console.error(e));
-    setIsItemDeleting(false);
     deleteItem();
     closeDialog();
 
-    setIsItemDeleting(false);
+    setDeleting(false);
   };
 
   return (
@@ -46,7 +45,7 @@ export default function ItemDeleteDialog({ itemId, deleteItem, closeDialog }) {
         </button>,
       ]}
     >
-      {isItemDeleting && <p>Anzeige wird gelöscht ...</p>}
+      {deleting && <p>Anzeige wird gelöscht ...</p>}
     </DialogWindow>
   );
 }
