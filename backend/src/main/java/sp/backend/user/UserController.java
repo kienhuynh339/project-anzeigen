@@ -5,7 +5,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.dto.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,7 +29,6 @@ public class UserController {
     @GetMapping("/me")
     private ResponseEntity<UserPrivateResponse> getCurrentUser(Authentication authentication) {
         User user = userService.findByAccountName(authentication.getName());
-
         return ResponseEntity.ok(new UserPrivateResponse(user));
     }
 
@@ -47,4 +50,14 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/register")
+    private ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request, UriComponentsBuilder ucb) {
+        Long userId = userService.register(request);
+
+        URI createdUserLocation = ucb
+                .path("/{userId}")
+                .buildAndExpand(userId).toUri();
+
+        return ResponseEntity.created(createdUserLocation).build();
+    }
 }
