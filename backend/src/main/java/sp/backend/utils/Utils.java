@@ -19,6 +19,7 @@ public class Utils {
         public static final String CHAT_NOT_FOUND = "Der Chat wurde nicht gefunden.";
         public static final String MESSAGE_NOT_FOUND = "Die Nachricht wurde nicht gefunden.";
         public static final String LOCATION_NOT_FOUND = "Der Ort wurde nicht gefunden.";
+        public static final String IMAGE_NOT_FOUND = "Das Bild wurde nicht gefunden.";
         public static final String ERROR_SAVING_IMAGE = "Fehler beim Speichern des Bildes.";
         public static final String DELETED_ITEM_EDITING_NOT_ALLOWED = "Eine gelöschte Anzeige darf nicht geändert werden.";
 
