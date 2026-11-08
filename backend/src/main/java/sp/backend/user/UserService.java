@@ -28,7 +28,7 @@ public class UserService {
         return new UserPublicResponse(user);
     }
 
-    public User register(RegisterRequest request) {
+    public Long register(RegisterRequest request) {
         if (userRepository.existsByAccountName(request.getAccountName())) {
             throw new IllegalArgumentException(ExceptionMessage.ACCOUNT_NAME_ALREADY_EXISTS);
         }
@@ -37,8 +37,9 @@ public class UserService {
         user.setProfileName(request.getProfileName());
         user.setAccountName(request.getAccountName());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
 
-        return userRepository.save(user);
+        return user.getId();
     }
 
     public User findByAccountName(String accountName) {
