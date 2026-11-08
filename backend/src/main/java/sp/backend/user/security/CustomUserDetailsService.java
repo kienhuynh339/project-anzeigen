@@ -8,6 +8,8 @@ import sp.backend.user.User;
 import org.springframework.stereotype.Service;
 import sp.backend.user.UserRepository;
 
+import java.util.Collections;
+
 @Service
 public class CustomUserDetailsService
         implements UserDetailsService {
@@ -21,17 +23,15 @@ public class CustomUserDetailsService
     @Override
     public UserDetails loadUserByUsername(String accountName) {
 
-        User user = userRepository
-                .findByAccountName(accountName)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                "User not found"
-                        )
-                );
+        User user = userRepository.findByAccountName(accountName).orElseThrow(() ->
+                // wird in formLogin().failureHandler() abgefangen.
+                // Passwort-Hashes werden automatisch verglichen.
+                new UsernameNotFoundException("User not found"));
 
-        return org.springframework.security.core.userdetails.User.withUsername(user.getAccountName())
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getAccountName())
                 .password(user.getPasswordHash())
-                .roles("USER")
+                .authorities(Collections.emptyList())
                 .build();
     }
 }
