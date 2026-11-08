@@ -43,7 +43,11 @@ export function useFetch(url, dependencies = [], initialData = null) {
             `Fehler beim Datenabruf: ${url}. ${result?.errorMessage}`,
           );
         }
-        setData(result);
+        if (result === null) {
+          setData(initialData);
+        } else {
+          setData(result);
+        }
       })
       .catch((error) => {
         console.log(error);
