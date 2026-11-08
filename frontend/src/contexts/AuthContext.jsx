@@ -4,6 +4,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import * as authApi from "../apis/authApi";
+import * as userApi from "../apis/userApi";
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,7 @@ export function AuthContextProvider({ children }) {
   useEffect(() => {
     async function checkAuthentication() {
       try {
-        const currentUser = await authApi.getCurrentUser();
+        const currentUser = await userApi.getCurrentUser();
         setUser(currentUser);
       } catch (error) {
         setUser(null);
@@ -29,13 +30,14 @@ export function AuthContextProvider({ children }) {
 
   // Anmelden
   async function login(accountName, password) {
-    const loggedInUser = await authApi.login(accountName, password);
+    await authApi.login(accountName, password);
+    const loggedInUser = await userApi.getCurrentUser();
     setUser(loggedInUser);
   }
 
   // Registrieren
   function register(profileName, accountName, password) {
-    return authApi.register(profileName, accountName, password);
+    return userApi.register(profileName, accountName, password);
   }
 
   // Abmelden
