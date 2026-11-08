@@ -18,12 +18,8 @@ public class UserController {
 
     @GetMapping("/{userId}")
     private ResponseEntity<UserPublicResponse> findPublicById(@PathVariable Long userId) {
-        try {
-            UserPublicResponse user = userService.findPublicById(userId);
-            return ResponseEntity.ok(user);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        UserPublicResponse user = userService.findPublicById(userId);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/me")
