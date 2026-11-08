@@ -33,26 +33,28 @@ const initialChat = {
 };
 
 export function ChatContextProvider({ children }) {
+  const { user } = useAuthContext();
+
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
-  const { user } = useAuthContext();
+  const [chatUpdateTrigger, setChatUpdateTrigger] = useState(false);
 
-  const { data: chatPage } = useFetch(getPath.chats(), []);
+  const { data: chatPage } = useFetch(getPath.chats(), [chatUpdateTrigger]);
 
   const chats = chatPage?.content ?? [];
   const chatListLength = chats.length;
 
-  // // Aktualisiere currentChat
-  // useEffect(() => {
-  //   if (!currentChat.id) return;
+  // Aktualisiere currentChat
+  useEffect(() => {
+    if (!currentChat.id) return;
 
-  //   const updatedChat = chats.find((chat) => chat.id === currentChat.id);
+    const updatedChat = chats.find((chat) => chat.id === currentChat.id);
 
-  //   if (updatedChat) {
-  //     setCurrentChat(updatedChat);
-  //   }
-  // }, [chats, currentChat.id]);
+    if (updatedChat) {
+      setCurrentChat(updatedChat);
+    }
+  }, [chats]);
 
   const otherUser =
     user.id != currentChat.poster.id
@@ -85,6 +87,10 @@ export function ChatContextProvider({ children }) {
     setCurrentChat(chat);
   };
 
+  const updateChat = () => {
+    setChatUpdateTrigger((prev) => !prev);
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -100,6 +106,7 @@ export function ChatContextProvider({ children }) {
         otherUser,
         selectChatToDelete,
         selectChat,
+        updateChat,
       }}
     >
       {children}
