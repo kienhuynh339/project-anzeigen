@@ -9,49 +9,51 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/images")
 public class ItemImageController {
-    private final ItemImageRepository itemImageRepository;
+    private final ItemImageService itemImageService;
 
-    private ItemImageController(ItemImageRepository itemImageRepository) {
-        this.itemImageRepository = itemImageRepository;
+    private ItemImageController(ItemImageService itemImageService) {
+        this.itemImageService = itemImageService;
     }
 
     @GetMapping("/{imageId}")
     private ResponseEntity<byte[]> findById(@PathVariable Long imageId) {
-        Optional<ItemImage> itemImage = itemImageRepository.findById(imageId);
-        if (itemImage.isPresent()) {
-            MediaType mediaType = MediaType.parseMediaType(itemImage.get().getContentType());
-            return ResponseEntity.ok()
-                    .contentType(mediaType)
-                    .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
-                    .body(itemImage.get().getImage());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        ItemImage itemImage = itemImageService.findById(imageId);
+
+        MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
+                .body(itemImage.getImage());
     }
 
     @GetMapping("/item/{itemId}/first")
     private ResponseEntity<byte[]> findFirstByItemId(@PathVariable Long itemId) {
-        ItemImage itemImage = itemImageRepository.findFirstByItemIdOrderByDisplayOrderAsc(itemId);
+        ItemImage itemImage = itemImageService.findFirstByItemId(itemId);
+
         if (itemImage != null) {
             MediaType mediaType = MediaType.parseMediaType(itemImage.getContentType());
             return ResponseEntity.ok()
                     .contentType(mediaType)
                     .body(itemImage.getImage());
-        } else {
-            return ResponseEntity.noContent().build();
         }
+
+        // Anzeige ohne Bilder ist erlaubt.
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/item/{itemId}")
     private ResponseEntity<List<Long>> findByItemId(@PathVariable Long itemId) {
-        List<ItemImage> itemImages = itemImageRepository.findByItemIdOrderByDisplayOrderAsc(itemId);
-        List<Long> imageIds = itemImages.stream().map(ItemImage::getId).toList();
+        List<Long> imageIds = itemImageService.findImageIdsByItemId(itemId);
+
+        if (imageIds.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
 
         return ResponseEntity.ok(imageIds);
     }
