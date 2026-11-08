@@ -17,6 +17,7 @@ export default function PostcodeInput({
   const { data: postcodes } = useFetch(
     getPath.postcodesByPostcodePrefix(postcode),
     [postcode],
+    [],
   );
 
   return (
