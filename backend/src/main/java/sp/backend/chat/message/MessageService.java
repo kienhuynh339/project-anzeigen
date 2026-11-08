@@ -27,6 +27,7 @@ import static sp.backend.utils.Utils.getLoggedInUser;
 import java.util.Optional;
 
 import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.websocket.DataChangePublisher;
 
 @Service
 public class MessageService {
@@ -34,12 +35,14 @@ public class MessageService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final DataChangePublisher dataChangePublisher;
 
-    public MessageService(MessageRepository messageRepository, ItemRepository itemRepository, UserRepository userRepository, ChatRepository chatRepository) {
+    public MessageService(MessageRepository messageRepository, ItemRepository itemRepository, UserRepository userRepository, ChatRepository chatRepository, DataChangePublisher dataChangePublisher) {
         this.messageRepository = messageRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
+        this.dataChangePublisher = dataChangePublisher;
     }
 
     public MessageResponse findByMessageId(Long messageId, Authentication authentication) {
@@ -102,7 +105,16 @@ public class MessageService {
 
         Message message = new Message(chat, messageSender, request.getContent(), false);
 
-        return messageRepository.save(message);
+        messageRepository.save(message);
+// HIER###
+        dataChangePublisher.publish(
+                "MESSAGE",
+                "CREATED",
+                message.getId(),
+                message.getChat().getId()
+        );
+
+        return message;
     }
 }
 
