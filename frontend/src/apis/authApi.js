@@ -2,49 +2,37 @@
  * @author Trung Kien Huynh
  */
 
-import { request } from "./request";
-
-// Registrieren
-export function register(profileName, accountName, password) {
-  const body = {
-    profileName: profileName,
-    accountName: accountName,
-    password: password,
-  };
-  return request(`/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-}
+import { request, getCsrfToken } from "./request";
 
 // Anmelden
-export function login(accountName, password) {
-  const body = {
-    accountName: accountName,
-    password: password,
-  };
-  return request(`/auth/login`, {
+export async function login(accountName, password) {
+  await getCsrfToken();
+
+  const body = new URLSearchParams();
+
+  body.append("accountName", accountName);
+  body.append("password", password);
+
+  const response = await request("/auth/login", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify(body),
+    body: body.toString(),
   });
+
+  await getCsrfToken();
+
+  return response;
 }
 
 // Abmelden
-export function logout() {
-  return request(`/auth/logout`, {
+export async function logout() {
+  const response = await request(`/auth/logout`, {
     method: "POST",
   });
-}
 
-// Aktuellen Benutzer abrufen
-export function getCurrentUser() {
-  return request("/users/me", {
-    method: "GET",
-  });
+  await getCsrfToken();
+
+  return response;
 }
