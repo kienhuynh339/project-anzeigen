@@ -30,24 +30,14 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     private ResponseEntity<ItemResponse> findById(@PathVariable Long itemId, Authentication authentication) {
-
         ItemResponse item = itemService.findByItemId(itemId, authentication);
-        if (item != null) {
-            return ResponseEntity.ok(item);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(item);
     }
 
     @GetMapping("/{itemId}/edit")
     private ResponseEntity<ItemResponse> findByIdToEdit(@PathVariable Long itemId, Authentication authentication) {
-
         ItemResponse item = itemService.findByItemIdToEdit(itemId, authentication);
-        if (item != null) {
-            return ResponseEntity.ok(item);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(item);
     }
 
     @GetMapping
@@ -77,40 +67,32 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     private ResponseEntity<Void> markItemAsDeleted(@PathVariable Long itemId, Authentication authentication) {
-        try {
-            itemService.markItemAsDeletedByItemId(itemId, authentication);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        itemService.markItemAsDeletedByItemId(itemId, authentication);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{itemId}")
     private ResponseEntity<Void> updateItemStatus(
             @PathVariable Long itemId,
             @Valid @RequestBody ItemStatusUpdateRequest request, Authentication authentication) {
-        try {
-            itemService.updateItemStatus(itemId, request.getStatus(), authentication);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        itemService.updateItemStatus(itemId, request.getStatus(), authentication);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ResponseEntity<Void> createItem(@Valid @ModelAttribute ItemCreateRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         Long itemId = itemService.createItem(request, authentication);
+
         URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
+
         return ResponseEntity.created(createdItemLocation).build();
     }
 
     @PutMapping(value = "/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private ResponseEntity<Void> updateItem(@PathVariable Long itemId, @Valid @ModelAttribute ItemUpdateRequest request, Authentication authentication) {
-        boolean result = itemService.updateItem(itemId, request, authentication);
+        itemService.updateItem(itemId, request, authentication);
         return ResponseEntity.noContent().build();
     }
-
-
 }
 
 
