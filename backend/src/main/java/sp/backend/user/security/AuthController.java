@@ -14,12 +14,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.dto.LoginRequest;
 import sp.backend.dto.LoginResponse;
 import sp.backend.dto.RegisterRequest;
 import sp.backend.user.User;
 import sp.backend.user.UserService;
 
+import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -39,21 +42,17 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.securityContextRepository = securityContextRepository;
     }
-
-    // REGISTRIEREN
+    
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        // @Valid @RequestBody RegisterRequest request
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
+        User user = userService.register(request);
 
-        try {
-            User user = userService.register(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new LoginResponse(user.getId(), user.getProfileName(), user.getAccountName()));
+        URI createdUserLocation = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/users/{userId}")
+                .buildAndExpand(user.getId()).toUri();
 
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
-        }
+        return ResponseEntity.created(createdUserLocation).build();
     }
 
     /*Ein wichtiger Sicherheitshinweis zum Login: Ergänze für eine produktive Anwendung eine Session-Fixation-Schutzstrategie beim manuellen Login. Beispielsweise kannst du vor der Authentifizierung eine bestehende Session invalidieren und nach erfolgreicher Authentifizierung eine neue erstellen. Alternativ lässt sich die Spring-Security-SessionAuthenticationStrategy explizit einbinden. Außerdem sollten Login-Versuche rate-limitiert werden.*/
