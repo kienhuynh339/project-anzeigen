@@ -6,7 +6,7 @@ import { deleteFavoriteItem as apiDeleteFavoriteItem } from "../../../apis/favor
 
 export default function FavoriteItemDeleteButton({
   itemId,
-  deleteItem: deleteFavoriteItem,
+  deleteFavoriteItem,
 }) {
   const [deletingFavorite, setDeletingFavorite] = useState(false);
 
