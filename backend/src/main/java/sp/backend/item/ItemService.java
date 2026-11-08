@@ -31,6 +31,7 @@ import static sp.backend.utils.Utils.getLoggedInUser;
 import static sp.backend.utils.Utils.getLoggedInUserId;
 
 import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.websocket.DataChangePublisher;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -44,15 +45,17 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ItemImageRepository itemImageRepository;
+    private final DataChangePublisher dataChangePublisher;
 
     private static final long MAX_IMAGES_SIZE = 50L * 1024 * 1024;
 
-    public ItemService(ItemRepository itemRepository, GeodbLocationRepository geodbLocationRepository, CategoryRepository categoryRepository, UserRepository userRepository, ItemImageRepository itemImageRepository) {
+    public ItemService(ItemRepository itemRepository, GeodbLocationRepository geodbLocationRepository, CategoryRepository categoryRepository, UserRepository userRepository, ItemImageRepository itemImageRepository, DataChangePublisher dataChangePublisher) {
         this.itemRepository = itemRepository;
         this.geodbLocationRepository = geodbLocationRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.itemImageRepository = itemImageRepository;
+        this.dataChangePublisher = dataChangePublisher;
     }
 
     public ItemResponse findByItemId(Long itemId, Authentication authentication) {
@@ -135,6 +138,13 @@ public class ItemService {
 
         item.setStatus(itemStatus);
         itemRepository.save(item);
+// HIER###
+        dataChangePublisher.publish(
+                "ITEM",
+                "UPDATED",
+                itemId,
+                null
+        );
     }
 
     @Transactional
