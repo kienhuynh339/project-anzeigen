@@ -22,6 +22,11 @@ public class GeodbAreaCodeController {
     @GetMapping
     private ResponseEntity<List<String>> findByPostcodeStartingWith(@RequestParam String postcodePrefix, Pageable pageable) {
         List<String> areacodeList = geodbAreaCodeRepository.findDistinctByPostcodeStartingWithOrderByPostcodeAsc(postcodePrefix, pageable);
+
+        if (areacodeList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok(areacodeList);
     }
 
