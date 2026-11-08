@@ -15,6 +15,7 @@ import sp.backend.dto.ItemCreateRequest;
 import sp.backend.dto.ItemResponse;
 import sp.backend.dto.ItemWithDistanceResponse;
 import sp.backend.dto.ItemUpdateRequest;
+import sp.backend.exception.DeletedItemModificationNotAllowedException;
 import sp.backend.exception.ImageSavingException;
 import sp.backend.exception.ImageSizeExceededException;
 import sp.backend.item.category.Category;
@@ -28,7 +29,6 @@ import sp.backend.user.UserRepository;
 
 import static sp.backend.utils.Utils.getLoggedInUser;
 import static sp.backend.utils.Utils.getLoggedInUserId;
-import static sp.backend.utils.Utils.getLoggedInAccountName;
 
 import sp.backend.utils.Utils.ExceptionMessage;
 
@@ -168,9 +168,9 @@ public class ItemService {
 
         validateImages(request.getImages());
 
-        // Gelöschte Item darf nicht modifiziert werden
+        // Gelöschtes Item darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
-            throw new IllegalStateException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
+            throw new DeletedItemModificationNotAllowedException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
         }
 
         // (Gilt für "Anzeige bearbeiten") Status einer entworfenen Anzeige darf nur in ACTIVE oder DRAFT geändert werden.
