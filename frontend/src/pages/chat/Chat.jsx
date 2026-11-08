@@ -14,7 +14,7 @@ import ChatList from "../../features/chat/list/ChatList";
 
 export default function Chat() {
   const { user } = useAuthContext();
-  const { currentChat } = useChatContext();
+  const { currentChat, updateChat } = useChatContext();
 
   return (
     <div className="container-fluid">
@@ -60,17 +60,22 @@ export default function Chat() {
                       <>
                         <div className="border-top border-dark-subtle mx-2"></div>
                         <div className="d-flex flex-wrap justify-content-between p-2">
-                          <ItemDeleteButton itemId={currentChat.itemId}>
+                          <ItemDeleteButton
+                            itemId={currentChat.itemId}
+                            deleteItem={updateChat}
+                          >
                             <span className="ps-1">Anzeige löschen</span>
                           </ItemDeleteButton>
                           {currentChat.itemStatus == "RESERVED" && (
                             <ItemActivateButton
                               itemId={currentChat.itemId}
+                              updateItemStatus={updateChat}
                             ></ItemActivateButton>
                           )}
                           {currentChat.itemStatus == "ACTIVE" && (
                             <ItemReserveButton
                               itemId={currentChat.itemId}
+                              updateItemStatus={updateChat}
                             ></ItemReserveButton>
                           )}
                         </div>
