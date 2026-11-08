@@ -31,8 +31,13 @@ export default function SettingsDialog({
   closeDialog,
 }) {
   const [value, setValue] = useState(initialValue);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [notification, setNotification] = useState("");
   const [updating, setUpdating] = useState(false);
+
+  const passwordsMatch = confirmPassword === value;
+  const isPassword = fieldKey === FIELD_KEYS.PASSWORD;
+  const initialValueMatch = value === initialValue;
 
   const handleCancel = () => {
     closeDialog();
@@ -85,19 +90,40 @@ export default function SettingsDialog({
           className="btn btn-primary"
           type="button"
           onClick={handleSave}
-          disabled={updating}
+          disabled={
+            updating || initialValueMatch || (isPassword && !passwordsMatch)
+          }
         >
           Speichern
         </button>,
       ]}
     >
-      <input
-        type={fields[fieldKey].type}
-        className="form-control"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        disabled={updating}
-      ></input>
+      <div className="form-floating">
+        <input
+          id={fieldKey}
+          type={fields[fieldKey].type}
+          className="form-control"
+          placeholder={fields[fieldKey].label}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={updating}
+        ></input>
+        <label htmlFor={fieldKey}>{fields[fieldKey].label}</label>
+      </div>
+      {fieldKey === FIELD_KEYS.PASSWORD && (
+        <div className="form-floating mt-2">
+          <input
+            id="confirmPassword"
+            type="password"
+            className="form-control"
+            placeholder="Passwort wiederholen"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={updating}
+          ></input>
+          <label htmlFor="confirmPassword">Passwort wiederholen</label>
+        </div>
+      )}
       {notification && (
         <p className="bg-danger-subtle mt-1 border border-danger-subtle rounded p-1 text-danger">
           {notification}
