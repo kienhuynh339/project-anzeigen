@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Map<String, String>> createResponseEntity(Exception exception, HttpStatus status) {
         Map<String, String> response = new HashMap<>();
-        response.put("errorMessage", exception.getMessage());
+        response.put("message", exception.getMessage());
 
         return ResponseEntity
                 .status(status)
