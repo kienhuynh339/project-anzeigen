@@ -24,6 +24,11 @@ public class GeodbLocationController {
     @GetMapping
     private ResponseEntity<List<GeodbLocationResponse>> findByPostcode(@RequestParam String postcode, Pageable pageable) {
         List<GeodbLocationResponse> locationList = geodbLocationService.findByPostcode(postcode, pageable);
+
+        if (locationList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok(locationList);
     }
 
