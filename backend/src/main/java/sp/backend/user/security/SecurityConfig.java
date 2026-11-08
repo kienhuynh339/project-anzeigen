@@ -1,5 +1,6 @@
 package sp.backend.user.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -41,12 +42,10 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable()
+                .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
+                        .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Authentifizierung
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
                         // users
                         .requestMatchers("/api/users/me")
                         .authenticated()
@@ -74,14 +73,34 @@ public class SecurityConfig {
                         .authenticated()
                         .anyRequest().permitAll()
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .securityContext(context ->
+                        context.securityContextRepository(securityContextRepository()))
+                .formLogin(form -> form
+                        .loginProcessingUrl("/api/auth/login")
+                        .usernameParameter("accountName")
+                        .passwordParameter("password")
+                        .successHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("{\"message\":\"Benutzername oder Passwort ist falsch.\"}");
+                        })
+                        .permitAll()
                 )
-                .securityContext(context -> context
-                        .securityContextRepository(securityContextRepository())
-                )
-                .logout(logout -> logout.disable());
-
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                );
         return http.build();
     }
 
@@ -116,6 +135,4 @@ public class SecurityConfig {
 
         return source;
     }
-
-
 }
