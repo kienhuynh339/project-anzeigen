@@ -22,20 +22,18 @@ public class ItemFavoriteController {
 
     @GetMapping("/{itemFavoriteId}")
     private ResponseEntity<ItemFavoriteResponse> findById(@PathVariable Long itemFavoriteId, Authentication authentication) {
-        try {
-            ItemFavoriteResponse itemFavoriteResponse = itemFavoriteService.findById(itemFavoriteId, authentication);
-            return ResponseEntity.ok(itemFavoriteResponse);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        ItemFavoriteResponse itemFavoriteResponse = itemFavoriteService.findById(itemFavoriteId, authentication);
+        return ResponseEntity.ok(itemFavoriteResponse);
     }
 
     @PostMapping
     private ResponseEntity<Void> createItemFavorite(@Valid @RequestBody ItemFavoriteCreateRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         ItemFavorite itemFavorite = itemFavoriteService.createItemFavorite(request.getItemId(), authentication);
+
         URI locationOfItemFavorite = ucb
                 .path("/api/item-favorites/{itemFavoriteId}")
                 .buildAndExpand(itemFavorite.getId()).toUri();
+        
         return ResponseEntity.created(locationOfItemFavorite).build();
     }
 
