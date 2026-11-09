@@ -70,7 +70,7 @@ public class ChatService {
         messageRepository.deleteByChat_Id(chatId);
         chatRepository.delete(chat);
 
-        dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat.getId(), null);
+        dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat);
     }
 
 }
