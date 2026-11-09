@@ -1,10 +1,18 @@
 /**
  * @author Trung Kien Huynh
  */
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { markMessageAsRead } from "../apis/messageApi";
 import { getPath, useFetch } from "../hooks/useFetch";
 import { useAuthContext } from "./AuthContext";
+import { useStomp, EVENT_ACTION, EVENT_ENTITY } from "./StompContext";
+import { getChat } from "../apis/chatApi";
 
 const ChatContext = createContext(null);
 const initialChat = {
@@ -35,6 +43,7 @@ const initialChat = {
 export function ChatContextProvider({ children }) {
   const { user } = useAuthContext();
 
+  const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
@@ -43,38 +52,44 @@ export function ChatContextProvider({ children }) {
   // Chats abrufen
   const { data: chatPage } = useFetch(getPath.chats(), [chatUpdateTrigger]);
 
-  const handleChatEvent = useCallback((event) => {
-    if (event.entity) {
-    }
-  });
+  useEffect(() => {
+    setChats(chatPage?.content ?? []);
+  }, [chatPage]);
 
-  /*
-  client.subscribe("/user/queue/chats", (event) => {
-    const data = JSON.parse(event.body);
-
-    console.log("Chat-Veränderung:", data);
-});
-       String entity,
-        String action,
-        Long entityId,
-        Long parentId
-  // callback für stomp-Event
-  const handleMessageEvent = useCallback(
-    (event) => {
-      if (event.entity === "MESSAGE" && event.parentId === Number(chatId)) {
-        console.log("Neue Änderung im Chat:", event);
-        // aktualisiere die States hier:
-        loadMessages(); // enthält setMessages(response.content);
-      }
-    },
-    [chatId, loadMessages],
-  );
-  // Abonieren
-  const { connected } = useStomp(`/topic/chats/${chatId}`, handleMessageEvent);
-  */
-
-  const chats = chatPage?.content ?? [];
   const chatListLength = chats.length;
+
+  const replaceChatInList = (newChat, newChatId) => {
+    setChats((prev) =>
+      prev.map((chat) => (chat.id === newChatId ? newChat : chat)),
+    );
+  };
+
+  const handleChatOrMessageEvent = useCallback(async (event) => {
+    try {
+      const fetchedChat = await getChat(event.entityId);
+
+      if (event.entity === EVENT_ENTITY.CHAT) {
+        // CREATE -> neuen Chat hinzufügen
+        if (event.action === EVENT_ACTION.CREATE) {
+          setChats((prev) => [...prev, fetchedChat]);
+
+          // DELETE -> betroffenen Chat aktualisieren
+        } else if (event.action === EVENT_ACTION.DELETE) {
+          replaceChatInList(fetchedChat, event.entityId);
+        }
+      } else if (event.entity === EVENT_ENTITY.MESSAGE) {
+        // Neue Nachricht für einen bestehenden Chat -> den Chat aktualisieren
+        if (event.action === EVENT_ACTION.CREATE) {
+          replaceChatInList(fetchedChat, event.entityId);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+  }, []);
+
+  const { connected } = useStomp("/user/chats", handleChatOrMessageEvent);
 
   // Aktualisiere currentChat
   useEffect(() => {
