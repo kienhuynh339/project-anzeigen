@@ -30,8 +30,10 @@ import sp.backend.user.UserRepository;
 import static sp.backend.utils.Utils.getLoggedInUser;
 import static sp.backend.utils.Utils.getLoggedInUserId;
 
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 import sp.backend.websocket.DataChangePublisher;
+import sp.backend.websocket.DataChangePublisher.Action;
+import sp.backend.websocket.DataChangePublisher.Entity;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -121,6 +123,8 @@ public class ItemService {
 
         item.setStatus(ItemStatus.DELETED);
         itemRepository.save(item);
+
+        dataChangePublisher.publish(Entity.ITEM, Action.DELETE, item.getId(), null);
     }
 
     @Transactional
@@ -138,13 +142,8 @@ public class ItemService {
 
         item.setStatus(itemStatus);
         itemRepository.save(item);
-// HIER###
-        dataChangePublisher.publish(
-                "ITEM",
-                "UPDATED",
-                itemId,
-                null
-        );
+
+        dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item.getId(), null);
     }
 
     @Transactional
@@ -165,6 +164,8 @@ public class ItemService {
         itemRepository.save(item);
 
         saveImages(request.getImages(), item.getId());
+
+        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item.getId(), null);
 
         return item.getId();
     }
@@ -221,6 +222,8 @@ public class ItemService {
 
         // Bilder speichern
         saveImages(request.getImages(), item.getId());
+
+        dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item.getId(), null);
 
         return true;
     }
