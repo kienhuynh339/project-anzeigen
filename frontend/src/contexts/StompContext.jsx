@@ -4,6 +4,18 @@ import { Client } from "@stomp/stompjs";
 const WS_URL = "ws://localhost:8080/ws"; // "http://localhost:8080/ws"
 const StompContext = createContext(null);
 
+export const EVENT_ENTITY = Object.freeze({
+  ITEM: "item",
+  CHAT: "chat",
+  MESSAGE: "message",
+});
+
+export const EVENT_ACTION = Object.freeze({
+  CREATE: "create",
+  UPDATE: "update",
+  DELETE: "delete",
+});
+
 export function StompContextProvider({ children }) {
   const clientRef = useRef(null);
   const [connected, setConnected] = useState(false);
