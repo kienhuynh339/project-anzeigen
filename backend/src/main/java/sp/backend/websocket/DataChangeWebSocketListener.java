@@ -16,15 +16,15 @@ public class DataChangeWebSocketListener {
 
     //Mit AFTER_COMMIT wird die Benachrichtigung erst nach erfolgreichem Commit versendet.
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleDataChanged(DataChangedEvent event) {
+    public void handleDataChanged(DataChangeEvent event) {
 
         String destination;
 
-        if ("MESSAGE".equals(event.entity())) {
-            destination = "/topic/chats/" + event.parentId();
-        } else if ("ITEM".equals(event.entity())) {
+        if ("MESSAGE".equals(event.getEntity())) {
+            destination = "/topic/chats/" + event.getParentId();
+        } else if ("ITEM".equals(event.getEntity())) {
             destination = "/topic/items";
-        } else if ("CHAT".equals(event.entity())) {
+        } else if ("CHAT".equals(event.getEntity())) {
             destination = "/topic/chats";
         } else {
             return;
