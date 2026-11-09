@@ -3,7 +3,7 @@ package sp.backend.dto;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
 import sp.backend.item.ItemStatus;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 
 import java.util.List;
 
