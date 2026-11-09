@@ -2,11 +2,11 @@ package sp.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import sp.backend.utils.Utils;
+import sp.backend.exception.ExceptionMessage;
 
 public class UserPasswordUpdateRequest {
-    @NotBlank(message = Utils.ExceptionMessage.PASSWORD_NOT_BLANK)
-    @Size(min = 5, max = 30, message = Utils.ExceptionMessage.PASSWORD_SIZE)
+    @NotBlank(message = ExceptionMessage.PASSWORD_NOT_BLANK)
+    @Size(min = 5, max = 30, message = ExceptionMessage.PASSWORD_SIZE)
     private String password;
 
     public String getPassword() {
