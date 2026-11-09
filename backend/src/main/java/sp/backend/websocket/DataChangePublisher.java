@@ -24,7 +24,7 @@ public class DataChangePublisher {
         this.eventPublisher = eventPublisher;
     }
 
-    public void publish(String entity, String action, Long entityId, Long parentId) {
-        eventPublisher.publishEvent(new DataChangeEvent(entity, action, entityId, parentId));
+    public void publish(String entity, String action, Object object) {
+        eventPublisher.publishEvent(new DataChangeEvent(entity, action, object));
     }
 }
