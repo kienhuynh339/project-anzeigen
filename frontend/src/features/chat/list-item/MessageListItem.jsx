@@ -30,8 +30,8 @@ export default function MessageListItem({ message }) {
         className={`d-flex flex-column ${senderId == userId ? "align-self-end" : null}`}
       >
         <div
-          className={`rounded p-2 ${senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
-          style={{ whiteSpace: "pre-line" }}
+          className={`rounded  p-2 ${senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
+          style={{ whiteSpace: "pre-line", overflowWrap: "anywhere" }}
         >
           {message.content.replace(
             /\\n/g /*"\\n" funktioniert nur für das erste Vorkommen*/,
