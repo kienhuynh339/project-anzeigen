@@ -7,3 +7,9 @@ export function deleteChat(chatId) {
     method: "DELETE",
   });
 }
+
+export function getChat(chatId) {
+  return request(`/chats/${chatId}`, {
+    method: "GET",
+  });
+}
