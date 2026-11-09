@@ -12,7 +12,7 @@ import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 
 import java.util.Optional;
 
