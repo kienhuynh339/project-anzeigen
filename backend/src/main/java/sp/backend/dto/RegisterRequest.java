@@ -2,7 +2,7 @@ package sp.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 
 public class RegisterRequest {
     @NotBlank(message = ExceptionMessage.PROFILE_NAME_NOT_BLANK)
