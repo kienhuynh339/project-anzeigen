@@ -86,9 +86,11 @@ public class MessageService {
         User interestedUser = userRepository.findById(request.getInterestedUserId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
 
+        Optional<Chat> existingChat = chatRepository.findByItem_IdAndInterestedUser_Id(item.getId(), interestedUser.getId());
 
-        Chat chat = chatRepository.findByItem_IdAndInterestedUser_Id(item.getId(), interestedUser.getId()).orElseGet(() -> {
-            // Chat existiert nicht. Neu erstellen
+        boolean createChat = existingChat.isEmpty();
+
+        Chat chat = existingChat.orElseGet(() -> {
             Chat newChat = new Chat(item, itemPoster, interestedUser, null);
             return chatRepository.save(newChat);
         });
@@ -97,7 +99,11 @@ public class MessageService {
 
         messageRepository.save(message);
 
-        dataChangePublisher.publish(Entity.MESSAGE, Action.CREATE, message.getId(), chat.getId());
+        if (createChat) {
+            dataChangePublisher.publish(Entity.CHAT, Action.CREATE, chat);
+        } else {
+            dataChangePublisher.publish(Entity.MESSAGE, Action.CREATE, chat);
+        }
 
         return message;
     }
