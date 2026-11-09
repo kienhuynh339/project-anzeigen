@@ -3,14 +3,12 @@ package sp.backend.websocket;
 public class DataChangeEvent {
     private String entity;
     private String action;
-    private Long entityId;
-    private Long parentId;
+    private Object object;
 
-    public DataChangeEvent(String entity, String action, Long entityId, Long parentId) {
+    public DataChangeEvent(String entity, String action, Object object) {
         this.entity = entity;
         this.action = action;
-        this.entityId = entityId;
-        this.parentId = parentId;
+        this.object = object;
     }
 
     public String getEntity() {
@@ -29,19 +27,11 @@ public class DataChangeEvent {
         this.action = action;
     }
 
-    public Long getEntityId() {
-        return entityId;
+    public Object getObject() {
+        return object;
     }
 
-    public void setEntityId(Long entityId) {
-        this.entityId = entityId;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
+    public void setObject(Object object) {
+        this.object = object;
     }
 }
