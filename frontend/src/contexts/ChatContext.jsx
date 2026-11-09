@@ -49,6 +49,11 @@ export function ChatContextProvider({ children }) {
   });
 
   /*
+  client.subscribe("/user/queue/chats", (event) => {
+    const data = JSON.parse(event.body);
+
+    console.log("Chat-Veränderung:", data);
+});
        String entity,
         String action,
         Long entityId,
