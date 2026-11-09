@@ -3,6 +3,10 @@
  */
 package sp.backend.dto;
 
+import jakarta.persistence.EntityNotFoundException;
+import sp.backend.chat.Chat;
+import sp.backend.chat.message.Message;
+import sp.backend.exception.ExceptionMessage;
 import sp.backend.item.ItemStatus;
 
 public class ChatResponse {
@@ -24,6 +28,17 @@ public class ChatResponse {
         this.interestedUser = interestedUser;
         this.lastMessage = lastMessage;
         this.fistDeletedByUserId = fistDeletedByUserId;
+    }
+
+    public ChatResponse(Chat chat, MessageResponse lastMessage) {
+        this.id = chat.getId();
+        this.itemId = chat.getItem().getId();
+        this.itemTitle = chat.getItem().getTitle();
+        this.itemStatus = chat.getItem().getStatus();
+        this.poster = new UserPublicResponse(chat.getPoster());
+        this.interestedUser = new UserPublicResponse(chat.getInterestedUser());
+        this.lastMessage = lastMessage;
+        this.fistDeletedByUserId = chat.getFirstDeletedByUser() != null ? chat.getFirstDeletedByUser().getId() : null;
     }
 
 
