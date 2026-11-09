@@ -1,7 +1,7 @@
 package sp.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 
 public class LoginRequest {
     @NotBlank(message = ExceptionMessage.ACCOUNT_NAME_NOT_BLANK)
