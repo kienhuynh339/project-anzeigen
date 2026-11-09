@@ -5,7 +5,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 
 import static sp.backend.utils.Utils.getLoggedInUser;
 
