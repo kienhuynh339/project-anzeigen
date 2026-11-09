@@ -8,24 +8,23 @@ public class DataChangePublisher {
 
     private final ApplicationEventPublisher eventPublisher;
 
+    public static class Entity {
+        public static final String ITEM = "item";
+        public static final String CHAT = "chat";
+        public static final String MESSAGE = "message";
+    }
+
+    public static class Action {
+        public static final String CREATE = "create";
+        public static final String UPDATE = "update";
+        public static final String DELETE = "delete";
+    }
+
     public DataChangePublisher(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
-
-    public void publish(
-            String entity,
-            String action,
-            Long entityId,
-            Long parentId
-    ) {
-        eventPublisher.publishEvent(
-                new DataChangedEvent(
-                        entity,
-                        action,
-                        entityId,
-                        parentId
-                )
-        );
+    public void publish(String entity, String action, Long entityId, Long parentId) {
+        eventPublisher.publishEvent(new DataChangeEvent(entity, action, entityId, parentId));
     }
 }
