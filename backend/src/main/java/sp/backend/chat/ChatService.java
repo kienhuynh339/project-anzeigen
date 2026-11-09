@@ -15,10 +15,12 @@ import sp.backend.dto.MessageResponse;
 import sp.backend.chat.message.MessageRepository;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
+import sp.backend.websocket.DataChangePublisher;
+import sp.backend.websocket.DataChangePublisher.Entity;
+import sp.backend.websocket.DataChangePublisher.Action;
 
 import static sp.backend.chat.ChatWithUser.checkIfUserIsParticipantOfChat;
-import static sp.backend.utils.Utils.getLoggedInUser;
 import static sp.backend.utils.Utils.getLoggedInUserId;
 
 @Service
@@ -26,11 +28,13 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final DataChangePublisher dataChangePublisher;
 
-    public ChatService(ChatRepository chatRepository, MessageRepository messageRepository, UserRepository userRepository) {
+    public ChatService(ChatRepository chatRepository, MessageRepository messageRepository, UserRepository userRepository, DataChangePublisher dataChangePublisher) {
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.dataChangePublisher = dataChangePublisher;
     }
 
     public Page<ChatResponse> findByUser(Authentication authentication, Pageable pageable) {
@@ -65,6 +69,8 @@ public class ChatService {
         // -> Chat und zugehörige Nachrichten löschen
         messageRepository.deleteByChat_Id(chatId);
         chatRepository.delete(chat);
+
+        dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat.getId(), null);
     }
 
 }
