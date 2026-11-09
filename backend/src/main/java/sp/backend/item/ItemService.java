@@ -124,7 +124,7 @@ public class ItemService {
         item.setStatus(ItemStatus.DELETED);
         itemRepository.save(item);
 
-        dataChangePublisher.publish(Entity.ITEM, Action.DELETE, item.getId(), null);
+        dataChangePublisher.publish(Entity.ITEM, Action.DELETE, item);
     }
 
     @Transactional
@@ -143,7 +143,7 @@ public class ItemService {
         item.setStatus(itemStatus);
         itemRepository.save(item);
 
-        dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item.getId(), null);
+        dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item);
     }
 
     @Transactional
@@ -165,7 +165,7 @@ public class ItemService {
 
         saveImages(request.getImages(), item.getId());
 
-        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item.getId(), null);
+        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item);
 
         return item.getId();
     }
@@ -223,7 +223,7 @@ public class ItemService {
         // Bilder speichern
         saveImages(request.getImages(), item.getId());
 
-        dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item.getId(), null);
+        dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item);
 
         return true;
     }
