@@ -26,8 +26,10 @@ import static sp.backend.utils.Utils.getLoggedInUser;
 
 import java.util.Optional;
 
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 import sp.backend.websocket.DataChangePublisher;
+import sp.backend.websocket.DataChangePublisher.Action;
+import sp.backend.websocket.DataChangePublisher.Entity;
 
 @Service
 public class MessageService {
@@ -62,18 +64,6 @@ public class MessageService {
         return messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chatId);
     }
 
-    public void deleteByChat_Id(Long chatId, Authentication authentication) {
-        ChatWithUser chatWithUser = checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
-        User loggedInUser = chatWithUser.getUser();
-        Chat chat = chatWithUser.getChat();
-        // Nachrichten nur löschen, wenn der User nicht der Erste ist, der den Chat gelöscht hat.
-        if (loggedInUser.equals(chat.getFirstDeletedByUser())) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
-        }
-
-        messageRepository.deleteByChat_Id(chatId);
-    }
-
     @Transactional
     public int markMessagesAsRead(Long chatId, Authentication authentication) {
         ChatWithUser chatWithUser = checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
@@ -106,13 +96,8 @@ public class MessageService {
         Message message = new Message(chat, messageSender, request.getContent(), false);
 
         messageRepository.save(message);
-// HIER###
-        dataChangePublisher.publish(
-                "MESSAGE",
-                "CREATED",
-                message.getId(),
-                message.getChat().getId()
-        );
+
+        dataChangePublisher.publish(Entity.MESSAGE, Action.CREATE, message.getId(), chat.getId());
 
         return message;
     }
