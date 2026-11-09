@@ -25,6 +25,12 @@ public class ChatController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("/{chatId}")
+    private ResponseEntity<ChatResponse> findById(@PathVariable Long chatId, Authentication authentication) {
+        ChatResponse chatResponse = chatService.findById(chatId, authentication);
+        return ResponseEntity.ok(chatResponse);
+    }
+
     @DeleteMapping("/{chatId}")
     private ResponseEntity<Void> deleteChat(@PathVariable Long chatId, Authentication authentication) {
         chatService.deleteChat(chatId, authentication);
