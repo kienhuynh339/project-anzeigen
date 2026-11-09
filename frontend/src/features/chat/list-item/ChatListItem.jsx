@@ -69,10 +69,11 @@ export default function ChatListItem({ chat }) {
                 ? "text-danger"
                 : null
             }
+            style={{ overflowWrap: "anywhere" }}
           >
             {chat.lastMessage.senderId == user.id
-              ? `Du: ${truncateText(chat.lastMessage.content, 45)}`
-              : truncateText(chat.lastMessage.content, 45)}
+              ? `Du: ${truncateText(chat.lastMessage.content, 35)}`
+              : truncateText(chat.lastMessage.content, 35)}
           </div>
         </div>
       </div>
