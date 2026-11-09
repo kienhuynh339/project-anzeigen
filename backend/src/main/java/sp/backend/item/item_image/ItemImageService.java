@@ -1,9 +1,8 @@
 package sp.backend.item.item_image;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import sp.backend.utils.Utils.ExceptionMessage;
+import sp.backend.exception.ExceptionMessage;
 
 import java.util.List;
 
