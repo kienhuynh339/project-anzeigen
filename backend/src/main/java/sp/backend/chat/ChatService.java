@@ -37,6 +37,17 @@ public class ChatService {
         this.dataChangePublisher = dataChangePublisher;
     }
 
+    public ChatResponse findById(Long chatId, Authentication authentication) {
+        ChatWithUser chatWithUser = checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
+
+        Chat chat = chatWithUser.getChat();
+
+        Message lastMessage = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chat.getId()).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND));
+
+        return new ChatResponse(chat, new MessageResponse(lastMessage));
+    }
+
     public Page<ChatResponse> findByUser(Authentication authentication, Pageable pageable) {
         Long userId = getLoggedInUserId(authentication, userRepository, true);
 
