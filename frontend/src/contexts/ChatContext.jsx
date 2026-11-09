@@ -40,7 +40,33 @@ export function ChatContextProvider({ children }) {
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
   const [chatUpdateTrigger, setChatUpdateTrigger] = useState(false);
 
+  // Chats abrufen
   const { data: chatPage } = useFetch(getPath.chats(), [chatUpdateTrigger]);
+
+  const handleChatEvent = useCallback((event) => {
+    if (event.entity) {
+    }
+  });
+
+  /*
+       String entity,
+        String action,
+        Long entityId,
+        Long parentId
+  // callback für stomp-Event
+  const handleMessageEvent = useCallback(
+    (event) => {
+      if (event.entity === "MESSAGE" && event.parentId === Number(chatId)) {
+        console.log("Neue Änderung im Chat:", event);
+        // aktualisiere die States hier:
+        loadMessages(); // enthält setMessages(response.content);
+      }
+    },
+    [chatId, loadMessages],
+  );
+  // Abonieren
+  const { connected } = useStomp(`/topic/chats/${chatId}`, handleMessageEvent);
+  */
 
   const chats = chatPage?.content ?? [];
   const chatListLength = chats.length;
