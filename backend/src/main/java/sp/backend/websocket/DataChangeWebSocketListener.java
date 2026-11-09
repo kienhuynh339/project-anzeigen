@@ -32,7 +32,7 @@ public class DataChangeWebSocketListener {
                 event = new Event(Entity.CHAT, Action.CREATE, chatId);
             }
 
-            sendChatOrMessageChangeEvent(chat, "/topic/chats", event);
+            sendChatOrMessageChangeEvent(chat, "/chats", event);
 
         } else if (dataChangeEvent.getEntity().equals(Entity.MESSAGE)) {
             Event event = null;
@@ -41,8 +41,8 @@ public class DataChangeWebSocketListener {
 
             if (dataChangeEvent.getAction().equals(Action.CREATE)) {
                 event = new Event(Entity.MESSAGE, Action.CREATE, chatId);
-                sendChatOrMessageChangeEvent(chat, "/topic/chats/" + chatId, event);
-                sendChatOrMessageChangeEvent(chat, "/topic/chats", event);
+                sendChatOrMessageChangeEvent(chat, "/chats/" + chatId, event);
+                sendChatOrMessageChangeEvent(chat, "/chats", event);
             }
 
         } else if (dataChangeEvent.getEntity().equals(Entity.ITEM)) {
