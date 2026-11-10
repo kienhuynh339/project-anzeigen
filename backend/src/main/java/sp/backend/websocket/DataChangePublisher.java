@@ -26,6 +26,10 @@ public class DataChangePublisher {
     }
 
     public void publish(String entity, String action, Object object) {
-        eventPublisher.publishEvent(new DataChangeEvent(entity, action, object));
+        publish(entity, action, object, null);
+    }
+
+    public void publish(String entity, String action, Object object, String accountName) {
+        eventPublisher.publishEvent(new DataChangeEvent(entity, action, object, accountName));
     }
 }
