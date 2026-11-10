@@ -73,15 +73,14 @@ public class ChatService {
         if (firstDeletedByUser == null) {
             chat.setFirstDeletedByUser(loggedInUser);
             chatRepository.save(chat);
-            return;
+            dataChangePublisher.publish(Entity.CHAT, Action.SOFT_DELETE, chat);
+        } else {
+            // Chat wurde bereits vom anderen Teilnehmer als gelöscht markiert (durch firstDeletedByUser)
+            // -> Chat und zugehörige Nachrichten löschen
+            messageRepository.deleteByChat_Id(chatId);
+            chatRepository.delete(chat);
+            dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat);
         }
-
-        // Chat wurde bereits vom anderen Teilnehmer als gelöscht markiert (durch firstDeletedByUser)
-        // -> Chat und zugehörige Nachrichten löschen
-        messageRepository.deleteByChat_Id(chatId);
-        chatRepository.delete(chat);
-
-        dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat);
     }
 
 }
