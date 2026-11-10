@@ -20,7 +20,10 @@ import sp.backend.websocket.DataChangePublisher;
 import sp.backend.websocket.DataChangePublisher.Entity;
 import sp.backend.websocket.DataChangePublisher.Action;
 
+import java.util.List;
+
 import static sp.backend.chat.ChatWithUser.checkIfUserIsParticipantOfChat;
+import static sp.backend.utils.Utils.getLoggedInUser;
 import static sp.backend.utils.Utils.getLoggedInUserId;
 
 @Service
@@ -73,14 +76,28 @@ public class ChatService {
         if (firstDeletedByUser == null) {
             chat.setFirstDeletedByUser(loggedInUser);
             chatRepository.save(chat);
-            dataChangePublisher.publish(Entity.CHAT, Action.SOFT_DELETE, chat);
+            dataChangePublisher.publish(Entity.CHAT, Action.SOFT_DELETE, chat, loggedInUser.getAccountName());
         } else {
             // Chat wurde bereits vom anderen Teilnehmer als gelöscht markiert (durch firstDeletedByUser)
             // -> Chat und zugehörige Nachrichten löschen
             messageRepository.deleteByChat_Id(chatId);
             chatRepository.delete(chat);
-            dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat);
+            dataChangePublisher.publish(Entity.CHAT, Action.DELETE, chat, loggedInUser.getAccountName());
         }
+    }
+
+    public boolean existsUnreadMessage(Authentication authentication) {
+        User loggedInUser = getLoggedInUser(authentication, userRepository, true);
+
+        List<Long> chatIds = chatRepository.findIdsByUserId(loggedInUser.getId());
+
+        return chatIds.stream().anyMatch((chatId) -> {
+            Message message = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chatId).orElse(null);
+            if (message != null && !message.getSender().equals(loggedInUser)) {
+                return !message.isRead();
+            }
+            return false;
+        });
     }
 
 }
