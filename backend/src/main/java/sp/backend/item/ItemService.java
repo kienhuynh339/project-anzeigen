@@ -11,10 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import sp.backend.dto.ItemCreateRequest;
-import sp.backend.dto.ItemResponse;
-import sp.backend.dto.ItemWithDistanceResponse;
-import sp.backend.dto.ItemUpdateRequest;
+import sp.backend.dto.*;
 import sp.backend.exception.DeletedItemModificationNotAllowedException;
 import sp.backend.exception.ImageSavingException;
 import sp.backend.exception.ImageSizeExceededException;
@@ -140,6 +137,11 @@ public class ItemService {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
+        // Gelöschtes Item darf nicht modifiziert werden
+        if (item.getStatus() == ItemStatus.DELETED) {
+            throw new DeletedItemModificationNotAllowedException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
+        }
+
         item.setStatus(itemStatus);
         itemRepository.save(item);
 
@@ -165,7 +167,7 @@ public class ItemService {
 
         saveImages(request.getImages(), item.getId());
 
-        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item);
+//        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item);
 
         return item.getId();
     }
