@@ -13,3 +13,9 @@ export function getChat(chatId) {
     method: "GET",
   });
 }
+
+export function hasUnreadMessage() {
+  return request(`/chats/has-unread-message`, {
+    method: "GET",
+  });
+}
