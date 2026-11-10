@@ -31,6 +31,12 @@ public class ChatController {
         return ResponseEntity.ok(chatResponse);
     }
 
+    @GetMapping("/has-unread-message")
+    private ResponseEntity<Boolean> hasUnreadMessage(Authentication authentication) {
+        Boolean result = chatService.existsUnreadMessage(authentication);
+        return ResponseEntity.ok(result);
+    }
+
     @DeleteMapping("/{chatId}")
     private ResponseEntity<Void> deleteChat(@PathVariable Long chatId, Authentication authentication) {
         chatService.deleteChat(chatId, authentication);
