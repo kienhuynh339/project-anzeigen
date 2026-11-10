@@ -24,6 +24,9 @@ public class DataChangeWebSocketListener {
         if (dataChangeEvent.getEntity().equals(Entity.CHAT)) {
             Event event = null;
             Chat chat = (Chat) dataChangeEvent.getObject();
+            String receiver = chat.getInterestedUser().getAccountName().equals(dataChangeEvent.getAccountName()) ?
+                    chat.getPoster().getAccountName()
+                    : chat.getInterestedUser().getAccountName();
             Long chatId = chat.getId();
 
             if (dataChangeEvent.getAction().equals(Action.DELETE)) {
@@ -32,29 +35,34 @@ public class DataChangeWebSocketListener {
                 event = new Event(Entity.CHAT, Action.SOFT_DELETE, chatId);
             } else if (dataChangeEvent.getAction().equals(Action.CREATE)) {
                 event = new Event(Entity.CHAT, Action.CREATE, chatId);
+                sendChatOrMessageChangeEvent(receiver, "/new-message", event);
             }
 
-            sendChatOrMessageChangeEvent(chat, "/chats", event);
+            sendChatOrMessageChangeEventToBoth(chat, "/chats", event);
 
         } else if (dataChangeEvent.getEntity().equals(Entity.MESSAGE)) {
             Event event = null;
             Chat chat = (Chat) dataChangeEvent.getObject();
+            String receiver = chat.getInterestedUser().getAccountName().equals(dataChangeEvent.getAccountName()) ?
+                    chat.getPoster().getAccountName()
+                    : chat.getInterestedUser().getAccountName();
             Long chatId = chat.getId();
 
             if (dataChangeEvent.getAction().equals(Action.CREATE)) {
                 event = new Event(Entity.MESSAGE, Action.CREATE, chatId);
-                sendChatOrMessageChangeEvent(chat, "/chats/" + chatId, event);
-                sendChatOrMessageChangeEvent(chat, "/chats", event);
+                sendChatOrMessageChangeEventToBoth(chat, "/chats/" + chatId, event);
+                sendChatOrMessageChangeEventToBoth(chat, "/chats", event); // "/new-message"
+                sendChatOrMessageChangeEvent(receiver, "/new-message", event);
             }
 
         } else if (dataChangeEvent.getEntity().equals(Entity.ITEM)) {
             Event event = null;
             Long itemId = ((Item) dataChangeEvent.getObject()).getId();
 
-            if (dataChangeEvent.getAction().equals(Action.CREATE)) {
-                event = new Event(Entity.ITEM, Action.CREATE, itemId);
+//            if (dataChangeEvent.getAction().equals(Action.CREATE)) {
+//                event = new Event(Entity.ITEM, Action.CREATE, itemId);} else
 
-            } else if (dataChangeEvent.getAction().equals(Action.DELETE)) {
+            if (dataChangeEvent.getAction().equals(Action.DELETE)) {
                 event = new Event(Entity.ITEM, Action.DELETE, itemId);
                 sendItemChangeEvent("/topic/items/" + itemId, event);
 
@@ -63,20 +71,28 @@ public class DataChangeWebSocketListener {
                 sendItemChangeEvent("/topic/items/" + itemId, event);
             }
 
-            sendItemChangeEvent("/topic/items", event);
+//            sendItemChangeEvent("/topic/items", event);
         }
 
 
     }
 
-    private void sendChatOrMessageChangeEvent(Chat chat, String destination, Event event) {
-        messagingTemplate.convertAndSendToUser(
+    private void sendChatOrMessageChangeEventToBoth(Chat chat, String destination, Event event) {
+        sendChatOrMessageChangeEvent(
                 chat.getInterestedUser().getAccountName(),
                 destination,
                 event
         );
-        messagingTemplate.convertAndSendToUser(
+        sendChatOrMessageChangeEvent(
                 chat.getPoster().getAccountName(),
+                destination,
+                event
+        );
+    }
+
+    private void sendChatOrMessageChangeEvent(String accountName, String destination, Event event) {
+        messagingTemplate.convertAndSendToUser(
+                accountName,
                 destination,
                 event
         );
