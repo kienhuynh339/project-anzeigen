@@ -9,11 +9,14 @@ import {
   INPUT_NOTICES,
   validateInput,
 } from "../../utils/inputValidation";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 export default function MessageInput() {
+  const { currentChat, otherUser } = useChatContext();
+  const { user } = useAuthContext();
+
   const [messageContent, setMessageContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const { currentChat, otherUser } = useChatContext();
   const [notification, setNotification] = useState("");
 
   const handleSubmit = async () => {
@@ -39,7 +42,8 @@ export default function MessageInput() {
   };
   return (
     <div>
-      {currentChat.fistDeletedByUserId ? (
+      {currentChat.fistDeletedByUserId &&
+      currentChat.fistDeletedByUserId !== user.id ? (
         <p className="m-0 text-center">
           {otherUser.profileName} hat den Chat verlassen.
         </p>
