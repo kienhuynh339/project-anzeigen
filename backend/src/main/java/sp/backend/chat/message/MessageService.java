@@ -105,9 +105,9 @@ public class MessageService {
         messageRepository.save(message);
 
         if (createChat) {
-            dataChangePublisher.publish(Entity.CHAT, Action.CREATE, chat);
+            dataChangePublisher.publish(Entity.CHAT, Action.CREATE, chat, messageSender.getAccountName());
         } else {
-            dataChangePublisher.publish(Entity.MESSAGE, Action.CREATE, chat);
+            dataChangePublisher.publish(Entity.MESSAGE, Action.CREATE, chat, messageSender.getAccountName());
         }
 
         return message;
