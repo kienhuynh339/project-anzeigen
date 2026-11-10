@@ -3,7 +3,6 @@
  */
 import "../../styles/hoverEffect.css";
 import ItemCard from "./ItemCard";
-import { useItemListContext } from "../../contexts/ItemListContext";
 import { useSearchContext } from "../../contexts/SearchContext";
 import ItemPagination from "./ItemPagination";
 import { useEffect, useState } from "react";
@@ -23,12 +22,12 @@ export default function ItemList({
   additionalContentWhenItemAmountIsZero = "",
   itemCardType,
 }) {
-  const { items, setItems, totalElements, setTotalElements } =
-    useItemListContext();
   const { searchTrigger } = useSearchContext();
 
   const [page, setPage] = useState(0);
   const [sortMode, setSortMode] = useState(sortOption.CREATED_AT_DESC);
+  const [items, setItems] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
 
   // Bei einer neuen Suche oder Sortierung wieder auf Seite 1.
   useEffect(() => {
@@ -49,6 +48,19 @@ export default function ItemList({
   if (loading) {
     return <p>Lade...</p>;
   }
+
+  const deleteItem = (itemId) => {
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
+    setTotalElements((prev) => prev - 1);
+  };
+
+  const updateItemStatus = (itemId, itemStatus) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === itemId ? { ...item, status: itemStatus } : item,
+      ),
+    );
+  };
 
   return (
     <div className="p-2">
@@ -87,7 +99,13 @@ export default function ItemList({
         {totalElements == 0 && additionalContentWhenItemAmountIsZero}
         {/* Anzeigen */}
         {items.map((item) => (
-          <ItemCard key={item.id} item={item} itemCardType={itemCardType} />
+          <ItemCard
+            key={item.id}
+            item={item}
+            itemCardType={itemCardType}
+            deleteItem={deleteItem}
+            updateItemStatus={updateItemStatus}
+          />
         ))}
       </div>
       {/* Pagination */}
