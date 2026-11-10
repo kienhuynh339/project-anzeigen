@@ -19,7 +19,6 @@ import Register from "./pages/authentication/Register";
 import { ChatContextProvider } from "./contexts/ChatContext";
 import NotFound from "./pages/not-found/NotFound";
 import { Navigate } from "react-router";
-import { ItemListContextProvider } from "./contexts/ItemListContext";
 
 function App() {
   return (
@@ -33,40 +32,22 @@ function App() {
           <Route path="/404" element={<NotFound />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <ItemListContextProvider>
-                <AllItems />
-              </ItemListContextProvider>
-            }
-          />
+          <Route path="/" element={<AllItems />} />
           <Route path="/anzeigen/:itemId" element={<ItemDetails />} />
           <Route
             path="/meine-anzeigen"
             element={
               <ProtectedRoute>
-                <ItemListContextProvider>
-                  <MyItems />
-                </ItemListContextProvider>
+                <MyItems />
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/user/:otherUserId"
-            element={
-              <ItemListContextProvider>
-                <UserItems />
-              </ItemListContextProvider>
-            }
-          />
+          <Route path="/user/:otherUserId" element={<UserItems />} />
           <Route
             path="/meine-merkliste"
             element={
               <ProtectedRoute>
-                <ItemListContextProvider>
-                  <MyFavoriteItems />
-                </ItemListContextProvider>
+                <MyFavoriteItems />
               </ProtectedRoute>
             }
           ></Route>
