@@ -15,7 +15,6 @@ import { truncateText } from "../../utils/truncatetext";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "./buttons/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useItemListContext } from "../../contexts/ItemListContext";
 
 export const itemCardTypes = Object.freeze({
   MY_FAVORITE_ITEM: "MY_FAVORITE_ITEM",
@@ -23,9 +22,13 @@ export const itemCardTypes = Object.freeze({
   ITEM_WITH_FAVOR_BUTTON: "ITEM_WITH_FAVOR_BUTTON",
 });
 
-export default function ItemCard({ item, itemCardType }) {
+export default function ItemCard({
+  item,
+  itemCardType,
+  deleteItem,
+  updateItemStatus,
+}) {
   const { user } = useAuthContext();
-  const { deleteItem, updateItemStatus } = useItemListContext();
   return (
     <>
       <Link
@@ -56,7 +59,7 @@ export default function ItemCard({ item, itemCardType }) {
             />
             {/* Favorite-Knopf */}
             {user &&
-              user?.id !== item.posterId &&
+              user.id !== item.posterId &&
               itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
                 <ItemFavorButton
                   itemId={item.id}
@@ -139,7 +142,7 @@ export default function ItemCard({ item, itemCardType }) {
                   <>
                     <FavoriteItemDeleteButton
                       itemId={item.id}
-                      deleteItem={() => deleteItem(item.id)}
+                      deleteFavoriteItem={() => deleteItem(item.id)}
                     ></FavoriteItemDeleteButton>
                     {item.status !== "DELETED" && (
                       <MessageButton item={item}></MessageButton>
