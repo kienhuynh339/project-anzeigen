@@ -47,10 +47,9 @@ export function ChatContextProvider({ children }) {
   const [currentChat, setCurrentChat] = useState(initialChat);
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
   const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
-  const [chatUpdateTrigger, setChatUpdateTrigger] = useState(false);
 
   // Chats abrufen
-  const { data: chatPage } = useFetch(getPath.chats(), [chatUpdateTrigger]);
+  const { data: chatPage } = useFetch(getPath.chats(), []);
 
   useEffect(() => {
     setChats(chatPage?.content ?? []);
@@ -64,22 +63,40 @@ export function ChatContextProvider({ children }) {
     );
   };
 
+  const removeChatFromList = (chatId) => {
+    setChats((prev) => prev.filter((chat) => chat.id !== chatId));
+  };
+
+  const addChatToList = (chat) => {
+    setChats((prev) => [...prev, chat]);
+  };
+
   const handleChatOrMessageEvent = useCallback(async (event) => {
     try {
-      const fetchedChat = await getChat(event.entityId);
-
       if (event.entity === EVENT_ENTITY.CHAT) {
-        // CREATE -> neuen Chat hinzufügen
         if (event.action === EVENT_ACTION.CREATE) {
-          setChats((prev) => [...prev, fetchedChat]);
-
-          // DELETE -> betroffenen Chat aktualisieren
+          // CREATE -> neuen Chat hinzufügen
+          const fetchedChat = await getChat(event.entityId);
+          addChatToList(fetchedChat);
         } else if (event.action === EVENT_ACTION.DELETE) {
-          replaceChatInList(fetchedChat, event.entityId);
+          // DELETE -> betroffenen Chat entfernen
+          removeChatFromList(event.entityId);
+        } else if (event.action === EVENT_ACTION.SOFT_DELETE) {
+          // SOFT_DELETE
+          const fetchedChat = await getChat(event.entityId);
+
+          if (user.id === fetchedChat.fistDeletedByUserId) {
+            // Chat entfernen bei dem Löschenden
+            removeChatFromList(event.entityId);
+          } else {
+            replaceChatInList(fetchedChat, event.entityId);
+          }
         }
       } else if (event.entity === EVENT_ENTITY.MESSAGE) {
-        // Neue Nachricht für einen bestehenden Chat -> den Chat aktualisieren
+        const fetchedChat = await getChat(event.entityId);
+
         if (event.action === EVENT_ACTION.CREATE) {
+          // Neue Nachricht für einen bestehenden Chat -> den Chat aktualisieren
           replaceChatInList(fetchedChat, event.entityId);
         }
       }
@@ -122,7 +139,6 @@ export function ChatContextProvider({ children }) {
   const selectChat = async (chat) => {
     if (!chat.lastMessage.read && chat.lastMessage.senderId !== user?.id) {
       // Nachricht(en) als gelesen markieren
-
       try {
         await markMessageAsRead(chat.id);
         chat.lastMessage.read = true;
@@ -130,11 +146,7 @@ export function ChatContextProvider({ children }) {
         console.error(e);
       }
     }
-    setCurrentChat(chat);
-  };
-
-  const updateChat = () => {
-    setChatUpdateTrigger((prev) => !prev);
+    setCurrentChat({ ...chat });
   };
 
   return (
@@ -152,7 +164,6 @@ export function ChatContextProvider({ children }) {
         otherUser,
         selectChatToDelete,
         selectChat,
-        updateChat,
       }}
     >
       {children}
