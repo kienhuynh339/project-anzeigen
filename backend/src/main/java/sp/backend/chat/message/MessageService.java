@@ -95,6 +95,11 @@ public class MessageService {
             return chatRepository.save(newChat);
         });
 
+        // Der User tritt dem Chat durch das Senden einer neuen Nachricht wieder bei.
+        if (chat.getFirstDeletedByUser() != null && chat.getFirstDeletedByUser().equals(messageSender)) {
+            chat.setFirstDeletedByUser(null);
+        }
+
         Message message = new Message(chat, messageSender, request.getContent(), false);
 
         messageRepository.save(message);
