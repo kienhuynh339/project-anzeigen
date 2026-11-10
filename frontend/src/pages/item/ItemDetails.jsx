@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useParams } from "react-router";
 import { getPath, useFetch } from "../../hooks/useFetch";
 import ItemDeleteButton from "../../features/item/buttons/ItemDeleteButton";
@@ -14,6 +14,11 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 import ImageGallery from "../../features/item/ImageGallery";
 import MessageButton from "../../features/chat/buttons/MessageButton";
+import {
+  useStomp,
+  EVENT_ACTION,
+  EVENT_ENTITY,
+} from "../../contexts/StompContext";
 
 const initialItem = {
   id: "",
@@ -30,10 +35,11 @@ export default function ItemDetails() {
   const { user } = useAuthContext();
   const { itemId } = useParams();
   const [item, setItem] = useState(initialItem);
+  const [itemFetchTrigger, setItemFetchTrigger] = useState(false);
 
   const { data: fetchedItem } = useFetch(
     getPath.itemByItemId(itemId),
-    [],
+    [itemFetchTrigger],
     initialItem,
   );
 
@@ -41,7 +47,11 @@ export default function ItemDetails() {
     setItem(fetchedItem);
   }, [fetchedItem]);
 
-  const { data: imageIds } = useFetch(getPath.imageIdsByItemId(itemId), [], []);
+  const { data: imageIds } = useFetch(
+    getPath.imageIdsByItemId(itemId),
+    [itemFetchTrigger],
+    [],
+  );
 
   const deleteItem = () => {
     setItem((prev) => ({ ...prev, status: "DELETED" }));
@@ -54,6 +64,23 @@ export default function ItemDetails() {
   const activateItem = () => {
     setItem((prev) => ({ ...prev, status: "ACTIVE" }));
   };
+
+  const handleItemEvent = useCallback(async (event) => {
+    try {
+      if (
+        event.entity === EVENT_ENTITY.ITEM &&
+        (event.action === EVENT_ACTION.DELETE ||
+          event.action === EVENT_ACTION.UPDATE)
+      ) {
+        setItemFetchTrigger((prev) => !prev);
+      }
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+  }, []);
+
+  const { connected } = useStomp(`/topic/items/${itemId}`, handleItemEvent);
 
   return (
     <>
@@ -122,22 +149,22 @@ export default function ItemDetails() {
             </div>
             <div className="d-flex flex-column gap-3 mt-5 ">
               {/* Knöpfe für Interessenten */}
-              {user && user?.id !== item.poster.id && (
-                <>
-                  {/* Nachricht schreiben */}
-                  {item.status !== "DELETED" && (
+              {user &&
+                user.id !== item.poster.id &&
+                item.status !== "DELETED" && (
+                  <>
+                    {/* Nachricht schreiben */}
                     <MessageButton item={item}></MessageButton>
-                  )}
-                  {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
-                  <ItemFavorButton
-                    userId={user?.id}
-                    itemId={item.id}
-                    isFavorite={item.favorite}
-                    className={"btn btn-outline-danger"}
-                    showLabel={true}
-                  ></ItemFavorButton>
-                </>
-              )}
+                    {/* Zur Merkliste hinzufügen / Von Merkliste entfernen */}
+                    <ItemFavorButton
+                      userId={user?.id}
+                      itemId={item.id}
+                      isFavorite={item.favorite}
+                      className={"btn btn-outline-danger"}
+                      showLabel={true}
+                    ></ItemFavorButton>
+                  </>
+                )}
               {/* Knöpfe für Poster der Anzeige */}
               {user && user?.id === item.poster.id && (
                 <>
