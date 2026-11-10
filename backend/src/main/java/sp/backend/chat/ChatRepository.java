@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import sp.backend.dto.ChatResponse;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
@@ -30,5 +31,14 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
             """)
     Page<ChatResponse> findByUserId(Long userId, Pageable pageable);
 
+    @Query("""
+            SELECT c.id
+            FROM Chat c
+            WHERE (c.firstDeletedByUser IS NULL OR (c.firstDeletedByUser.id != 0 AND c.firstDeletedByUser.id != :userId))
+            AND (:userId = c.poster.id OR :userId = c.interestedUser.id)
+            """)
+    List<Long> findIdsByUserId(Long userId);
+
     Optional<Chat> findByItem_IdAndInterestedUser_Id(Long itemId, Long interestedUserId);
+
 }
