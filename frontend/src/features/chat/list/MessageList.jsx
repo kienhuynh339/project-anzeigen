@@ -11,7 +11,7 @@ export default function MessageList() {
 
   const { data: messagePage } = useFetch(
     getPath.messagesByChatId(currentChat.id),
-    [currentChat.id],
+    [currentChat],
   );
 
   const messages = messagePage?.content ?? [];
