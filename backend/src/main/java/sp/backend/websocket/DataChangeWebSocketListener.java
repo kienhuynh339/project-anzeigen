@@ -28,6 +28,8 @@ public class DataChangeWebSocketListener {
 
             if (dataChangeEvent.getAction().equals(Action.DELETE)) {
                 event = new Event(Entity.CHAT, Action.DELETE, chatId);
+            } else if (dataChangeEvent.getAction().equals(Action.SOFT_DELETE)) {
+                event = new Event(Entity.CHAT, Action.SOFT_DELETE, chatId);
             } else if (dataChangeEvent.getAction().equals(Action.CREATE)) {
                 event = new Event(Entity.CHAT, Action.CREATE, chatId);
             }
