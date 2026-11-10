@@ -14,11 +14,27 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuthContext();
   const options = [
-    { label: "Meine Anzeigen", action: () => navigate("/meine-anzeigen") },
-    { label: "Nachrichten", action: () => navigate("/nachrichten") },
-    { label: "Merkliste", action: () => navigate("/meine-merkliste") },
-    { label: "Einstellungen", action: () => navigate("/einstellungen") },
-    { label: "Abmelden", action: handleLogout },
+    {
+      label: "Meine Anzeigen",
+      action: () => navigate("/meine-anzeigen"),
+      redPoint: false,
+    },
+    {
+      label: "Nachrichten",
+      action: () => navigate("/nachrichten"),
+      redPoint: true,
+    },
+    {
+      label: "Merkliste",
+      action: () => navigate("/meine-merkliste"),
+      redPoint: false,
+    },
+    {
+      label: "Einstellungen",
+      action: () => navigate("/einstellungen"),
+      redPoint: false,
+    },
+    { label: "Abmelden", action: handleLogout, redPoint: false },
   ];
 
   async function handleLogout() {
