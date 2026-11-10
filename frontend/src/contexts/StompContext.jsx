@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
+import { useAuthContext } from "./AuthContext";
 
 const WS_URL = "ws://localhost:8080/ws"; // "http://localhost:8080/ws"
 const StompContext = createContext(null);
@@ -14,13 +15,21 @@ export const EVENT_ACTION = Object.freeze({
   CREATE: "create",
   UPDATE: "update",
   DELETE: "delete",
+  SOFT_DELETE: "softDelete",
 });
 
 export function StompContextProvider({ children }) {
+  const { isAuthenticated } = useAuthContext();
+
   const clientRef = useRef(null);
+
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
     // STOMP-Client (Simple Text Oriented Messaging Protocol)
     const client = new Client({
       brokerURL: WS_URL, // Websocket-Endpunkt (Backend)
@@ -83,7 +92,7 @@ export function StompContextProvider({ children }) {
       client.deactivate();
       clientRef.current = null;
     };
-  }, []);
+  }, [isAuthenticated]);
 
   // einen bestimmten Nachrichtenkanal (destination) beim Backend abonnieren
   // callback erhält ein Event-Objekt (DataChangedEvent vom Backend) als Parameter.
