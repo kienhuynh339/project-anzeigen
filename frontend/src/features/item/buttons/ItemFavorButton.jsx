@@ -7,6 +7,9 @@ import {
   addFavoriteItem,
 } from "../../../apis/favoriteItemApi";
 import { useEffect } from "react";
+import { useAppContext } from "../../../contexts/AppContext";
+import ErrorDialog from "../../../components/ErrorDialog";
+
 export default function ItemFavorButton({
   itemId,
   isFavorite,
@@ -14,6 +17,8 @@ export default function ItemFavorButton({
   style,
   showLabel = false,
 }) {
+  const { openDialog } = useAppContext();
+
   const [isFavoriteChanging, setIsFavoriteChanging] = useState(false);
   const [favorite, setFavorite] = useState(isFavorite);
 
@@ -36,7 +41,9 @@ export default function ItemFavorButton({
         await addFavoriteItem(itemId);
         setFavorite(true);
       } catch (e) {
-        console.error(error);
+        const errorMessage = e.message;
+        openDialog(ErrorDialog, { errorMessage });
+        console.error(e);
       }
     }
     setIsFavoriteChanging(false);
