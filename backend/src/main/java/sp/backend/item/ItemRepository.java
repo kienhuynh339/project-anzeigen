@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import sp.backend.dto.ItemResponse;
 import sp.backend.dto.ItemWithDistanceResponse;
 
+import java.util.Optional;
+
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("""
@@ -31,7 +33,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             LEFT JOIN ItemFavorite ifavorite ON i.id = ifavorite.item.id AND :loggedInUserId = ifavorite.user.id
             WHERE :itemId = i.id
             """)
-    ItemResponse findItemById(Long itemId, Long loggedInUserId);
+    Optional<ItemResponse> findItemById(Long itemId, Long loggedInUserId);
 
 
     @Query("""
