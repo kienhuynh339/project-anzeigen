@@ -61,9 +61,27 @@ public class GlobalExceptionHandler {
         return createResponseEntity(exception, status);
     }
 
-    @ExceptionHandler(CannotFavoriteOwnItemException.class)
+    @ExceptionHandler(CannotFavorOwnItemException.class)
     public ResponseEntity<Map<String, String>> handleException(
-            CannotFavoriteOwnItemException exception) {
+            CannotFavorOwnItemException exception) {
+
+        HttpStatus status = HttpStatus.FORBIDDEN;
+
+        return createResponseEntity(exception, status);
+    }
+
+    @ExceptionHandler(CannotFavorDeletedItemException.class)
+    public ResponseEntity<Map<String, String>> handleException(
+            CannotFavorDeletedItemException exception) {
+
+        HttpStatus status = HttpStatus.FORBIDDEN;
+
+        return createResponseEntity(exception, status);
+    }
+
+    @ExceptionHandler(CannotStartNewChatForDeletedItemException.class)
+    public ResponseEntity<Map<String, String>> handleException(
+            CannotStartNewChatForDeletedItemException exception) {
 
         HttpStatus status = HttpStatus.FORBIDDEN;
 
