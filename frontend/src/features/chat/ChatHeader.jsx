@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { useChatContext } from "../../contexts/ChatContext";
 import { Link } from "react-router";
 import ItemDeleteButton from "../../features/item/buttons/ItemDeleteButton";
@@ -18,8 +21,8 @@ export default function ChatHeader() {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    // neuen CurrentChat
-    const fetchChat = async () => {
+    // aktualisiert Chat
+    const refreshChat = async () => {
       try {
         const fetchedChat = await getChat(currentChat.id);
         replaceChatInList(fetchedChat, currentChat.id);
@@ -27,9 +30,10 @@ export default function ChatHeader() {
         console.error(e);
       }
     };
-    fetchChat();
+    refreshChat();
   }, [currentChat.id]);
 
+  // Aktualisiert Chat anhand von Änderungen an der Anzeige
   const handleItemEvent = useCallback(
     async (event) => {
       try {
@@ -38,7 +42,7 @@ export default function ChatHeader() {
           (event.action === EVENT_ACTION.DELETE ||
             event.action === EVENT_ACTION.UPDATE)
         ) {
-          // neuen CurrentChat
+          // aktualisiert Chat
           const fetchedChat = await getChat(currentChat.id);
           replaceChatInList(fetchedChat, currentChat.id);
         }
@@ -49,7 +53,6 @@ export default function ChatHeader() {
     },
     [currentChat],
   );
-
   const { connected } = useStomp(
     `/topic/items/${currentChat.itemId}`,
     handleItemEvent,
@@ -73,21 +76,21 @@ export default function ChatHeader() {
           ></ItemTitle>
         </Link>
       </h5>
-      {/* Löschen / Reservieren */}
-      {user.id == currentChat.poster.id &&
-        currentChat.itemStatus != "DELETED" && (
+      {/* Anzeige löschen/reservieren/aktivieren */}
+      {user.id === currentChat.poster.id &&
+        currentChat.itemStatus !== "DELETED" && (
           <>
             <div className="border-top border-dark-subtle mx-2"></div>
             <div className="d-flex flex-wrap justify-content-between p-2">
               <ItemDeleteButton itemId={currentChat.itemId}>
                 <span className="ps-1">Anzeige löschen</span>
               </ItemDeleteButton>
-              {currentChat.itemStatus == "RESERVED" && (
+              {currentChat.itemStatus === "RESERVED" && (
                 <ItemActivateButton
                   itemId={currentChat.itemId}
                 ></ItemActivateButton>
               )}
-              {currentChat.itemStatus == "ACTIVE" && (
+              {currentChat.itemStatus === "ACTIVE" && (
                 <ItemReserveButton
                   itemId={currentChat.itemId}
                 ></ItemReserveButton>
