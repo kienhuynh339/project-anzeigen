@@ -2,21 +2,20 @@
  * @author Trung Kien Huynh
  */
 import ItemList from "../../features/item/ItemList";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import { useParams } from "react-router";
 import { useFetch, getPath } from "../../hooks/useFetch";
 import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
-import { useEffect } from "react";
 import { itemCardTypes } from "../../features/item/ItemCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
 export default function UserItems() {
-  const navigate = useNavigate();
-
   const { otherUserId } = useParams();
 
   const { user } = useAuthContext();
+
+  let isOtherUserIdValid = /^[1-9]\d*$/.test(otherUserId);
 
   const PAGE_SIZE = 9999;
   const urlWithoutPaginationAndSorting = getPath.itemsByUserId(otherUserId);
@@ -27,21 +26,26 @@ export default function UserItems() {
   );
 
   // Daten des anderen Users
-  const { data: otherUser } = useFetch(
-    getPath.userByUserId(otherUserId),
+  const {
+    data: otherUser,
+    loading,
+    error: userFetchError,
+  } = useFetch(
+    isOtherUserIdValid ? getPath.userByUserId(otherUserId) : null,
     [otherUserId],
     { id: "", profileName: "", createdAt: "" },
   );
 
-  // "/meine-anzeigen" aufrufen statt "user/:userId", wenn otherUser = user
-  useEffect(() => {
-    if (String(otherUserId) === String(user?.id)) {
-      navigate("/meine-anzeigen", { replace: true });
-    }
-  }, [otherUserId, user]);
-  // nichts rendern
+  if (loading) {
+    return <p>Lade...</p>;
+  }
+
+  if (!isOtherUserIdValid || userFetchError) {
+    return <Navigate to="/404" replace></Navigate>;
+  }
+
   if (String(otherUserId) === String(user?.id)) {
-    return null;
+    return <Navigate to="/meine-anzeigen" replace></Navigate>;
   }
 
   return (
