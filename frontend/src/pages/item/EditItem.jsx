@@ -46,7 +46,7 @@ export default function EditItem() {
 
   let isItemIdValid = /^[1-9]\d*$/.test(itemId);
 
-  const { data: fetchedItem, error: itemDataFetchError } = useFetch(
+  const { data: fetchedItem, error: itemFetchError } = useFetch(
     isItemIdValid ? getPath.itemByItemIdToEdit(itemId) : null,
     [itemId],
   );
@@ -79,7 +79,7 @@ export default function EditItem() {
     }
   }, [fetchedItem]);
 
-  if (!isItemIdValid || itemDataFetchError) {
+  if (!isItemIdValid || itemFetchError) {
     return <Navigate to="/404" replace />;
   }
 
