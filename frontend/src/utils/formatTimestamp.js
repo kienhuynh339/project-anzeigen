@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-export const TimestampType = Object.freeze({
+export const TIMESTAMP_TYPES = Object.freeze({
   MESSAGE: "MESSAGE",
   ITEM: "ITEM",
   USER: "USER",
@@ -27,7 +27,7 @@ export function formatTimestamp(dateString, type) {
     year: "numeric",
   });
 
-  if (type === TimestampType.USER) {
+  if (type === TIMESTAMP_TYPES.USER) {
     return `${dayMonthYear}`;
   }
 
@@ -44,18 +44,18 @@ export function formatTimestamp(dateString, type) {
   // Gleiches Jahr
   if (date.getFullYear() === today.getFullYear()) {
     switch (type) {
-      case TimestampType.MESSAGE:
+      case TIMESTAMP_TYPES.MESSAGE:
         return `${dayMonth} UM ${time}`;
-      case TimestampType.ITEM:
+      case TIMESTAMP_TYPES.ITEM:
         return `${dayMonthYear}`;
     }
   }
 
   // Anderes Jahr
   switch (type) {
-    case TimestampType.MESSAGE:
+    case TIMESTAMP_TYPES.MESSAGE:
       return `${dayMonthYear} UM ${time}`;
-    case TimestampType.ITEM:
+    case TIMESTAMP_TYPES.ITEM:
       return `${dayMonthYear}`;
   }
 }
