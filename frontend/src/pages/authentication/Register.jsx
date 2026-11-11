@@ -3,7 +3,7 @@
  */
 import { useState } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router";
+import { useNavigate, Navigate } from "react-router";
 import {
   FIELD_KEYS,
   INPUT_NOTICES,
@@ -11,14 +11,24 @@ import {
 } from "../../utils/inputValidation";
 
 export default function Register() {
-  const { register } = useAuthContext();
   const navigate = useNavigate();
+
+  const { register } = useAuthContext();
+  const { isAuthenticated, isLoadingUser } = useAuthContext();
 
   const [profileName, setProfileName] = useState("");
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
 
   const [notification, setNotification] = useState("");
+
+  if (isLoadingUser) {
+    return <p>Lade...</p>;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace></Navigate>;
+  }
 
   async function handleSubmit(e) {
     if (!validateInput(profileName, FIELD_KEYS.PROFILE_NAME)) {
