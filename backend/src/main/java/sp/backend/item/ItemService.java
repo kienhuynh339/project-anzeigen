@@ -59,19 +59,22 @@ public class ItemService {
 
     public ItemResponse findByItemId(Long itemId, Authentication authentication) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
-        return itemRepository.findItemById(itemId, loggedInUserId);
+
+        return itemRepository.findItemById(itemId, loggedInUserId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
     }
 
     public ItemResponse findByItemIdToEdit(Long itemId, Authentication authentication) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
 
-        ItemResponse item = itemRepository.findItemById(itemId, loggedInUserId);
+        ItemResponse item = itemRepository.findItemById(itemId, loggedInUserId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         if (!item.getPoster().getId().equals(loggedInUserId)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
-        return itemRepository.findItemById(itemId, loggedInUserId);
+        return item;
     }
 
     public Page<ItemWithDistanceResponse> search(
@@ -99,6 +102,10 @@ public class ItemService {
 
     public Page<ItemResponse> findByUserId(Long userId, Authentication authentication, Pageable pageable) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
+
+        User poster = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
+
         return itemRepository.findByUserId(userId, loggedInUserId, pageable);
     }
 
