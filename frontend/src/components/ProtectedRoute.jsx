@@ -4,10 +4,11 @@
 import { Navigate } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
 
+// Leitet nicht angemeldete Users zu "/login" weiter.
 export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuthContext();
+  const { isAuthenticated, isLoadingUser } = useAuthContext();
 
-  if (loading) {
+  if (isLoadingUser) {
     return <p>Lade...</p>;
   }
 
