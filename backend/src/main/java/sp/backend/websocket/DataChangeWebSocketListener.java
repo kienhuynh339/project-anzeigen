@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import sp.backend.chat.Chat;
+import sp.backend.dto.Event;
 import sp.backend.item.Item;
 import sp.backend.websocket.DataChangePublisher.Entity;
 import sp.backend.websocket.DataChangePublisher.Action;
