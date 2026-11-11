@@ -15,6 +15,7 @@ const initialSearchFilters = Object.freeze({
   priceMax: "",
 });
 
+// Für Suchfilter und den Trigger zum erneuten Ausführen der Suche
 export function SearchContextProvider({ children }) {
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
   const [searchTrigger, setSearchTrigger] = useState(false);
@@ -46,7 +47,7 @@ export function useSearchContext() {
   const context = useContext(SearchContext);
   if (!context) {
     throw new Error(
-      "useSearchContext muss innerhalb von SearchContextProvider verwendet werden",
+      "useSearchContext darf nur innerhalb von SearchContextProvider verwendet werden",
     );
   }
   return context;
