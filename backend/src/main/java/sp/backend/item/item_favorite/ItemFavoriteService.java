@@ -6,10 +6,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sp.backend.dto.ItemFavoriteResponse;
-import sp.backend.exception.CannotFavoriteOwnItemException;
+import sp.backend.exception.CannotFavorDeletedItemException;
+import sp.backend.exception.CannotFavorOwnItemException;
 import sp.backend.exception.FavoriteItemAlreadyExistsException;
 import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
+import sp.backend.item.ItemStatus;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
 import sp.backend.exception.ExceptionMessage;
@@ -52,7 +54,11 @@ public class ItemFavoriteService {
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
         if (item.getPoster().equals(user)) {
-            throw new CannotFavoriteOwnItemException(ExceptionMessage.POSTER_CANNOT_FAVORITE_OWN_ITEM);
+            throw new CannotFavorOwnItemException(ExceptionMessage.POSTER_CANNOT_FAVOR_OWN_ITEM);
+        }
+
+        if (item.getStatus() == ItemStatus.DELETED) {
+            throw new CannotFavorDeletedItemException(ExceptionMessage.CANNOT_FAVOR_DELETED_ITEM);
         }
 
         Optional<ItemFavorite> itemFavoriteOptional = itemFavoriteRepository.findByUser_IdAndItem_Id(user.getId(), item.getId());
