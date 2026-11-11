@@ -13,6 +13,7 @@ import { hasUnreadMessage } from "../apis/chatApi";
 import { useAuthContext } from "./AuthContext";
 const AppContext = createContext(null);
 
+// Für Dialogfenster und den roten Punkt für neue Nachrichten
 export function AppContextProvider({ children }) {
   const { isAuthenticated } = useAuthContext();
 
@@ -90,7 +91,7 @@ export function useAppContext() {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error(
-      "useAppContext muss innerhalb von AppContextProvider verwendet werden",
+      "useAppContext darf nur innerhalb von AppContextProvider verwendet werden",
     );
   }
   return context;
