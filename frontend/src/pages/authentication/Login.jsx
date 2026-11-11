@@ -3,15 +3,25 @@
  */
 import { useState } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 export default function Login() {
-  const { login } = useAuthContext();
   const navigate = useNavigate();
+
+  const { login } = useAuthContext();
+  const { isAuthenticated, isLoadingUser } = useAuthContext();
 
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  if (isLoadingUser) {
+    return <p>Lade...</p>;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace></Navigate>;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
