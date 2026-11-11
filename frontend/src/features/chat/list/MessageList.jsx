@@ -2,23 +2,26 @@
  * @author Trung Kien Huynh
  */
 import { getPath, useFetch } from "../../../hooks/useFetch";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useChatContext } from "../../../contexts/ChatContext";
 import MessageListItem from "../list-item/MessageListItem";
 
 export default function MessageList() {
   const { currentChat } = useChatContext();
 
+  // Nachrichten abrufen (Page<...>)
   const { data: messagePage } = useFetch(
     getPath.messagesByChatId(currentChat.id),
     [currentChat],
   );
 
-  const messages = messagePage?.content ?? [];
+  const messages = useMemo(() => {
+    return messagePage?.content ?? [];
+  }, [messagePage]);
 
   const chatContainerRef = useRef(null);
 
-  // Scrolle das Nachrichtenfenster bis zum Ende
+  // Scrollt das Nachrichtenfenster bis zum Ende
   useEffect(() => {
     const container = chatContainerRef.current;
     if (container) {
