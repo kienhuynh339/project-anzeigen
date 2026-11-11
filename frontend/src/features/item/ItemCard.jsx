@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { Link } from "react-router";
-import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
+import { formatTimestamp, TIMESTAMP_TYPES } from "../../utils/formatTimestamp";
 import ItemFavorButton from "./buttons/ItemFavorButton";
 import ItemDeleteButton from "./buttons/ItemDeleteButton";
 import ItemReserveButton from "./buttons/ItemReserveButton";
@@ -106,7 +106,7 @@ export default function ItemCard({
                       })}
                 </p>
                 <p className="text-secondary m-0">
-                  {formatTimestamp(item.createdAt, TimestampType.ITEM)}
+                  {formatTimestamp(item.createdAt, TIMESTAMP_TYPES.ITEM)}
                 </p>
               </div>
               <div className="d-flex justify-content-between">
