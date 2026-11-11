@@ -4,30 +4,36 @@
 
 import { useState } from "react";
 import { updateItemStatus as apiUpdateItemStatus } from "../../../apis/itemApi";
+import { useAppContext } from "../../../contexts/AppContext";
+import ErrorDialog from "../../../components/ErrorDialog";
 
 export default function ItemActivateButton({
   itemId,
   updateItemStatus = () => {},
 }) {
-  const [activating, setActivating] = useState(false);
+  const { openDialog } = useAppContext();
 
-  const handleItemActivate = async (event) => {
-    setActivating(true);
+  const [isActivating, setIsActivating] = useState(false);
 
+  const handleActivateItem = async (event) => {
+    setIsActivating(true);
     event.preventDefault();
-    await apiUpdateItemStatus(itemId, "ACTIVE").catch((error) =>
-      console.error(error),
-    );
-    updateItemStatus();
 
-    setActivating(false);
+    try {
+      await apiUpdateItemStatus(itemId, "ACTIVE");
+      updateItemStatus();
+    } catch (e) {
+      openDialog(ErrorDialog, { errorMessage: e.message });
+    }
+
+    setIsActivating(false);
   };
   return (
     <button
       type="button"
       className={`btn btn-outline-success`}
-      onClick={handleItemActivate}
-      disabled={activating}
+      onClick={handleActivateItem}
+      disabled={isActivating}
     >
       Aktivieren
     </button>
