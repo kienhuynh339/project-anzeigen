@@ -15,16 +15,17 @@ export default function MessageInputDialog({ item, closeDialog }) {
   const { user } = useAuthContext();
 
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const [notification, setNotification] = useState("");
 
   const handleSend = async (itemId, interestedUserId, content) => {
     if (!validateInput(content, FIELD_KEYS.MESSAGE)) {
+      // Fehlermeldung
       setNotification(INPUT_NOTICES[FIELD_KEYS.MESSAGE]);
       return;
     }
 
-    setSubmitting(true);
+    setIsSending(true);
 
     try {
       await sendMessage(itemId, interestedUserId, content);
@@ -32,27 +33,28 @@ export default function MessageInputDialog({ item, closeDialog }) {
       closeDialog();
     } catch (e) {
       setNotification(e.message);
-    } finally {
-      setSubmitting(false);
     }
+
+    //   setIsSubmitting(false);
   };
+
   return (
     <DialogWindow
       dialogTitle={"Nachricht schreiben"}
       dialogWidth={"70ch"}
       dialogButtons={[
-        <button
+        <button /* schließt Dialogfenster */
           key="message-button-abbrechen"
           className="btn btn-secondary"
           onClick={closeDialog}
-          disabled={submitting}
+          disabled={isSending}
         >
           Abbrechen
         </button>,
-        <button
+        <button /* sendet die Nachricht */
           key="message-button-senden"
           className="btn btn-primary"
-          disabled={submitting || !message}
+          disabled={isSending || !message}
           onClick={() => {
             handleSend(item.id, user.id, message);
           }}
@@ -62,6 +64,7 @@ export default function MessageInputDialog({ item, closeDialog }) {
       ]}
     >
       <div>
+        {/* Anzeigeinformation */}
         <span>
           {item.title.length > 50
             ? item.title.slice(0, 50) + "..."
@@ -72,17 +75,20 @@ export default function MessageInputDialog({ item, closeDialog }) {
             currency: "EUR",
           })}
         </span>
+        {/* Nachrichteneingabefeld  */}
         <textarea
           className="form-control mt-3"
           value={message}
-          disabled={submitting}
+          disabled={isSending}
           onChange={(e) => setMessage(e.target.value)}
           rows={4}
           maxLength={4000}
         />
+        {/* Zeichenanzahllimit  */}
         <p className="text-end mb-0">
           <small className="text-muted">{message.length}/4000 Zeichen</small>
         </p>
+        {/* Fehlermeldung */}
         {notification && (
           <p className="bg-danger-subtle my-0 border border-danger-subtle rounded p-1 text-danger">
             {notification}
