@@ -10,8 +10,7 @@ import { useSearchContext } from "../../contexts/SearchContext";
 
 export default function SearchBar({}) {
   const navigate = useNavigate();
-  const { searchFilters, setSearchFilters, searchTrigger, setSearchTrigger } =
-    useSearchContext();
+  const { searchFilters, setSearchFilters, triggerSearch } = useSearchContext();
   const { searchTerm, categoryId, postcode, radiusKm, priceMin, priceMax } =
     searchFilters;
 
@@ -24,7 +23,7 @@ export default function SearchBar({}) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setSearchTrigger(!searchTrigger);
+    triggerSearch();
     navigate("/");
   };
 
