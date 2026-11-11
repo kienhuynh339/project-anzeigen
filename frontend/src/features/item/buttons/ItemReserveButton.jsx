@@ -3,30 +3,36 @@
  */
 import { useState } from "react";
 import { updateItemStatus as apiUpdateItemStatus } from "../../../apis/itemApi";
+import ErrorDialog from "../../../components/ErrorDialog";
+import { useAppContext } from "../../../contexts/AppContext";
 
 export default function ItemReserveButton({
   itemId,
   updateItemStatus = () => {},
 }) {
-  const [reserving, setReserving] = useState(false);
+  const { openDialog } = useAppContext();
 
-  const handleItemReserved = async (event) => {
-    setReserving(true);
+  const [isReserving, setIsReserving] = useState(false);
 
+  const handleReserveItem = async (event) => {
+    setIsReserving(true);
     event.preventDefault();
-    await apiUpdateItemStatus(itemId, "RESERVED").catch((error) =>
-      console.log(error),
-    );
-    updateItemStatus();
 
-    setReserving(false);
+    try {
+      await apiUpdateItemStatus(itemId, "RESERVED");
+      updateItemStatus();
+    } catch (e) {
+      openDialog(ErrorDialog, { errorMessage: e.message });
+    }
+
+    setIsReserving(false);
   };
   return (
     <button
       type="button"
       className={`btn btn-outline-primary`}
-      onClick={handleItemReserved}
-      disabled={reserving}
+      onClick={handleReserveItem}
+      disabled={isReserving}
     >
       Reservieren
     </button>
