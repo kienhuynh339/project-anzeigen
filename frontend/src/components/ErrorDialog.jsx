@@ -1,3 +1,7 @@
+/**
+ * @author Trung Kien Huynh
+ */
+
 import DialogWindow from "./DialogWindow";
 
 export default function ErrorDialog({ errorMessage, closeDialog }) {
@@ -15,6 +19,7 @@ export default function ErrorDialog({ errorMessage, closeDialog }) {
         </button>,
       ]}
     >
+      {/* Fehler-Nachricht */}
       <span className="text-danger">{errorMessage}</span>
     </DialogWindow>
   );
