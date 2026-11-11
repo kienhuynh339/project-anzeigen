@@ -4,6 +4,8 @@
 import DialogWindow from "../../../components/DialogWindow";
 import { useState } from "react";
 import { deleteChat } from "../../../apis/chatApi";
+import ErrorDialog from "../../../components/ErrorDialog";
+import { useAppContext } from "../../../contexts/AppContext";
 
 export default function ChatDeleteDialog({
   deleteList,
@@ -11,19 +13,32 @@ export default function ChatDeleteDialog({
   setIsChatDeleteActive,
   closeDialog,
 }) {
+  const { openDialog } = useAppContext();
+
   const [isDeletingChat, setIsDeletingChat] = useState(false);
 
   const handleDeleteChat = async () => {
     setIsDeletingChat(true);
 
+    // Fehlermeldung(en)
+    let errorMessage = "";
+
     await Promise.all(
       deleteList.map((chatId) =>
-        deleteChat(chatId).catch((e) => console.error(e)),
+        deleteChat(chatId).catch((e) => {
+          errorMessage += `${errorMessage ? "\n" : ""}Chat ${chatId} konnte nicht gelöscht werden. ${e.message}`;
+        }),
       ),
     );
     setDeleteList([]);
+
     setIsChatDeleteActive(false);
-    closeDialog();
+    if (errorMessage) {
+      // öffnet ErrorDialog-Dialogfenster
+      openDialog(ErrorDialog, { errorMessage });
+    } else {
+      closeDialog();
+    }
 
     // setIsDeletingChat(false);
   };
