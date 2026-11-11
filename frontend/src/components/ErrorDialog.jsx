@@ -20,7 +20,9 @@ export default function ErrorDialog({ errorMessage, closeDialog }) {
       ]}
     >
       {/* Fehler-Nachricht */}
-      <span className="text-danger">{errorMessage}</span>
+      <span className="text-danger" style={{ whiteSpace: "pre-line" }}>
+        {errorMessage}
+      </span>
     </DialogWindow>
   );
 }
