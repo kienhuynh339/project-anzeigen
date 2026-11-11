@@ -5,7 +5,7 @@ import ItemList from "../../features/item/ItemList";
 import { Navigate } from "react-router";
 import { useParams } from "react-router";
 import { useFetch, getPath } from "../../hooks/useFetch";
-import { formatTimestamp, TimestampType } from "../../utils/formatTimestamp";
+import { formatTimestamp, TIMESTAMP_TYPES } from "../../utils/formatTimestamp";
 import { itemCardTypes } from "../../features/item/ItemCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
@@ -58,7 +58,8 @@ export default function UserItems() {
         <span className="fw-bold">{otherUser.profileName}</span>
         <span>|</span>
         <span>
-          Aktiv seit: {formatTimestamp(otherUser.createdAt, TimestampType.USER)}
+          Aktiv seit:{" "}
+          {formatTimestamp(otherUser.createdAt, TIMESTAMP_TYPES.USER)}
         </span>
       </div>
       <ItemList
