@@ -3,30 +3,36 @@
  */
 import { useState } from "react";
 import { deleteFavoriteItem as apiDeleteFavoriteItem } from "../../../apis/favoriteItemApi";
+import ErrorDialog from "../../../components/ErrorDialog";
+import { useAppContext } from "../../../contexts/AppContext";
 
 export default function FavoriteItemDeleteButton({
   itemId,
   deleteFavoriteItem,
 }) {
-  const [deletingFavorite, setDeletingFavorite] = useState(false);
+  const { openDialog } = useAppContext();
 
-  const handleOnclick = async (event) => {
-    setDeletingFavorite(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const handleDeleteFavoriteItem = async (event) => {
+    setIsDeleting(true);
     event.preventDefault();
-    await apiDeleteFavoriteItem(itemId).catch((error) => {
-      console.error(error);
-    });
-    deleteFavoriteItem();
 
-    setDeletingFavorite(false);
+    try {
+      await apiDeleteFavoriteItem(itemId);
+      deleteFavoriteItem();
+    } catch (e) {
+      openDialog(ErrorDialog, { errorMessage: e.message });
+    }
+
+    setIsDeleting(false);
   };
   return (
     <button
       type="button"
       className="btn btn-outline-danger"
-      onClick={handleOnclick}
-      disabled={deletingFavorite}
+      onClick={handleDeleteFavoriteItem}
+      disabled={isDeleting}
     >
       <i className="bi bi-trash"></i>
     </button>
