@@ -15,8 +15,10 @@ import sp.backend.chat.ChatRepository;
 import sp.backend.chat.ChatWithUser;
 import sp.backend.dto.MessageCreateRequest;
 import sp.backend.dto.MessageResponse;
+import sp.backend.exception.CannotStartNewChatForDeletedItemException;
 import sp.backend.item.Item;
 import sp.backend.item.ItemRepository;
+import sp.backend.item.ItemStatus;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
 
@@ -91,6 +93,13 @@ public class MessageService {
         boolean createChat = existingChat.isEmpty();
 
         Chat chat = existingChat.orElseGet(() -> {
+            // Chat existiert nicht
+
+            // Für eine gelöschte Anzeige kann kein neuer Chat gestartet werden.
+            if (item.getStatus() == ItemStatus.DELETED) {
+                throw new CannotStartNewChatForDeletedItemException(ExceptionMessage.CANNOT_START_NEW_CHAT_FOR_DELETED_ITEM);
+            }
+
             Chat newChat = new Chat(item, itemPoster, interestedUser, null);
             return chatRepository.save(newChat);
         });
