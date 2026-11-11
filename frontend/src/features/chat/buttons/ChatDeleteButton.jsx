@@ -14,6 +14,7 @@ export default function ChatDeleteButton() {
     resetCurrentChat,
     chatListLength,
   } = useChatContext();
+
   const handleOpenDialog = () => {
     openDialog(ChatDeleteDialog, {
       deleteList,
@@ -24,9 +25,8 @@ export default function ChatDeleteButton() {
 
   return (
     <div className="d-flex justify-content-end gap-2">
-      {/* Chat löschen */}
       {isChatDeleteActive ? (
-        <button /* "Chat löschen" abbrechen */
+        <button /* deaktiviert Chat-Löschen-Modus */
           className="btn btn-outline-danger"
           onClick={() => {
             setIsChatDeleteActive(false);
@@ -36,7 +36,7 @@ export default function ChatDeleteButton() {
           <i className="bi bi-x-lg"></i>
         </button>
       ) : chatListLength > 0 ? (
-        <button /* "Chat löschen" aktivieren */
+        <button /* aktiviert Chat-Löschen-Modus */
           className="btn btn-outline-danger"
           onClick={() => {
             setIsChatDeleteActive(true);
@@ -47,7 +47,7 @@ export default function ChatDeleteButton() {
         </button>
       ) : null}
 
-      {/* "Chat löschen" bestätigen */}
+      {/* öffnet Chat-Löschen-Dialogfenster  */}
       {isChatDeleteActive && (
         <button
           className="btn btn-outline-danger"
