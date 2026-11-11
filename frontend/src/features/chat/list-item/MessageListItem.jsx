@@ -5,7 +5,10 @@ import { useChatContext } from "../../../contexts/ChatContext";
 import { useAuthContext } from "../../../contexts/AuthContext";
 import ProfileImage from "../../../components/ProfileImage";
 import { Link } from "react-router";
-import { formatTimestamp, TimestampType } from "../../../utils/formatTimestamp";
+import {
+  formatTimestamp,
+  TIMESTAMP_TYPES,
+} from "../../../utils/formatTimestamp";
 
 export default function MessageListItem({ message }) {
   const { user } = useAuthContext();
@@ -19,6 +22,7 @@ export default function MessageListItem({ message }) {
       className={`d-flex align-items-end ${senderId == userId ? "align-self-end" : null}`}
       style={{ maxWidth: "80%" }}
     >
+      {/* Profilbild des Chatpartners */}
       {senderId != userId ? (
         <Link className="mb-1 me-1 rounded-circle" to={`/user/${senderId}`}>
           <ProfileImage
@@ -29,6 +33,7 @@ export default function MessageListItem({ message }) {
       <div
         className={`d-flex flex-column ${senderId == userId ? "align-self-end" : null}`}
       >
+        {/* Nachricht */}
         <div
           className={`rounded  p-2 ${senderId == userId ? "align-self-end bg-primary-subtle" : "align-self-start bg-secondary-subtle"}`}
           style={{ whiteSpace: "pre-line", overflowWrap: "anywhere" }}
@@ -38,10 +43,11 @@ export default function MessageListItem({ message }) {
             "\n",
           )}
         </div>
+        {/* Zeitstempel */}
         <span
           className={`text-secondary small ${senderId == userId ? "align-self-end" : null}`}
         >
-          {formatTimestamp(message.createdAt, TimestampType.MESSAGE)}
+          {formatTimestamp(message.createdAt, TIMESTAMP_TYPES.MESSAGE)}
         </span>
       </div>
     </div>
