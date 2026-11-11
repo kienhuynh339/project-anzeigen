@@ -19,42 +19,42 @@ export default function ItemFavorButton({
 }) {
   const { openDialog } = useAppContext();
 
-  const [isFavoriteChanging, setIsFavoriteChanging] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [favorite, setFavorite] = useState(isFavorite);
 
   useEffect(() => {
     setFavorite(isFavorite);
   }, [isFavorite]);
 
-  const handleFavoriteButtonClick = async (event) => {
+  const handleClick = async (event) => {
     event.preventDefault();
-    setIsFavoriteChanging(true);
+    setIsButtonDisabled(true);
+
     if (favorite) {
       try {
         await deleteFavoriteItem(itemId);
         setFavorite(false);
       } catch (e) {
-        console.error(error);
+        openDialog(ErrorDialog, { errorMessage: e.message });
       }
     } else {
       try {
         await addFavoriteItem(itemId);
         setFavorite(true);
       } catch (e) {
-        const errorMessage = e.message;
-        openDialog(ErrorDialog, { errorMessage });
-        console.error(e);
+        openDialog(ErrorDialog, { errorMessage: e.message });
       }
     }
-    setIsFavoriteChanging(false);
+
+    setIsButtonDisabled(false);
   };
 
   return (
     <button
       className={className}
       style={style}
-      onClick={handleFavoriteButtonClick}
-      disabled={isFavoriteChanging}
+      onClick={handleClick}
+      disabled={isButtonDisabled}
     >
       <i
         className={` bi bi-heart${favorite ? "-fill" : ""} ${!showLabel && (favorite ? "text-danger" : "")}`}
