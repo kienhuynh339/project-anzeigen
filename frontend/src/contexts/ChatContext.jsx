@@ -41,18 +41,20 @@ const initialChat = {
   fistDeletedByUserId: "",
 };
 
+// Für Chats und den aktuell ausgewählten Chat
 export function ChatContextProvider({ children }) {
   const { user } = useAuthContext();
   const { activateRedPoint, deactivateRedPoint } = useAppContext();
 
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(initialChat);
+  // Chat-Löschen-Modus
   const [isChatDeleteActive, setIsChatDeleteActive] = useState(false);
-  const [deleteList, setDeleteList] = useState([]); // Ids von zu löschenden Chats
+  // Ids von zu löschenden Chats
+  const [deleteList, setDeleteList] = useState([]);
 
   // Chats abrufen
   const { data: chatPage } = useFetch(getPath.chats(), []);
-
   useEffect(() => {
     setChats(chatPage?.content ?? []);
   }, [chatPage]);
@@ -73,15 +75,16 @@ export function ChatContextProvider({ children }) {
     setChats((prev) => [...prev, chat]);
   };
 
+  // hält Chatliste automatisch aktuell
   const handleChatOrMessageEvent = useCallback(async (event) => {
     try {
       if (event.entity === EVENT_ENTITY.CHAT) {
         if (event.action === EVENT_ACTION.CREATE) {
-          // CREATE -> neuen Chat hinzufügen
+          // CREATE -> Chat hinzufügen (CHAT-CREATE: der Chat existiert noch nicht, MESSAGE-CREATE: der Chat existiert bereits)
           const fetchedChat = await getChat(event.entityId);
           addChatToList(fetchedChat);
         } else if (event.action === EVENT_ACTION.DELETE) {
-          // DELETE -> betroffenen Chat entfernen
+          // DELETE -> Chat entfernen
           removeChatFromList(event.entityId);
         } else if (event.action === EVENT_ACTION.SOFT_DELETE) {
           // SOFT_DELETE
@@ -98,7 +101,7 @@ export function ChatContextProvider({ children }) {
         const fetchedChat = await getChat(event.entityId);
 
         if (event.action === EVENT_ACTION.CREATE) {
-          // Neue Nachricht für einen bestehenden Chat -> den Chat aktualisieren
+          // Chat bei neuer Nachricht aktualisieren (MESSAGE-CREATE: der Chat existiert bereits)
           replaceChatInList(fetchedChat, event.entityId);
         }
       }
@@ -107,11 +110,10 @@ export function ChatContextProvider({ children }) {
       return;
     }
   }, []);
-
   const { connected } = useStomp("/user/chats", handleChatOrMessageEvent);
 
   useEffect(() => {
-    // Aktualisiere currentChat
+    // Aktualisiert currentChat
     if (currentChat.id) {
       const updatedChat = chats.find((chat) => chat.id === currentChat.id);
 
@@ -168,7 +170,7 @@ export function ChatContextProvider({ children }) {
 
   const selectChat = async (chat) => {
     if (!chat.lastMessage.read && chat.lastMessage.senderId !== user?.id) {
-      // Nachricht(en) als gelesen markieren
+      // markiert Nachricht als gelesen
       try {
         await markMessageAsRead(chat.id);
         updateChatStatus(chat.id, true);
@@ -206,7 +208,7 @@ export function useChatContext() {
   const context = useContext(ChatContext);
   if (!context) {
     throw new Error(
-      "useChatContext muss innerhalb von ChatContextProvider verwendet werden",
+      "useChatContext darf nur innerhalb von ChatContextProvider verwendet werden",
     );
   }
   return context;
