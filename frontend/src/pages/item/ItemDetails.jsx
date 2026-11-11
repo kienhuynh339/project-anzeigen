@@ -14,6 +14,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 import ImageGallery from "../../features/item/ImageGallery";
 import MessageButton from "../../features/chat/buttons/MessageButton";
+import { Navigate } from "react-router";
 import {
   useStomp,
   EVENT_ACTION,
@@ -37,8 +38,14 @@ export default function ItemDetails() {
   const [item, setItem] = useState(initialItem);
   const [itemFetchTrigger, setItemFetchTrigger] = useState(false);
 
-  const { data: fetchedItem } = useFetch(
-    getPath.itemByItemId(itemId),
+  let isItemIdValid = /^[1-9]\d*$/.test(itemId);
+
+  const {
+    data: fetchedItem,
+    error: itemFetchError,
+    loading,
+  } = useFetch(
+    isItemIdValid ? getPath.itemByItemId(itemId) : null,
     [itemFetchTrigger],
     initialItem,
   );
@@ -81,6 +88,14 @@ export default function ItemDetails() {
   }, []);
 
   const { connected } = useStomp(`/topic/items/${itemId}`, handleItemEvent);
+
+  if (loading) {
+    return <p>Lade...</p>;
+  }
+
+  if (!isItemIdValid || itemFetchError) {
+    return <Navigate to="/404" replace />;
+  }
 
   return (
     <>
