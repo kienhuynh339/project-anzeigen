@@ -7,12 +7,15 @@ import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useSearchContext } from "../contexts/SearchContext";
+import { useAppContext } from "../contexts/AppContext";
+import ErrorDialog from "./ErrorDialog";
 
 export default function Navbar() {
   const navigate = useNavigate();
 
   const { triggerSearch, resetSearchFilters } = useSearchContext();
   const { user, logout, isAuthenticated } = useAuthContext();
+  const { openDialog } = useAppContext();
 
   const options = [
     {
@@ -39,8 +42,12 @@ export default function Navbar() {
   ];
 
   async function handleLogout() {
-    await logout();
-    navigate("/login");
+    try {
+      await logout();
+      navigate("/login");
+    } catch (e) {
+      openDialog(ErrorDialog, { errorMessage: e.message });
+    }
   }
 
   const handleClickLogo = () => {
