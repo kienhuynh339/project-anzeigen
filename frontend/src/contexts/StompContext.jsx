@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import { useAuthContext } from "./AuthContext";
 
-const WS_URL = "ws://localhost:8080/ws"; // "http://localhost:8080/ws"
+const WS_URL = "ws://localhost:8080/ws";
 const StompContext = createContext(null);
 
 export const EVENT_ENTITY = Object.freeze({
@@ -21,9 +21,11 @@ export const EVENT_ACTION = Object.freeze({
   SOFT_DELETE: "softDelete",
 });
 
+// Für STOMP-WebSocket-Verbindung
 export function StompContextProvider({ children }) {
   const { isAuthenticated } = useAuthContext();
 
+  // STOMP-Client
   const clientRef = useRef(null);
 
   const [connected, setConnected] = useState(false);
@@ -51,30 +53,30 @@ export function StompContextProvider({ children }) {
 
       // wird von stomp aufgerufen, wenn die STOMP-Verbindung erfolgreich hergestellt wurde.
       onConnect: () => {
-        console.log("STOMP connected");
+        console.log("STOMP-Verbindung hergestellt");
         setConnected(true);
       },
 
       // wenn die STOMP-Verbindung ordnungsgemäß beendet wird.
       onDisconnect: () => {
-        console.log("STOMP disconnected");
+        console.log("STOMP-Verbindung getrennt");
         setConnected(false);
       },
 
       // wenn die WebSocket-Verbindung geschlossen wird.
       onWebSocketClose: () => {
-        console.log("WebSocket closed");
+        console.log("WebSocket-Verbindung geschlossen");
         setConnected(false);
       },
 
       // wenn ein Fehler auf der WebSocket-Ebene auftritt.
       onWebSocketError: (error) => {
-        console.error("WebSocket error:", error);
+        console.error("WebSocket-Fehler:", error);
       },
 
       // wenn Client einen STOMP-ERROR-Frame bekommt.
       onStompError: (frame) => {
-        console.error("STOMP error:", frame.headers["message"], frame.body);
+        console.error("STOMP-Fehler:", frame.headers["message"], frame.body);
       },
     });
 
@@ -84,7 +86,6 @@ export function StompContextProvider({ children }) {
     // Der STOMP-Client startet den Verbindungsaufbau.
     // Er öffnet eine WebSocket-Verbindung.
     // Er sendet eine STOMP-CONNECT-Nachricht.
-    // Der Spring-Boot-Server verarbeitet die Verbindung.
     // Der Server antwortet mit STOMP-CONNECTED.
     // onConnect()-Callback wird ausgeführt.
     client.activate();
@@ -98,7 +99,7 @@ export function StompContextProvider({ children }) {
   }, [isAuthenticated]);
 
   // einen bestimmten Nachrichtenkanal (destination) beim Backend abonnieren
-  // callback erhält ein Event-Objekt (DataChangedEvent vom Backend) als Parameter.
+  // callback erhält ein Event-Objekt (sp.backend.dto.Event vom Backend) als Parameter.
   const subscribe = (destination, callback) => {
     const client = clientRef.current;
 
@@ -108,10 +109,11 @@ export function StompContextProvider({ children }) {
 
     const subscription = client.subscribe(destination, (message) => {
       try {
+        // message.body enthält das Event-Objekt
         const event = JSON.parse(message.body);
         callback(event);
       } catch (error) {
-        console.error("STOMP message parsing error:", error);
+        console.error("Fehler beim Verarbeiten der STOMP-Nachricht:", error);
       }
     });
 
@@ -133,6 +135,12 @@ export function StompContextProvider({ children }) {
 
 export function useStomp(destination, callback) {
   const context = useContext(StompContext);
+
+  if (!context) {
+    throw new Error(
+      "useStomp darf nur innerhalb von StompContextProvider verwendet werden",
+    );
+  }
 
   const callbackRef = useRef(callback);
 
