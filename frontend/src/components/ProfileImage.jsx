@@ -1,6 +1,8 @@
 /**
  * @author Trung Kien Huynh
  */
+
+// enthält {Dateiname(ohne Endung):PfadZurDatei,...}
 const PROFILE_IMAGES = Object.fromEntries(
   Object.entries(
     import.meta.glob("../assets/profile_images/*.svg", {
