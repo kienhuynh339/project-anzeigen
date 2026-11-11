@@ -8,9 +8,11 @@ public class ExceptionMessage {
     public static final String ITEM_NOT_FOUND = "Die Anzeige wurde nicht gefunden.";
     public static final String FAVORITE_ITEM_NOT_FOUND = "Die Anzeige existiert nicht in der Merkliste.";
     public static final String FAVORITE_ITEM_ALREADY_EXISTS = "Die Anzeige existiert bereits in der Merkliste.";
-    public static final String POSTER_CANNOT_FAVORITE_OWN_ITEM = "Der Poster darf seine eigene Anzeige nicht zur Merkliste hinzufügen..";
+    public static final String POSTER_CANNOT_FAVOR_OWN_ITEM = "Der Poster darf seine eigene Anzeige nicht zur Merkliste hinzufügen..";
+    public static final String CANNOT_FAVOR_DELETED_ITEM = "Eine gelöschte Anzeige kann nicht zur Merkliste hinzugefügt werden.";
     public static final String CATEGORY_NOT_FOUND = "Die Kategorie wurde nicht gefunden.";
     public static final String CHAT_NOT_FOUND = "Der Chat wurde nicht gefunden.";
+    public static final String CANNOT_START_NEW_CHAT_FOR_DELETED_ITEM = "Für eine gelöschte Anzeige kann kein neuer Chat gestartet werden.";
     public static final String MESSAGE_NOT_FOUND = "Die Nachricht wurde nicht gefunden.";
     public static final String LOCATION_NOT_FOUND = "Der Ort wurde nicht gefunden.";
     public static final String IMAGE_NOT_FOUND = "Das Bild wurde nicht gefunden.";
