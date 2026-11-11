@@ -15,29 +15,30 @@ export default function MessageInput() {
   const { currentChat, otherUser } = useChatContext();
   const { user } = useAuthContext();
 
-  const [messageContent, setMessageContent] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  // Fehlermeldung
   const [notification, setNotification] = useState("");
 
-  const handleSubmit = async () => {
-    if (!validateInput(messageContent, FIELD_KEYS.MESSAGE)) {
+  const handleSend = async () => {
+    if (!validateInput(message, FIELD_KEYS.MESSAGE)) {
       setNotification(INPUT_NOTICES[FIELD_KEYS.MESSAGE]);
       return;
     }
 
-    setSubmitting(true);
+    setIsSending(true);
 
     try {
       await apiSendMessage(
         currentChat.itemId,
         currentChat.interestedUser.id,
-        messageContent,
+        message,
       );
-      setMessageContent("");
+      setMessage("");
     } catch (e) {
       setNotification(e.message);
     } finally {
-      setSubmitting(false);
+      setIsSending(false);
     }
   };
   return (
@@ -50,30 +51,31 @@ export default function MessageInput() {
       ) : (
         <div className="d-flex flex-column">
           <div className="d-flex gap-2">
+            {/* Nachrichteneingabefeld  */}
             <textarea
               type="text"
               className="form-control border-dark-subtle"
               placeholder="Nachricht schreiben..."
               maxLength={4000}
-              value={messageContent}
-              onChange={(e) => setMessageContent(e.target.value)}
-              disabled={submitting}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              disabled={isSending}
               rows={1}
             />
-            <button
+            <button /* sendet Nachricht */
               type="button"
               className="btn btn-primary border-dark-subtle"
-              disabled={submitting || !messageContent}
-              onClick={handleSubmit}
+              disabled={isSending || !message}
+              onClick={handleSend}
             >
               Senden
             </button>
           </div>
-          {messageContent && (
-            <small className="text-muted">
-              {messageContent.length}/4000 Zeichen
-            </small>
+          {/* Zeichenanzahllimit */}
+          {message && (
+            <small className="text-muted">{message.length}/4000 Zeichen</small>
           )}
+          {/* Fehlermeldung */}
           {notification && (
             <p className="bg-danger-subtle mt-1 mb-0 border border-danger-subtle rounded p-1 text-danger">
               {notification}
