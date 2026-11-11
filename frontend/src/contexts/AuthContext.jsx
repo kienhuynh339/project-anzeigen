@@ -8,39 +8,38 @@ import * as userApi from "../apis/userApi";
 
 const AuthContext = createContext(null);
 
+// Für Anmelden, Abmelden, Registrieren und den aktuellen User
 export function AuthContextProvider({ children }) {
+  // aktueller User
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  // Prüfen, ob bereits eine Session existiert
   useEffect(() => {
-    async function checkAuthentication() {
+    async function loadCurrentUser() {
+      setIsLoadingUser(true);
       try {
         const currentUser = await userApi.getCurrentUser();
         setUser(currentUser);
-      } catch (error) {
+      } catch (e) {
         setUser(null);
       } finally {
-        setLoading(false);
+        setIsLoadingUser(false);
       }
     }
 
-    checkAuthentication();
+    loadCurrentUser();
   }, []);
 
-  // Anmelden
   async function login(accountName, password) {
     await authApi.login(accountName, password);
     const loggedInUser = await userApi.getCurrentUser();
     setUser(loggedInUser);
   }
 
-  // Registrieren
   function register(profileName, accountName, password) {
     return userApi.register(profileName, accountName, password);
   }
 
-  // Abmelden
   async function logout() {
     await authApi.logout();
     setUser(null);
@@ -50,8 +49,8 @@ export function AuthContextProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
-        loading,
         isAuthenticated: !!user,
+        isLoadingUser,
         login,
         register,
         logout,
@@ -63,5 +62,11 @@ export function AuthContextProvider({ children }) {
 }
 
 export function useAuthContext() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error(
+      "useAuthContext darf nur innerhalb von AuthContextProvider verwendet werden",
+    );
+  }
+  return context;
 }
