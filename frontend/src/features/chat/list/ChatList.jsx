@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useChatContext } from "../../../contexts/ChatContext";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ChatListItem from "../list-item/ChatListItem";
 import ChatDeleteButton from "../buttons/ChatDeleteButton";
 import { useAuthContext } from "../../../contexts/AuthContext";
@@ -14,20 +14,29 @@ const chatFilterOptions = [
 ];
 
 export default function ChatList() {
-  const [chatFilter, setChatFilter] = useState(chatFilterOptions[0].value);
   const { chats } = useChatContext();
   const { user } = useAuthContext();
 
-  const filteredChats = chats.filter((chat) => {
-    switch (chatFilter) {
-      case "all":
-        return true;
-      case "yours":
-        return chat.poster.id == user.id;
-      case "others":
-        return chat.poster.id != user.id;
-    }
-  });
+  const [chatFilter, setChatFilter] = useState(chatFilterOptions[0].value);
+
+  const filteredChats = useMemo(() => {
+    return chats
+      .filter((chat) => {
+        switch (chatFilter) {
+          case "all":
+            return true;
+          case "yours":
+            return chat.poster.id == user.id;
+          case "others":
+            return chat.poster.id != user.id;
+        }
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime(),
+      );
+  }, [chats, chatFilter]);
 
   return (
     <div className="h-100 d-flex flex-column">
@@ -59,15 +68,9 @@ export default function ChatList() {
       </div>
       {/* Chatliste */}
       <div className=" list-group list-group-flush flex-grow-1 overflow-auto">
-        {filteredChats
-          .sort(
-            (a, b) =>
-              new Date(b.lastMessage.createdAt).getTime() -
-              new Date(a.lastMessage.createdAt).getTime(),
-          )
-          .map((chat) => (
-            <ChatListItem key={chat.id} chat={chat} />
-          ))}
+        {filteredChats?.map((chat) => (
+          <ChatListItem key={chat.id} chat={chat} />
+        ))}
       </div>
     </div>
   );
