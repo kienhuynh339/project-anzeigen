@@ -50,7 +50,7 @@ export function useFetch(url, dependencies = [], initialData = null) {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         setError(true);
         setData(initialData);
       })
