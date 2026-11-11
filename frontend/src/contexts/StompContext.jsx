@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import { useAuthContext } from "./AuthContext";
