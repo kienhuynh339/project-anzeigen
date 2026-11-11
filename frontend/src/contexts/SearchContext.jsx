@@ -5,20 +5,26 @@ import { createContext, useContext, useState } from "react";
 
 const SearchContext = createContext(null);
 
+const initialSearchFilters = Object.freeze({
+  searchTerm: "",
+  categoryId: 1,
+  postcode: "",
+  locationId: "",
+  radiusKm: "",
+  priceMin: "",
+  priceMax: "",
+});
+
 export function SearchContextProvider({ children }) {
-  const initialSearchFilters = Object.freeze({
-    searchTerm: "",
-    categoryId: 1,
-    postcode: "",
-    locationId: "",
-    radiusKm: "",
-    priceMin: "",
-    priceMax: "",
-  });
   const [searchFilters, setSearchFilters] = useState(initialSearchFilters);
   const [searchTrigger, setSearchTrigger] = useState(false);
+
   const resetSearchFilters = () => {
     setSearchFilters(initialSearchFilters);
+  };
+
+  const triggerSearch = () => {
+    setSearchTrigger((prev) => !prev);
   };
 
   return (
@@ -28,7 +34,7 @@ export function SearchContextProvider({ children }) {
         searchFilters,
         setSearchFilters,
         searchTrigger,
-        setSearchTrigger,
+        triggerSearch,
       }}
     >
       {children}
