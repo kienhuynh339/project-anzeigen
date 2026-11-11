@@ -9,10 +9,11 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { useSearchContext } from "../contexts/SearchContext";
 
 export default function Navbar() {
-  const { searchTrigger, setSearchTrigger, resetSearchFilters } =
-    useSearchContext();
   const navigate = useNavigate();
+
+  const { triggerSearch, resetSearchFilters } = useSearchContext();
   const { user, logout, isAuthenticated } = useAuthContext();
+
   const options = [
     {
       label: "Meine Anzeigen",
@@ -42,23 +43,26 @@ export default function Navbar() {
     navigate("/login");
   }
 
-  const handleLogoClick = () => {
+  const handleClickLogo = () => {
     resetSearchFilters();
-    setSearchTrigger(!searchTrigger);
+    // löst eine erneute Suche aus
+    triggerSearch();
   };
 
   return (
     <div className="container-fluid pb-2 bg-dark">
       <div className="row align-items-center justify-content-between gap-3">
-        <Link to="/" className="col-auto ps-1 pe-0" onClick={handleLogoClick}>
+        {/* Logo */}
+        <Link to="/" className="col-auto ps-1 pe-0" onClick={handleClickLogo}>
           <img src={logo} alt="Logo" width="150" height="60" />
         </Link>
         <div className="col-auto pe-0 ps-0">
           <div className="d-flex flex-nowrap align-items-center gap-2">
-            {/* Login/Logout/Register */}
             {isAuthenticated ? (
               <>
+                {/* Begrüßung */}
                 <div className="text-white">Hallo {user.profileName}!</div>
+                {/* Anzeige erstellen */}
                 <button
                   type="button"
                   className="btn btn-outline-light"
@@ -66,18 +70,22 @@ export default function Navbar() {
                 >
                   <i className="bi bi-plus-circle"></i> Anzeige erstellen
                 </button>
+
                 <div className="ps-0 pe-1">
+                  {/* Dropdown-Knopf */}
                   <HamburgerMenu options={options} />
                 </div>
               </>
             ) : (
               <>
+                {/* Anmelden */}
                 <button
                   className="btn btn-outline-light"
                   onClick={() => navigate("/login")}
                 >
                   Anmelden
                 </button>
+                {/* Registrieren */}
                 <button
                   className="btn btn-outline-light"
                   onClick={() => navigate("/register")}
