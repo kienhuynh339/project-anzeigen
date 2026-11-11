@@ -43,7 +43,7 @@ export function StompContextProvider({ children }) {
 
       // wird von stomp aufgerufen, wenn Debug-Nachrichten ausgegeben werden.
       debug: (message) => {
-        console.log("[STOMP]", message);
+        // console.log("[STOMP]", message);
       },
 
       // wird von stomp aufgerufen, wenn die STOMP-Verbindung erfolgreich hergestellt wurde.
