@@ -4,15 +4,18 @@
 import DialogWindow from "../../../components/DialogWindow";
 import { useState } from "react";
 import { deleteChat } from "../../../apis/chatApi";
+
 export default function ChatDeleteDialog({
   deleteList,
   setDeleteList,
   setIsChatDeleteActive,
   closeDialog,
 }) {
-  const [deletingChat, setDeletingChat] = useState(false);
+  const [isDeletingChat, setIsDeletingChat] = useState(false);
+
   const handleDeleteChat = async () => {
-    setDeletingChat(true);
+    setIsDeletingChat(true);
+
     await Promise.all(
       deleteList.map((chatId) =>
         deleteChat(chatId).catch((e) => console.error(e)),
@@ -21,34 +24,36 @@ export default function ChatDeleteDialog({
     setDeleteList([]);
     setIsChatDeleteActive(false);
     closeDialog();
-    setDeletingChat(false);
+
+    // setIsDeletingChat(false);
   };
+
   return (
     <DialogWindow
       dialogTitle={"Chat löschen"}
-      dialogWidth={"50ch"}
+      dialogWidth={"25rem"}
       dialogButtons={[
-        <button
+        <button /* schließt Dialogfenster */
           key="dialog_button_1"
           type="button"
           className="btn btn-secondary"
           onClick={closeDialog}
-          disabled={deletingChat}
+          disabled={isDeletingChat}
         >
           Abbrechen
         </button>,
-        <button
+        <button /* löscht Chat(s) */
           key="dialog_button_2"
           type="button"
           className="btn btn-danger"
           onClick={handleDeleteChat}
-          disabled={deletingChat}
+          disabled={isDeletingChat}
         >
           Bestätigen
         </button>,
       ]}
     >
-      {deletingChat && <p>Chats werden gelöscht ...</p>}
+      {isDeletingChat && <p>Chats werden gelöscht ...</p>}
     </DialogWindow>
   );
 }
