@@ -17,52 +17,51 @@ export function AppContextProvider({ children }) {
   const { isAuthenticated } = useAuthContext();
 
   const [dialog, setDialog] = useState(null);
-  const [redPointActive, setRedPointActive] = useState(false);
+  // Signalisiert, dass es neue Nachricht(en) gibt
+  const [isRedPointActive, setIsRedPointActive] = useState(false);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const hasUnread = async () => {
       try {
         const result = await hasUnreadMessage();
-        setRedPointActive(result);
+        setIsRedPointActive(result);
       } catch (e) {
         console.error(e);
-        setRedPointActive(false);
+        setIsRedPointActive(false);
       }
     };
     hasUnread();
   }, [isAuthenticated]);
 
   const activateRedPoint = () => {
-    setRedPointActive(true);
+    setIsRedPointActive(true);
   };
 
   const deactivateRedPoint = () => {
-    setRedPointActive(false);
+    setIsRedPointActive(false);
   };
 
   const openDialog = (DialogComponent, props = {}) => {
     setDialog({ DialogComponent, props });
   };
+
   const closeDialog = () => {
     setDialog(null);
   };
 
+  // User bekommt eine neue Nachricht -> roten Punkt anzeigen
   const handleChatOrMessageEvent = useCallback(async (event) => {
-    try {
-      if (
-        (event.entity === EVENT_ENTITY.CHAT &&
-          event.action === EVENT_ACTION.CREATE) ||
-        (event.entity === EVENT_ENTITY.MESSAGE &&
-          event.action === EVENT_ACTION.CREATE)
-      ) {
-        activateRedPoint();
-      }
-    } catch (e) {
-      console.error(e);
-      return;
+    if (
+      (event.entity === EVENT_ENTITY.CHAT &&
+        event.action === EVENT_ACTION.CREATE) ||
+      (event.entity === EVENT_ENTITY.MESSAGE &&
+        event.action === EVENT_ACTION.CREATE)
+    ) {
+      activateRedPoint();
     }
   }, []);
-
   const { connected } = useStomp("/user/new-message", handleChatOrMessageEvent);
 
   return (
@@ -70,7 +69,7 @@ export function AppContextProvider({ children }) {
       value={{
         openDialog,
         closeDialog,
-        redPointActive,
+        isRedPointActive,
         activateRedPoint,
         deactivateRedPoint,
       }}
