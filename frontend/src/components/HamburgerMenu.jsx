@@ -4,7 +4,7 @@ import { useAppContext } from "../contexts/AppContext";
  * @author Trung Kien Huynh
  */
 export default function HamburgerMenu({ options }) {
-  // true -> Roter Punkt wird angezeigt (signalisiert, dass es neue Nachricht(en) gibt)
+  // true -> Roter Punkt anzeigen (signalisiert, dass es neue Nachricht(en) gibt)
   const { isRedPointActive } = useAppContext();
   return (
     <div className="btn-group postition-relative">
