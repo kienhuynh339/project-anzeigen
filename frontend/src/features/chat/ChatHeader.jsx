@@ -21,7 +21,7 @@ export default function ChatHeader() {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    // aktualisiert Chat
+    // Chat aktualisieren
     const refreshChat = async () => {
       try {
         const fetchedChat = await getChat(currentChat.id);
@@ -33,7 +33,7 @@ export default function ChatHeader() {
     refreshChat();
   }, [currentChat.id]);
 
-  // Aktualisiert Chat anhand von Änderungen an der Anzeige
+  // Chat anhand von Änderungen an der Anzeige aktualisieren
   const handleItemEvent = useCallback(
     async (event) => {
       try {
@@ -42,7 +42,7 @@ export default function ChatHeader() {
           (event.action === EVENT_ACTION.DELETE ||
             event.action === EVENT_ACTION.UPDATE)
         ) {
-          // aktualisiert Chat
+          // Chat aktualisieren
           const fetchedChat = await getChat(currentChat.id);
           replaceChatInList(fetchedChat, currentChat.id);
         }
