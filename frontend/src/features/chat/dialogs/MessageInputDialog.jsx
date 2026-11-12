@@ -16,11 +16,11 @@ export default function MessageInputDialog({ item, closeDialog }) {
 
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  // Fehlermeldung
   const [notification, setNotification] = useState("");
 
   const handleSend = async (itemId, interestedUserId, content) => {
     if (!validateInput(content, FIELD_KEYS.MESSAGE)) {
-      // Fehlermeldung
       setNotification(INPUT_NOTICES[FIELD_KEYS.MESSAGE]);
       return;
     }
@@ -43,7 +43,7 @@ export default function MessageInputDialog({ item, closeDialog }) {
       dialogTitle={"Nachricht schreiben"}
       dialogWidth={"70ch"}
       dialogButtons={[
-        <button /* schließt Dialogfenster */
+        <button /* Dialogfenster schließen */
           key="message-button-abbrechen"
           className="btn btn-secondary"
           onClick={closeDialog}
@@ -51,7 +51,7 @@ export default function MessageInputDialog({ item, closeDialog }) {
         >
           Abbrechen
         </button>,
-        <button /* sendet die Nachricht */
+        <button /* Nachricht senden */
           key="message-button-senden"
           className="btn btn-primary"
           disabled={isSending || !message}
