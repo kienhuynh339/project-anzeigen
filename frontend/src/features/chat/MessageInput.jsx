@@ -62,7 +62,7 @@ export default function MessageInput() {
               disabled={isSending}
               rows={1}
             />
-            <button /* sendet Nachricht */
+            <button /* Nachricht senden */
               type="button"
               className="btn btn-primary border-dark-subtle"
               disabled={isSending || !message}
