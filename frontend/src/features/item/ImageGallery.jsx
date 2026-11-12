@@ -67,7 +67,14 @@ export default function ImageGallery({ imageIds, itemStatus }) {
         </>
       ) : (
         // Kein Bild
-        <img className="h-100" src={noImage}></img>
+        <img
+          src={noImage}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        ></img>
       )}
     </div>
   );
