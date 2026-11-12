@@ -1,14 +1,14 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState } from "react";
+import React, { useState } from "react";
 
 const formatSize = (bytes) =>
   (bytes / (1024 * 1024)).toLocaleString("de-DE", {
     maximumFractionDigits: 2,
   });
 
-export default function ImageInput({ images, setImages }) {
+const ImageInput = React.memo(function ImageInput({ images, setImages }) {
   const [inputKey, setInputKey] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
@@ -156,4 +156,6 @@ export default function ImageInput({ images, setImages }) {
       </p>
     </div>
   );
-}
+});
+
+export default ImageInput;
