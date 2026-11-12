@@ -15,6 +15,7 @@ export default function LocationInput({
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputValue, setInputValue] = useState(initialInputValue);
+
   const previousPostcode = useRef(postcode);
 
   // Orte abrufen
@@ -25,15 +26,17 @@ export default function LocationInput({
   );
 
   // location.extraInfo an location.name anhängen
-  const locations = locationsData.map((location) => ({
-    id: location.id,
-    name: `${location.name} ${location.extraInfo ?? ""}`.trim(),
-    postcode: location.postcode,
-  }));
+  const locations = useMemo(() => {
+    return locationsData.map((location) => ({
+      id: location.id,
+      name: `${location.name} ${location.extraInfo ?? ""}`.trim(),
+      postcode: location.postcode,
+    }));
+  }, [locationsData]);
 
   // States bei Änderung der PLZ zurücksetzen
   useEffect(() => {
-    // if verhindert, dass die Resets beim ersten Rendern ausgeführt werden
+    // if verhindert, dass das Reset beim ersten Rendern ausgeführt wird
     if (previousPostcode.current !== postcode) {
       previousPostcode.current = postcode;
       setInputValue("");
