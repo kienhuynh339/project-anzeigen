@@ -6,6 +6,7 @@ import { ITEM_CARD_TYPES } from "../../features/item/ItemCard";
 import ItemList from "../../features/item/ItemList";
 import { getPath } from "../../hooks/useFetch";
 
+// Alle (gefilterten) Anzeigen
 export default function AllItems() {
   const { searchFilters } = useSearchContext();
 
