@@ -16,7 +16,7 @@ import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "./buttons/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
 
-export const itemCardTypes = Object.freeze({
+export const ITEM_CARD_TYPES = Object.freeze({
   MY_FAVORITE_ITEM: "MY_FAVORITE_ITEM",
   MY_ITEM: "MY_ITEM",
   ITEM_WITH_FAVOR_BUTTON: "ITEM_WITH_FAVOR_BUTTON",
@@ -29,6 +29,7 @@ export default function ItemCard({
   updateItemStatus,
 }) {
   const { user } = useAuthContext();
+
   return (
     <>
       <Link
@@ -37,8 +38,8 @@ export default function ItemCard({
         style={{ width: "22rem" }}
       >
         <div className="card shadow-sm h-100">
-          {/* Bild */}
           <div className="position-relative">
+            {/* Anzeigebild */}
             <img
               src={`http://localhost:8080/api/images/item/${item.id}/first`}
               className="card-img-top"
@@ -60,7 +61,7 @@ export default function ItemCard({
             {/* Favorite-Knopf */}
             {user &&
               user.id !== item.posterId &&
-              itemCardType === itemCardTypes.ITEM_WITH_FAVOR_BUTTON && (
+              itemCardType === ITEM_CARD_TYPES.ITEM_WITH_FAVOR_BUTTON && (
                 <ItemFavorButton
                   itemId={item.id}
                   isFavorite={item.favorite}
@@ -68,6 +69,7 @@ export default function ItemCard({
                   style={{ backgroundColor: "#9d9d9db9" }}
                 ></ItemFavorButton>
               )}
+            {/* Anzeigezustand (Gelöscht/Entwurf/Reserviert) */}
             {item.status && item.status !== "ACTIVE" && (
               <span className="text-white position-absolute top-50 start-50 translate-middle">
                 {translateItemStatus(item.status)}
@@ -77,6 +79,7 @@ export default function ItemCard({
 
           <div className="card-body d-flex flex-column justify-content-between pt-0">
             <div className="container-fluid p-0 m-0">
+              {/* Ort (ggf. Abstand in km) */}
               <div
                 className="d-flex align-items-center gap-1"
                 style={{ fontSize: "0.85rem" }}
@@ -87,6 +90,7 @@ export default function ItemCard({
                 </p>
               </div>
               <h5 className="card-title">
+                {/* Anzeigetitel */}
                 <ItemTitle
                   itemStatus={item.status}
                   itemTitle={item.title}
@@ -97,6 +101,7 @@ export default function ItemCard({
 
             <div className="d-flex flex-column gap-2">
               <div className="d-flex justify-content-between align-items-end">
+                {/* Preis */}
                 <p className="fs-5 fw-bold m-0">
                   {item.price === 0
                     ? ""
@@ -105,23 +110,27 @@ export default function ItemCard({
                         currency: "EUR",
                       })}
                 </p>
+                {/* Zeitstempel */}
                 <p className="text-secondary m-0">
                   {formatTimestamp(item.createdAt, TIMESTAMP_TYPES.ITEM)}
                 </p>
               </div>
               <div className="d-flex justify-content-between">
-                {itemCardType === itemCardTypes.MY_ITEM && (
+                {itemCardType === ITEM_CARD_TYPES.MY_ITEM && (
                   <>
+                    {/* Anzeige löschen */}
                     <ItemDeleteButton
                       itemId={item.id}
                       deleteItem={() => deleteItem(item.id)}
                     ></ItemDeleteButton>
                     {item.status === "DRAFT" ? (
+                      // Anzeige bearbeiten/fortsetzen
                       <ItemEditButton
                         itemId={item.id}
                         itemStatus={item.status}
                       ></ItemEditButton>
                     ) : item.status === "ACTIVE" ? (
+                      // Anzeige reservieren
                       <ItemReserveButton
                         itemId={item.id}
                         updateItemStatus={() =>
@@ -129,6 +138,7 @@ export default function ItemCard({
                         }
                       ></ItemReserveButton>
                     ) : item.status === "RESERVED" ? (
+                      // Anzeige aktivieren
                       <ItemActivateButton
                         itemId={item.id}
                         updateItemStatus={() =>
@@ -138,13 +148,15 @@ export default function ItemCard({
                     ) : null}
                   </>
                 )}
-                {itemCardType === itemCardTypes.MY_FAVORITE_ITEM && (
+                {itemCardType === ITEM_CARD_TYPES.MY_FAVORITE_ITEM && (
                   <>
+                    {/* Anzeige aus der Merkliste entfernen */}
                     <FavoriteItemDeleteButton
                       itemId={item.id}
                       deleteFavoriteItem={() => deleteItem(item.id)}
                     ></FavoriteItemDeleteButton>
                     {item.status !== "DELETED" && (
+                      // Nachricht schreiben
                       <MessageButton item={item}></MessageButton>
                     )}
                   </>
