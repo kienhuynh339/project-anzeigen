@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 export default function ItemEditButton({ itemId, itemStatus }) {
   const navigate = useNavigate();
 
-  const handleEditItem = async (event) => {
+  const handleNavigate = async (event) => {
     event.preventDefault();
     navigate(`/bearbeiten/${itemId}`);
   };
@@ -14,7 +14,7 @@ export default function ItemEditButton({ itemId, itemStatus }) {
     <button
       type="button"
       className={`btn btn-outline-dark`}
-      onClick={handleEditItem}
+      onClick={handleNavigate}
     >
       {itemStatus === "DRAFT" ? "Fortsetzen" : "Bearbeiten"}
     </button>
