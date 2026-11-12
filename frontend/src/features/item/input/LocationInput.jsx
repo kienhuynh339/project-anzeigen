@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { getPath, useFetch } from "../../../hooks/useFetch";
 
 export default function LocationInput({
