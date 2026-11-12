@@ -3,7 +3,7 @@
  */
 import ItemList from "../../features/item/ItemList";
 import { useNavigate } from "react-router";
-import { itemCardTypes } from "../../features/item/ItemCard";
+import { ITEM_CARD_TYPES } from "../../features/item/ItemCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { getPath } from "../../hooks/useFetch";
 
@@ -37,7 +37,7 @@ export default function MyItems() {
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
-      itemCardType={itemCardTypes.MY_ITEM}
+      itemCardType={ITEM_CARD_TYPES.MY_ITEM}
     ></ItemList>
   );
 }
