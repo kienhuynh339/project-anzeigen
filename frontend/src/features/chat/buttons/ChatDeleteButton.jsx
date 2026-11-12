@@ -26,7 +26,7 @@ export default function ChatDeleteButton() {
   return (
     <div className="d-flex justify-content-end gap-2">
       {isChatDeleteActive ? (
-        <button /* deaktiviert Chat-Löschen-Modus */
+        <button /* Chat-Löschen-Modus deaktivieren */
           className="btn btn-outline-danger"
           onClick={() => {
             setIsChatDeleteActive(false);
@@ -36,7 +36,7 @@ export default function ChatDeleteButton() {
           <i className="bi bi-x-lg"></i>
         </button>
       ) : chatListLength > 0 ? (
-        <button /* aktiviert Chat-Löschen-Modus */
+        <button /* Chat-Löschen-Modus aktivieren */
           className="btn btn-outline-danger"
           onClick={() => {
             setIsChatDeleteActive(true);
@@ -47,7 +47,7 @@ export default function ChatDeleteButton() {
         </button>
       ) : null}
 
-      {/* öffnet Chat-Löschen-Dialogfenster  */}
+      {/* Chat-Löschen-Dialogfenster öffnen  */}
       {isChatDeleteActive && (
         <button
           className="btn btn-outline-danger"
