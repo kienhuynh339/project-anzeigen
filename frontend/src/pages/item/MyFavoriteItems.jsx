@@ -3,7 +3,7 @@
  */
 import ItemList from "../../features/item/ItemList";
 import { useNavigate } from "react-router";
-import { itemCardTypes } from "../../features/item/ItemCard";
+import { ITEM_CARD_TYPES } from "../../features/item/ItemCard";
 import { getPath } from "../../hooks/useFetch";
 import { useSearchContext } from "../../contexts/SearchContext";
 
@@ -39,7 +39,7 @@ export default function MyFavoriteItems() {
       additionalContentWhenItemAmountIsZero={
         additionalContentWhenItemAmountIsZero
       }
-      itemCardType={itemCardTypes.MY_FAVORITE_ITEM}
+      itemCardType={ITEM_CARD_TYPES.MY_FAVORITE_ITEM}
     ></ItemList>
   );
 }
