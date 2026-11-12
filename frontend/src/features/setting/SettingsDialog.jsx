@@ -30,45 +30,48 @@ export default function SettingsDialog({
   fieldKey,
   closeDialog,
 }) {
-  const [value, setValue] = useState(initialValue);
+  const [inputValue, setInputValue] = useState(initialValue);
+  // Für "Passwort wiederholen"
   const [confirmPassword, setConfirmPassword] = useState("");
+  // Fehlermeldung
   const [notification, setNotification] = useState("");
-  const [updating, setUpdating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const passwordsMatch = confirmPassword === value;
   const isPassword = fieldKey === FIELD_KEYS.PASSWORD;
-  const initialValueMatch = value === initialValue;
+  const passwordsMatch = confirmPassword === inputValue;
+  const initialValueMatch = inputValue === initialValue;
 
   const handleCancel = () => {
     closeDialog();
   };
 
   const handleSave = async () => {
-    if (!validateInput(value, fieldKey)) {
+    if (!validateInput(inputValue, fieldKey)) {
       setNotification(INPUT_NOTICES[fieldKey]);
       return;
     }
 
-    setUpdating(true);
+    setIsUpdating(true);
+
     try {
       switch (fieldKey) {
         case FIELD_KEYS.PROFILE_NAME:
-          await userApi.updateProfileName(value);
+          await userApi.updateProfileName(inputValue);
           break;
         case FIELD_KEYS.ACCOUNT_NAME:
-          await userApi.updateAccountName(value);
+          await userApi.updateAccountName(inputValue);
           break;
         case FIELD_KEYS.PASSWORD:
-          await userApi.updatePassword(value);
+          await userApi.updatePassword(inputValue);
           break;
       }
       setNotification("");
       closeDialog();
-      setUpdating(false);
     } catch (e) {
       setNotification(e.message);
-      setUpdating(false);
     }
+
+    setIsUpdating(false);
   };
 
   return (
@@ -76,22 +79,22 @@ export default function SettingsDialog({
       dialogTitle={`${fields[fieldKey].label} ändern`}
       dialogWidth={"30rem"}
       dialogButtons={[
-        <button
+        <button // Abbrechen
           key="settings-cancel-button"
           className="btn btn-secondary"
           type="button"
           onClick={handleCancel}
-          disabled={updating}
+          disabled={isUpdating}
         >
           Abbrechen
         </button>,
-        <button
+        <button // Speichern
           key="settings-save-button"
           className="btn btn-primary"
           type="button"
           onClick={handleSave}
           disabled={
-            updating || initialValueMatch || (isPassword && !passwordsMatch)
+            isUpdating || initialValueMatch || (isPassword && !passwordsMatch)
           }
         >
           Speichern
@@ -104,13 +107,14 @@ export default function SettingsDialog({
           type={fields[fieldKey].type}
           className="form-control"
           placeholder={fields[fieldKey].label}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          disabled={updating}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          disabled={isUpdating}
         ></input>
         <label htmlFor={fieldKey}>{fields[fieldKey].label}</label>
       </div>
       {fieldKey === FIELD_KEYS.PASSWORD && (
+        // "Passwort wiederholen" - Eingabefeld
         <div className="form-floating mt-2">
           <input
             id="confirmPassword"
@@ -119,11 +123,12 @@ export default function SettingsDialog({
             placeholder="Passwort wiederholen"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            disabled={updating}
+            disabled={isUpdating}
           ></input>
           <label htmlFor="confirmPassword">Passwort wiederholen</label>
         </div>
       )}
+      {/* Fehlermeldung */}
       {notification && (
         <p className="bg-danger-subtle mt-1 border border-danger-subtle rounded p-1 text-danger">
           {notification}
