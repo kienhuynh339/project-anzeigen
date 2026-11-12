@@ -13,7 +13,7 @@ export default function PostcodeInput({
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Gefilterte PLZs abrufen
+  // PLZs abrufen
   const { data: postcodes } = useFetch(
     getPath.postcodesByPostcodePrefix(postcode),
     [postcode],
