@@ -23,17 +23,25 @@ import { Navigate } from "react-router";
 function App() {
   return (
     <BrowserRouter>
+      {/* Kopfbereich  */}
       <header>
         <Navbar></Navbar>
         <SearchBar></SearchBar>
       </header>
+      {/* Hauptbereich  */}
       <main className="min-vh-100 d-flex flex-column">
         <Routes>
+          {/* 404 Not Found */}
           <Route path="/404" element={<NotFound />} />
+          {/* Anmelden */}
           <Route path="/login" element={<Login />} />
+          {/* Registrieren */}
           <Route path="/register" element={<Register />} />
+          {/* Alle (gefilterten) Anzeigen */}
           <Route path="/" element={<AllItems />} />
+          {/* Anzeigedetails */}
           <Route path="/anzeigen/:itemId" element={<ItemDetails />} />
+          {/* Meine Anzeigen */}
           <Route
             path="/meine-anzeigen"
             element={
@@ -42,7 +50,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Anzeigen von User ... */}
           <Route path="/user/:otherUserId" element={<UserItems />} />
+          {/* Meine Merkliste */}
           <Route
             path="/meine-merkliste"
             element={
@@ -51,6 +61,7 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
+          {/* Nachrichten */}
           <Route
             path="/nachrichten"
             element={
@@ -79,6 +90,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Einstellungen */}
           <Route
             path="/einstellungen"
             element={
@@ -91,6 +103,7 @@ function App() {
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </main>
+      {/* Fußbereich  */}
       <footer className="bg-dark mt-auto py-3 flex-grow-1">
         <div className="container">
           <div className="text-center text-secondary">
