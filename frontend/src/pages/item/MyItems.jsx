@@ -19,7 +19,7 @@ export default function MyItems() {
   const additionalContentWhenItemAmountIsZero = (
     <div className="d-flex flex-column gap-2">
       <div>Du hast keine Anzeigen.</div>
-      <button
+      <button // Zu "/anzeige-erstellen" navigieren
         className="btn btn-outline-primary"
         onClick={() => navigate("/anzeige-erstellen")}
       >
