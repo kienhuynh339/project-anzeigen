@@ -4,7 +4,7 @@
 import { Navigate } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
 
-// Leitet nicht angemeldete Users zu "/login" weiter.
+// Nicht angemeldete Users zu "/login" weiterleiten.
 export default function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoadingUser } = useAuthContext();
 
