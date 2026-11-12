@@ -34,7 +34,7 @@ export default function ChatDeleteDialog({
 
     setIsChatDeleteActive(false);
     if (errorMessage) {
-      // öffnet ErrorDialog-Dialogfenster
+      // Fehler-Dialogfenster öffnen
       openDialog(ErrorDialog, { errorMessage });
     } else {
       closeDialog();
@@ -48,7 +48,7 @@ export default function ChatDeleteDialog({
       dialogTitle={"Chat löschen"}
       dialogWidth={"25rem"}
       dialogButtons={[
-        <button /* schließt Dialogfenster */
+        <button /* Dialogfenster schließen */
           key="dialog_button_1"
           type="button"
           className="btn btn-secondary"
@@ -57,7 +57,7 @@ export default function ChatDeleteDialog({
         >
           Abbrechen
         </button>,
-        <button /* löscht Chat(s) */
+        <button /* Chat(s) löschen */
           key="dialog_button_2"
           type="button"
           className="btn btn-danger"
