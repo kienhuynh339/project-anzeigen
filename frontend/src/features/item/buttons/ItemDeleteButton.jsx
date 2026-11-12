@@ -11,7 +11,7 @@ export default function ItemDeleteButton({
 }) {
   const { openDialog } = useAppContext();
 
-  const handleDeleteItem = (event) => {
+  const handleOpenDialog = (event) => {
     event.preventDefault();
     openDialog(ItemDeleteDialog, { itemId, deleteItem });
   };
@@ -20,7 +20,7 @@ export default function ItemDeleteButton({
     <button
       type="button"
       className="btn btn-outline-danger"
-      onClick={handleDeleteItem}
+      onClick={handleOpenDialog}
     >
       <i className="bi bi-trash"></i>
       {children}
