@@ -15,16 +15,18 @@ export default function ItemForm({
   initialLocationInputValue = "",
   children,
 }) {
-  if (item === null) {
+  if (!item) {
     return;
   }
-  // value(prev[key]) ist für "set((prev)=>{...})"
+
+  // value(prev[key]) ist "(prev)=>{...}" in "set((prev)=>{...})"
   const updateItemDetails = (key, value) => {
     setItem((prev) => ({
       ...prev,
       [key]: typeof value === "function" ? value(prev[key]) : value,
     }));
   };
+
   return (
     <div
       className="container border-dark-subtle border rounded mx-auto mt-3 pb-3 shadow-sm "
@@ -97,7 +99,7 @@ export default function ItemForm({
           &nbsp;,00&euro;
         </div>
       </div>
-      {/* Bilder Input*/}
+      {/* Bilder*/}
       <div className={"row mx-1 mt-3 align-items-center"}>
         <label className="fw-bold col-2">Bilder</label>
         <div className="col">
@@ -132,6 +134,7 @@ export default function ItemForm({
         </div>
       </div>
       {notification && (
+        // Fehlermeldung
         <div className={"row mx-1 my-3 align-items-center"}>
           <span className="bg-danger-subtle border rounded py-2 border-danger-subtle  text-danger">
             {notification}
