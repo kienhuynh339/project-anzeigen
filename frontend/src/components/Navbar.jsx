@@ -52,7 +52,7 @@ export default function Navbar() {
 
   const handleClickLogo = () => {
     resetSearchFilters();
-    // löst eine erneute Suche aus
+    // eine erneute Suche auslösen
     triggerSearch();
   };
 
