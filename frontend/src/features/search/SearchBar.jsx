@@ -10,7 +10,9 @@ import { useSearchContext } from "../../contexts/SearchContext";
 
 export default function SearchBar({}) {
   const navigate = useNavigate();
+
   const { searchFilters, setSearchFilters, triggerSearch } = useSearchContext();
+
   const { searchTerm, categoryId, postcode, radiusKm, priceMin, priceMax } =
     searchFilters;
 
@@ -21,7 +23,7 @@ export default function SearchBar({}) {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSearch = (event) => {
     event.preventDefault();
     triggerSearch();
     navigate("/");
@@ -94,6 +96,7 @@ export default function SearchBar({}) {
           >
             <i className="bi bi-sliders"></i> Preis
           </button>
+          {/* Dropdown-Fenster */}
           <div
             className="collapse mt-2 text-light position-absolute end-0 border border-dark-subtle bg-white rounded shadow"
             id="advancedFilters"
@@ -110,35 +113,36 @@ export default function SearchBar({}) {
               }}
             >
               <span className="">Preis: </span>
-              <div className="" style={{ width: "7rem" }}>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="von"
-                  value={priceMin}
-                  onChange={(e) => updateFilter("priceMin", e.target.value)}
-                  autoComplete="off"
-                />
-              </div>
+              {/* Preis min */}
+              <input
+                type="number"
+                className="form-control"
+                placeholder="von"
+                value={priceMin}
+                onChange={(e) => updateFilter("priceMin", e.target.value)}
+                autoComplete="off"
+                style={{ width: "7rem" }}
+              />
               <span className="">-</span>
-              <div className="" style={{ width: "7rem" }}>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="bis"
-                  value={priceMax}
-                  onChange={(e) => updateFilter("priceMax", e.target.value)}
-                  autoComplete="off"
-                />
-              </div>
+              {/* Preis max */}
+              <input
+                type="number"
+                className="form-control"
+                placeholder="bis"
+                value={priceMax}
+                onChange={(e) => updateFilter("priceMax", e.target.value)}
+                autoComplete="off"
+                style={{ width: "7rem" }}
+              />
             </div>
           </div>
         </div>
+        {/* Suche */}
         <button
           type="button"
           className="btn btn-outline-light "
           style={{ width: "7rem" }}
-          onClick={handleSubmit}
+          onClick={handleSearch}
         >
           Finden
         </button>
