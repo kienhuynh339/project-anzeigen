@@ -9,9 +9,10 @@ const formatSize = (bytes) =>
   });
 
 export default function ImageInput({ images, setImages }) {
-  const [inputId, setInputId] = useState(0);
+  const [inputKey, setInputKey] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
+  // Gesamtgröße der hochgeladenen Bilddateien
   const totalSize = images.reduce((sum, image) => sum + image.size, 0);
 
   const handleUpload = (event) => {
@@ -19,7 +20,8 @@ export default function ImageInput({ images, setImages }) {
 
     if (files.length > 0) {
       setImages((prev) => [...prev, ...files]);
-      setInputId((prev) => prev + 1);
+      // key ändert sich -> aktuelles <input> entfernen und ein neues <input> erstellen
+      setInputKey((prev) => prev + 1);
     }
   };
 
@@ -72,8 +74,8 @@ export default function ImageInput({ images, setImages }) {
         <div className={`p-0 m-0 ${images.length === 0 && "container-fluid"}`}>
           {/* key ändert sich -> aktuelles <input> entfernen und ein neues <input> erstellen */}
           <input
-            key={inputId}
-            id={`images-${inputId}`}
+            key={inputKey}
+            id={`images-${inputKey}`}
             name="images"
             type="file"
             multiple
@@ -82,7 +84,7 @@ export default function ImageInput({ images, setImages }) {
             onChange={handleUpload}
           />
           <label
-            htmlFor={`images-${inputId}`}
+            htmlFor={`images-${inputKey}`}
             className="btn btn-outline-light text-dark d-flex justify-content-center align-items-center p-0 m-0"
             style={{
               cursor: "pointer",
@@ -146,6 +148,7 @@ export default function ImageInput({ images, setImages }) {
           </p>
         )}
       </div>
+      {/* Limit */}
       <p className="text-muted text-end">
         <small>
           {images.length}/10 Bilder - {formatSize(totalSize)}/50 MB
