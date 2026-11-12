@@ -18,7 +18,7 @@ export default function MyFavoriteItems() {
   const additionalContentWhenItemAmountIsZero = (
     <div className="d-flex flex-column gap-2 align-items-center">
       <div>Deine Merkliste ist leer.</div>
-      <button
+      <button // Zu "/" navigieren
         className="btn btn-outline-primary"
         onClick={() => {
           resetSearchFilters();
