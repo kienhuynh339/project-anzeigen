@@ -13,7 +13,8 @@ export default function Login() {
 
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // Fehlermeldung
+  const [notification, setNotification] = useState("");
 
   if (isLoadingUser) {
     return <p>Lade...</p>;
@@ -25,12 +26,12 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError("");
+    setNotification("");
     try {
       await login(accountName, password);
       navigate("/");
     } catch (error) {
-      setError(error.message);
+      setNotification(error.message);
     }
   }
 
@@ -43,6 +44,7 @@ export default function Login() {
             className="d-flex flex-column gap-2 align-items-center"
             onSubmit={handleSubmit}
           >
+            {/* Benutzername */}
             <div className="form-floating">
               <input
                 id="accountName"
@@ -56,6 +58,7 @@ export default function Login() {
               />
               <label htmlFor="accountName">Benutzername</label>
             </div>
+            {/* Passwort */}
             <div className="form-floating">
               <input
                 id="password"
@@ -69,14 +72,14 @@ export default function Login() {
               />
               <label htmlFor="password">Passwort</label>
             </div>
-
-            {error && (
+            {/* Fehlermeldung */}
+            {notification && (
               <p className="text-danger m-0" style={{ width: "20rem" }}>
-                {error}
+                {notification}
               </p>
             )}
 
-            <button
+            <button // Anmelden
               className="btn btn-primary mt-3"
               type="submit"
               style={{ width: "15rem" }}
