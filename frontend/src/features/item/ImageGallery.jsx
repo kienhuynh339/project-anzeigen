@@ -4,6 +4,7 @@
 import { useState } from "react";
 import noImage from "../../assets/noImage.jpg";
 import { translateItemStatus } from "../../utils/translateItemStatus";
+
 export default function ImageGallery({ imageIds, itemStatus }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -41,23 +42,23 @@ export default function ImageGallery({ imageIds, itemStatus }) {
               {translateItemStatus(itemStatus)}
             </span>
           )}
-          {/* Nächstes/Vorheriges Bild */}
           {imageIds.length > 1 && (
             <>
-              <button
+              <button /* Vorheriges Bild */
                 className="btn btn-dark position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle"
                 type="button"
                 onClick={previousImage}
               >
                 &#10094;
               </button>
-              <button
+              <button /* Nächstes Bild */
                 className="btn btn-dark position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle"
                 type="button"
                 onClick={nextImage}
               >
                 &#10095;
               </button>
+              {/* Bildnummer */}
               <span className="badge bg-dark position-absolute bottom-0 end-0 m-2">
                 {currentIndex + 1} / {imageIds.length}
               </span>
