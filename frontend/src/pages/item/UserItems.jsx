@@ -28,7 +28,7 @@ export default function UserItems() {
   // Daten des anderen Users
   const {
     data: otherUser,
-    loading,
+    loading: otherUserLoading,
     error: userFetchError,
   } = useFetch(
     isOtherUserIdValid ? getPath.userByUserId(otherUserId) : null,
@@ -36,7 +36,7 @@ export default function UserItems() {
     { id: "", profileName: "", createdAt: "" },
   );
 
-  if (loading) {
+  if (otherUserLoading) {
     return <p>Lade...</p>;
   }
 
@@ -44,6 +44,7 @@ export default function UserItems() {
     return <Navigate to="/404" replace></Navigate>;
   }
 
+  // Angemeldeter User hat dieselbe ID wie die ID in der URL -> "/meine-anzeigen"
   if (String(otherUserId) === String(user?.id)) {
     return <Navigate to="/meine-anzeigen" replace></Navigate>;
   }
@@ -51,17 +52,21 @@ export default function UserItems() {
   return (
     <>
       <div className="d-flex justify-content-center align-items-center gap-2 border-bottom border-dark-subtle py-2">
+        {/* Profilbild */}
         <ProfileImage
           firstLetterOfName={otherUser.profileName.charAt(0)}
           size={"50"}
         ></ProfileImage>
+        {/* Profilname */}
         <span className="fw-bold">{otherUser.profileName}</span>
         <span>|</span>
+        {/* Kontoerstellungsdatum  */}
         <span>
           Aktiv seit:{" "}
           {formatTimestamp(otherUser.createdAt, TIMESTAMP_TYPES.USER)}
         </span>
       </div>
+      {/* Anzeigen */}
       <ItemList
         pageSize={PAGE_SIZE}
         urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
