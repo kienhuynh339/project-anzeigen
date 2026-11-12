@@ -34,12 +34,14 @@ const fieldKeys = [
 
 export default function CreateItem() {
   const navigate = useNavigate();
+
   const [item, setItem] = useState(initialItem);
   const [images, setImages] = useState([]);
   const [notification, setNotification] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (status) => {
+    // Eingaben validieren
     for (const key of fieldKeys) {
       const inputValue =
         key === FIELD_KEYS.IMAGES_AMOUNT || key === FIELD_KEYS.IMAGES_TOTAL_SIZE
@@ -51,7 +53,7 @@ export default function CreateItem() {
       }
     }
 
-    setSubmitting(true);
+    setIsSubmitting(true);
 
     try {
       await createItem(
@@ -75,7 +77,7 @@ export default function CreateItem() {
   const handleSaveDraft = async () => {
     const success = await handleSubmit("DRAFT");
 
-    setSubmitting(false);
+    setIsSubmitting(false);
     if (!success) return;
 
     navigate("/meine-anzeigen");
@@ -84,7 +86,7 @@ export default function CreateItem() {
   const handlePublishItem = async () => {
     const success = await handleSubmit("ACTIVE");
 
-    setSubmitting(false);
+    setIsSubmitting(false);
     if (!success) return;
 
     navigate("/meine-anzeigen");
@@ -93,6 +95,7 @@ export default function CreateItem() {
   return (
     <div className="container-fluid ">
       <h2 className="py-2 m-0">Anzeigendetails</h2>
+      {/* Formular */}
       <ItemForm
         item={item}
         setItem={setItem}
@@ -105,7 +108,7 @@ export default function CreateItem() {
           className="btn btn-outline-success"
           type="button"
           onClick={handleSaveDraft}
-          disabled={submitting}
+          disabled={isSubmitting}
         >
           Entwurf speichern
         </button>
@@ -114,7 +117,7 @@ export default function CreateItem() {
           className="btn btn-primary"
           type="button"
           onClick={handlePublishItem}
-          disabled={submitting}
+          disabled={isSubmitting}
         >
           Anzeige veröffentlichen
         </button>
