@@ -6,7 +6,7 @@ import { Navigate } from "react-router";
 import { useParams } from "react-router";
 import { useFetch, getPath } from "../../hooks/useFetch";
 import { formatTimestamp, TIMESTAMP_TYPES } from "../../utils/formatTimestamp";
-import { itemCardTypes } from "../../features/item/ItemCard";
+import { ITEM_CARD_TYPES } from "../../features/item/ItemCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import ProfileImage from "../../components/ProfileImage";
 
@@ -69,7 +69,7 @@ export default function UserItems() {
         additionalContentWhenItemAmountIsZero={
           additionalContentWhenItemAmountIsZero
         }
-        itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
+        itemCardType={ITEM_CARD_TYPES.ITEM_WITH_FAVOR_BUTTON}
       ></ItemList>
     </>
   );
