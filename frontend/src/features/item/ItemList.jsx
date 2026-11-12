@@ -8,7 +8,7 @@ import ItemPagination from "./ItemPagination";
 import { useEffect, useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
 
-const sortOption = Object.freeze({
+const SORT_OPTIONS = Object.freeze({
   CREATED_AT_DESC: "createdAt,desc",
   PRICE_ASC: "price,asc",
   PRICE_DESC: "price,desc",
@@ -24,16 +24,18 @@ export default function ItemList({
 }) {
   const { searchTrigger } = useSearchContext();
 
+  // aktuelle Seite
   const [page, setPage] = useState(0);
-  const [sortMode, setSortMode] = useState(sortOption.CREATED_AT_DESC);
+  const [sortMode, setSortMode] = useState(SORT_OPTIONS.CREATED_AT_DESC);
   const [items, setItems] = useState([]);
-  const [totalElements, setTotalElements] = useState(0);
+  const [itemAmount, setItemAmount] = useState(0);
 
-  // Bei einer neuen Suche oder Sortierung wieder auf Seite 1.
+  // Bei einer neuen Suche oder Sortierung wieder auf Seite 1 zurückkehren
   useEffect(() => {
     setPage(0);
   }, [sortMode, searchTrigger]);
 
+  // Anzeigen abrufen (Page<...>)
   const { data: response, loading } = useFetch(
     `${urlWithoutPaginationAndSorting}page=${page}&size=${pageSize}&sort=${sortMode}`,
     [sortMode, page, searchTrigger],
@@ -41,8 +43,7 @@ export default function ItemList({
 
   useEffect(() => {
     setItems(response?.content ?? []);
-    // Aktualisiert totalElements anhand von response nur bei Änderung an response
-    setTotalElements(response?.totalElements ?? 0);
+    setItemAmount(response?.totalElements ?? 0);
   }, [response]);
 
   if (loading) {
@@ -51,7 +52,7 @@ export default function ItemList({
 
   const deleteItem = (itemId) => {
     setItems((prev) => prev.filter((item) => item.id !== itemId));
-    setTotalElements((prev) => prev - 1);
+    setItemAmount((prev) => prev - 1);
   };
 
   const updateItemStatus = (itemId, itemStatus) => {
@@ -72,14 +73,14 @@ export default function ItemList({
         <h2 className="ps-1 m-0 d-flex align-items-center">
           {showItemAmount ? (
             <span style={{ fontSize: "1rem", fontWeight: "normal" }}>
-              {totalElements} Ergebnisse gefunden
+              {itemAmount} Ergebnisse gefunden
             </span>
           ) : (
             title
           )}
         </h2>
         {/* Sortierung */}
-        {totalElements > 0 && (
+        {itemAmount > 0 && (
           <div>
             Sortieren:{" "}
             <select
@@ -87,16 +88,16 @@ export default function ItemList({
               value={sortMode}
               onChange={(e) => setSortMode(e.target.value)}
             >
-              <option value={sortOption.CREATED_AT_DESC}>Neueste</option>
-              <option value={sortOption.PRICE_ASC}>Niedrigster Preis</option>
-              <option value={sortOption.PRICE_DESC}>Höchster Preis</option>
+              <option value={SORT_OPTIONS.CREATED_AT_DESC}>Neueste</option>
+              <option value={SORT_OPTIONS.PRICE_ASC}>Niedrigster Preis</option>
+              <option value={SORT_OPTIONS.PRICE_DESC}>Höchster Preis</option>
             </select>
           </div>
         )}
       </div>
       <div className="d-flex gap-2 flex-wrap justify-content-center">
         {/* Anderer Inhalt, wenn es keine Anzeigen gibt */}
-        {totalElements == 0 && additionalContentWhenItemAmountIsZero}
+        {itemAmount == 0 && additionalContentWhenItemAmountIsZero}
         {/* Anzeigen */}
         {items.map((item) => (
           <ItemCard
@@ -112,7 +113,7 @@ export default function ItemList({
       <ItemPagination
         page={page}
         setPage={setPage}
-        totalElements={totalElements}
+        itemAmount={itemAmount}
         pageSize={pageSize}
       ></ItemPagination>
     </div>
