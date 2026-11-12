@@ -13,7 +13,7 @@ export default function MessageButton({ item }) {
   };
 
   return (
-    <button /* öffnet Nachricht-Schreiben-Dialogfenster */
+    <button /* Nachricht-Schreiben-Dialogfenster öffnen */
       type="button"
       className="btn btn-outline-primary"
       onClick={handleOpenDialog}
