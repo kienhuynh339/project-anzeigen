@@ -46,15 +46,17 @@ export default function LocationInput({
   }, [postcode]);
 
   // Ort-Optionen aktualisieren
-  const options = locations.filter((location) =>
-    location.name.toLowerCase().includes(inputValue.toLowerCase()),
-  );
+  const options = useMemo(() => {
+    return locations.filter((location) =>
+      location.name.toLowerCase().includes(inputValue.toLowerCase()),
+    );
+  }, [locations, inputValue]);
 
   const getLocationExtraInfo = (locationId) => {
     return locationsData.find((l) => l.id === locationId).extraInfo;
   };
 
-  const handleInputChange = (event) => {
+  const handleChangeInput = (event) => {
     const value = event.target.value;
     setInputValue(value);
 
@@ -71,7 +73,7 @@ export default function LocationInput({
     }
   };
 
-  const handleOptionSelect = (location) => {
+  const handleSelectOption = (location) => {
     setInputValue(location.name);
     setLocationId(location.id);
     setLocationExtraInfo?.(getLocationExtraInfo(location.id));
@@ -85,7 +87,7 @@ export default function LocationInput({
         className="form-control white-focus w-100"
         placeholder="Ort"
         value={inputValue}
-        onChange={handleInputChange}
+        onChange={handleChangeInput}
         onFocus={() => setShowSuggestions(true)}
         onBlur={() => setShowSuggestions(false)}
         autoComplete="off"
@@ -111,7 +113,7 @@ export default function LocationInput({
               className="list-group-item list-group-item-action"
               style={{ cursor: "pointer" }}
               onMouseDown={() => {
-                handleOptionSelect(option);
+                handleSelectOption(option);
               }}
             >
               {option.name}
