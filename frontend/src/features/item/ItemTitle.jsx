@@ -12,10 +12,12 @@ export default function ItemTitle({
   return (
     <span>
       {itemStatus && itemStatus !== "ACTIVE" && (
+        // Anzeigezustand
         <span className="text-secondary pe-1">
           {translateItemStatus(itemStatus)} •
         </span>
       )}
+      {/* Anzeigetitel */}
       {truncateText(itemTitle, textLimit)}
     </span>
   );
