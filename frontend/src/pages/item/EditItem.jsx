@@ -39,18 +39,24 @@ const fieldKeys = [
 export default function EditItem() {
   const navigate = useNavigate();
   const { itemId } = useParams();
+
   const [item, setItem] = useState(null);
   const [images, setImages] = useState([]);
   const [notification, setNotification] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   let isItemIdValid = /^[1-9]\d*$/.test(itemId);
 
-  const { data: fetchedItem, error: itemFetchError } = useFetch(
-    isItemIdValid ? getPath.itemByItemIdToEdit(itemId) : null,
-    [itemId],
-  );
+  // Anzeigedaten abrufen
+  const {
+    data: fetchedItem,
+    error: itemFetchError,
+    loading: itemLoading,
+  } = useFetch(isItemIdValid ? getPath.itemByItemIdToEdit(itemId) : null, [
+    itemId,
+  ]);
 
+  // Bild-IDs abrufen
   const { data: imageIds } = useFetch(
     isItemIdValid ? getPath.imageIdsByItemId(itemId) : null,
     [itemId],
@@ -63,12 +69,13 @@ export default function EditItem() {
       setImages([]);
       return;
     }
+
     Promise.all(imageIds.map((id) => getImage(id)))
       .then((fetchedImages) => {
         setImages(fetchedImages);
       })
-      .catch((error) => {
-        console.error("Fehler beim Laden der Bilder:", error);
+      .catch((e) => {
+        setNotification(e.message);
       });
   }, [imageIds]);
 
@@ -78,6 +85,10 @@ export default function EditItem() {
       setItem(mapItemToFormData(fetchedItem));
     }
   }, [fetchedItem]);
+
+  if (itemLoading) {
+    return <p>Lade...</p>;
+  }
 
   if (!isItemIdValid || itemFetchError) {
     return <Navigate to="/404" replace />;
@@ -92,6 +103,7 @@ export default function EditItem() {
   }
 
   const handleSubmit = async (status) => {
+    // Eingaben validieren
     for (const key of fieldKeys) {
       const inputValue =
         key === FIELD_KEYS.IMAGES_AMOUNT || key === FIELD_KEYS.IMAGES_TOTAL_SIZE
@@ -103,7 +115,7 @@ export default function EditItem() {
       }
     }
 
-    setSubmitting(true);
+    setIsSubmitting(true);
 
     try {
       await updateItem(
@@ -128,7 +140,7 @@ export default function EditItem() {
   const handleSaveDraft = async () => {
     const success = await handleSubmit("DRAFT");
 
-    setSubmitting(false);
+    setIsSubmitting(false);
     if (!success) return;
 
     navigate("/meine-anzeigen");
@@ -137,7 +149,7 @@ export default function EditItem() {
   const handlePublishItem = async () => {
     const success = await handleSubmit("ACTIVE");
 
-    setSubmitting(false);
+    setIsSubmitting(false);
     if (!success) return;
 
     navigate("/meine-anzeigen");
@@ -146,14 +158,14 @@ export default function EditItem() {
   const handleSaveItem = async () => {
     const success = await handleSubmit(fetchedItem.status);
 
-    setSubmitting(false);
+    setIsSubmitting(false);
     if (!success) return;
 
     navigate("/meine-anzeigen");
   };
 
   const handleCancel = () => {
-    setSubmitting(false);
+    setIsSubmitting(false);
     navigate("/meine-anzeigen");
   };
 
@@ -168,11 +180,11 @@ export default function EditItem() {
         notification={notification}
         initialLocationInputValue={initialLocationInputValue}
       >
-        <button
+        <button // Abbrechen
           className="btn btn-secondary"
           type="button"
           onClick={handleCancel}
-          disabled={submitting}
+          disabled={isSubmitting}
         >
           Abbrechen
         </button>
@@ -182,7 +194,7 @@ export default function EditItem() {
             className="btn btn-outline-success"
             type="button"
             onClick={handleSaveDraft}
-            disabled={submitting}
+            disabled={isSubmitting}
           >
             Entwurf speichern
           </button>
@@ -197,7 +209,7 @@ export default function EditItem() {
               ? handleSaveItem
               : handlePublishItem
           }
-          disabled={submitting}
+          disabled={isSubmitting}
         >
           {fetchedItem?.status === "DRAFT"
             ? "Anzeige veröffentlichen"
