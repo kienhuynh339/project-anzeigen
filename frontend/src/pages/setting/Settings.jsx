@@ -10,7 +10,7 @@ export default function Settings() {
   const { openDialog } = useAppContext();
   const { user } = useAuthContext();
 
-  const handleDialogOpen = (fieldKey) => {
+  const handleOpenDialog = (fieldKey) => {
     const initialValue = user[fieldKey] ?? "";
     openDialog(SettingsDialog, { initialValue, fieldKey });
   };
@@ -30,7 +30,7 @@ export default function Settings() {
             <button
               className="btn btn-outline-primary border-0"
               type="button"
-              onClick={() => handleDialogOpen(FIELD_KEYS.PROFILE_NAME)}
+              onClick={() => handleOpenDialog(FIELD_KEYS.PROFILE_NAME)}
             >
               Ändern
             </button>
@@ -44,7 +44,7 @@ export default function Settings() {
             <button
               className="btn btn-outline-primary border-0"
               type="button"
-              onClick={() => handleDialogOpen(FIELD_KEYS.ACCOUNT_NAME)}
+              onClick={() => handleOpenDialog(FIELD_KEYS.ACCOUNT_NAME)}
             >
               Ändern
             </button>
@@ -58,7 +58,7 @@ export default function Settings() {
             <button
               className="btn btn-outline-primary border-0"
               type="button"
-              onClick={() => handleDialogOpen(FIELD_KEYS.PASSWORD)}
+              onClick={() => handleOpenDialog(FIELD_KEYS.PASSWORD)}
             >
               Ändern
             </button>
