@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { useSearchContext } from "../../contexts/SearchContext";
-import { itemCardTypes } from "../../features/item/ItemCard";
+import { ITEM_CARD_TYPES } from "../../features/item/ItemCard";
 import ItemList from "../../features/item/ItemList";
 import { getPath } from "../../hooks/useFetch";
 
@@ -26,7 +26,7 @@ export default function AllItems() {
       pageSize={PAGE_SIZE}
       urlWithoutPaginationAndSorting={urlWithoutPaginationAndSorting}
       showItemAmount={true}
-      itemCardType={itemCardTypes.ITEM_WITH_FAVOR_BUTTON}
+      itemCardType={ITEM_CARD_TYPES.ITEM_WITH_FAVOR_BUTTON}
     ></ItemList>
   );
 }
