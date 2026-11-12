@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 const API_URL = "http://localhost:8080/api";
 
+// GET-Pfad
 export const getPath = Object.freeze({
   messagesByChatId: (chatId) =>
     `/messages/chat/${chatId}?page=0&size=9999&sort=createdAt,asc`,
@@ -25,7 +26,7 @@ export const getPath = Object.freeze({
 
 export function useFetch(url, dependencies = [], initialData = null) {
   const [data, setData] = useState(initialData);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
