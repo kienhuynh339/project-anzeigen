@@ -75,7 +75,7 @@ export function ChatContextProvider({ children }) {
     setChats((prev) => [...prev, chat]);
   };
 
-  // hält Chatliste automatisch aktuell
+  // Chatliste automatisch aktuell halten
   const handleChatOrMessageEvent = useCallback(async (event) => {
     try {
       if (event.entity === EVENT_ENTITY.CHAT) {
@@ -91,7 +91,7 @@ export function ChatContextProvider({ children }) {
           const fetchedChat = await getChat(event.entityId);
 
           if (user.id === fetchedChat.fistDeletedByUserId) {
-            // Chat entfernen bei dem Löschenden
+            // Chat entfernen (bei dem Löschenden)
             removeChatFromList(event.entityId);
           } else {
             replaceChatInList(fetchedChat, event.entityId);
@@ -113,7 +113,7 @@ export function ChatContextProvider({ children }) {
   const { connected } = useStomp("/user/chats", handleChatOrMessageEvent);
 
   useEffect(() => {
-    // Aktualisiert currentChat
+    // currentChat aktualisieren
     if (currentChat.id) {
       const updatedChat = chats.find((chat) => chat.id === currentChat.id);
 
@@ -170,7 +170,7 @@ export function ChatContextProvider({ children }) {
 
   const selectChat = async (chat) => {
     if (!chat.lastMessage.read && chat.lastMessage.senderId !== user?.id) {
-      // markiert Nachricht als gelesen
+      // Nachricht als gelesen markieren
       try {
         await markMessageAsRead(chat.id);
         updateChatStatus(chat.id, true);
