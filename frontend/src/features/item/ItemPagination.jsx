@@ -4,23 +4,23 @@
 export default function ItemPagination({
   page,
   setPage,
-  totalElements,
+  itemAmount,
   pageSize,
 }) {
-  const totalPages = Math.ceil(totalElements / pageSize);
+  const totalPages = Math.ceil(itemAmount / pageSize);
 
   // Aktuelle Seite innerhalb der gültigen Grenzen halten.
   const currentPage = Math.min(totalPages, Math.max(0, page));
 
   // Seitenzahlen für die Pagination erzeugen.
   const visiblePages = Array.from(
-    { length: totalPages },
-    (value, key) => key, // Wert für ArrayElement (key ist index)
+    { length: totalPages }, // Anzahl der Arrayelements
+    (value, index) => index, // Arrayelement
   ).filter(
     (pageNumber) =>
       pageNumber === 0 || // erste Seite
       pageNumber === totalPages - 1 || // letzte Seite
-      Math.abs(pageNumber - currentPage) <= 2, //  die aktuelle Seite und 2 Seiten vor und nach der aktuellen Seite anzeigen
+      Math.abs(pageNumber - currentPage) <= 2, //  die aktuelle Seite und 2 Seiten vor und nach der aktuellen Seite
   );
   return (
     <>
