@@ -19,7 +19,6 @@ export default function Register() {
   const [profileName, setProfileName] = useState("");
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
-
   const [notification, setNotification] = useState("");
 
   if (isLoadingUser) {
@@ -46,7 +45,6 @@ export default function Register() {
 
     try {
       await register(profileName, accountName, password);
-
       navigate("/login");
     } catch (error) {
       setNotification(error.message);
@@ -59,6 +57,7 @@ export default function Register() {
         <div className="m-4">
           <h2 className="text-center mb-3">Registrieren</h2>
           <div className="d-flex flex-column gap-2 align-items-center">
+            {/* Profilname */}
             <div className="form-floating">
               <input
                 id="profileName"
@@ -73,6 +72,7 @@ export default function Register() {
               />
               <label htmlFor="profileName">Profilname</label>
             </div>
+            {/* Benutzername */}
             <div className="form-floating">
               <input
                 id="accountName"
@@ -87,6 +87,7 @@ export default function Register() {
               />
               <label htmlFor="accountName">Benutzername</label>
             </div>
+            {/* Passwort */}
             <div className="form-floating">
               <input
                 id="password"
@@ -101,7 +102,7 @@ export default function Register() {
               />
               <label htmlFor="password">Passwort</label>
             </div>
-
+            {/* Fehlermeldung */}
             {notification && (
               <p
                 className="bg-danger-subtle mt-1 border border-danger-subtle rounded p-1 text-danger"
@@ -111,7 +112,7 @@ export default function Register() {
               </p>
             )}
 
-            <button
+            <button // Konto erstellen
               className="btn btn-primary mt-3"
               type="button"
               style={{ width: "15rem" }}
