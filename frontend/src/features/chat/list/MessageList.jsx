@@ -21,7 +21,7 @@ export default function MessageList() {
 
   const chatContainerRef = useRef(null);
 
-  // Scrollt das Nachrichtenfenster bis zum Ende
+  // Nachrichtenfenster bis zum Ende scrollen
   useEffect(() => {
     const container = chatContainerRef.current;
     if (container) {
