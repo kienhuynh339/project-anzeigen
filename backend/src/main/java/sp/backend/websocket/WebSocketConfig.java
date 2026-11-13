@@ -12,10 +12,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-
         config.enableSimpleBroker("/topic", "/chats", "/new-message", "/items")
                 .setHeartbeatValue(new long[]{9000, 10000})
                 .setTaskScheduler(heartbeatScheduler());
