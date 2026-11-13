@@ -1,11 +1,9 @@
 package sp.backend.user;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.dto.*;
 
@@ -21,13 +19,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    private ResponseEntity<UserPublicResponse> findPublicById(@PathVariable Long userId) {
+    private ResponseEntity<UserPublicResponse> findById(@PathVariable Long userId) {
         UserPublicResponse user = userService.findPublicById(userId);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/me")
-    private ResponseEntity<UserPrivateResponse> getCurrentUser(Authentication authentication) {
+    private ResponseEntity<UserPrivateResponse> findCurrentUser(Authentication authentication) {
         User user = userService.findByAccountName(authentication.getName());
         return ResponseEntity.ok(new UserPrivateResponse(user));
     }
@@ -51,8 +49,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    private ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request, UriComponentsBuilder ucb) {
-        Long userId = userService.register(request);
+    private ResponseEntity<Void> createUser(@Valid @RequestBody RegisterRequest request, UriComponentsBuilder ucb) {
+        Long userId = userService.createUser(request);
 
         URI createdUserLocation = ucb
                 .path("/{userId}")
