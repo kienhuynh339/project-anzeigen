@@ -26,8 +26,8 @@ public class MessageController {
     }
 
     @GetMapping("/{messageId}")
-    private ResponseEntity<MessageResponse> findByMessageId(@PathVariable Long messageId, Authentication authentication) {
-        MessageResponse messageResponse = messageService.findByMessageId(messageId, authentication);
+    private ResponseEntity<MessageResponse> findById(@PathVariable Long messageId, Authentication authentication) {
+        MessageResponse messageResponse = messageService.findById(messageId, authentication);
         return ResponseEntity.ok(messageResponse);
     }
 
@@ -48,7 +48,7 @@ public class MessageController {
         Message message = messageService.createMessage(messageCreateRequest, authentication);
 
         URI locationOfNewMessage = ucb.path("/{messageId}").buildAndExpand(message.getId()).toUri();
-        
+
         return ResponseEntity.created(locationOfNewMessage).build();
     }
 
