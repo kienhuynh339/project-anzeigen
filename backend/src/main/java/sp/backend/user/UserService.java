@@ -28,7 +28,8 @@ public class UserService {
         return new UserPublicResponse(user);
     }
 
-    public Long register(RegisterRequest request) {
+    public Long createUser(RegisterRequest request) {
+        // Der Benutzername existiert bereits
         if (userRepository.existsByAccountName(request.getAccountName())) {
             throw new IllegalArgumentException(ExceptionMessage.ACCOUNT_NAME_ALREADY_EXISTS);
         }
@@ -57,6 +58,7 @@ public class UserService {
     public void updateAccountName(UserAccountNameUpdateRequest request, Authentication authentication) {
         User user = getLoggedInUser(authentication, userRepository);
 
+        // Der Benutzername existiert bereits
         if (userRepository.existsByAccountName(request.getAccountName())) {
             throw new IllegalArgumentException(ExceptionMessage.ACCOUNT_NAME_ALREADY_EXISTS);
         }
