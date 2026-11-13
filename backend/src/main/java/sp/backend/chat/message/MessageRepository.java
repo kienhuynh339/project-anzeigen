@@ -29,11 +29,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             UPDATE Message m SET m.isRead = true WHERE (m.chat.id = :chatId) AND (m.sender.id = :senderId)
             """)
     int markMessagesAsReadByChat_IdAndSender_Id(Long chatId, Long senderId);
-
-    @Query("""
-            SELECT m
-            FROM Message m
-            WHERE m.id = :messageId
-            """)
-    MessageResponse findByMessageId(Long messageId);
+    
 }
