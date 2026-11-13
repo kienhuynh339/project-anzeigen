@@ -4,7 +4,6 @@
 package sp.backend.item;
 
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,13 +29,13 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     private ResponseEntity<ItemResponse> findById(@PathVariable Long itemId, Authentication authentication) {
-        ItemResponse item = itemService.findByItemId(itemId, authentication);
+        ItemResponse item = itemService.findById(itemId, authentication);
         return ResponseEntity.ok(item);
     }
 
     @GetMapping("/{itemId}/edit")
     private ResponseEntity<ItemResponse> findByIdToEdit(@PathVariable Long itemId, Authentication authentication) {
-        ItemResponse item = itemService.findByItemIdToEdit(itemId, authentication);
+        ItemResponse item = itemService.findByIdToEdit(itemId, authentication);
         return ResponseEntity.ok(item);
     }
 
@@ -67,7 +66,7 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     private ResponseEntity<Void> markItemAsDeleted(@PathVariable Long itemId, Authentication authentication) {
-        itemService.markItemAsDeletedByItemId(itemId, authentication);
+        itemService.markItemAsDeleted(itemId, authentication);
         return ResponseEntity.noContent().build();
     }
 
