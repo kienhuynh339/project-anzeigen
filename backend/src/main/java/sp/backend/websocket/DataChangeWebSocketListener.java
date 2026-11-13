@@ -12,70 +12,62 @@ import sp.backend.websocket.DataChangePublisher.Action;
 
 @Component
 public class DataChangeWebSocketListener {
-
     private final SimpMessagingTemplate messagingTemplate;
 
     public DataChangeWebSocketListener(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
-    //Mit AFTER_COMMIT wird die Benachrichtigung erst nach erfolgreichem Commit versendet.
+    // @TransactionalEventListener -> handleDataChange wird aufgerufen, wenn ein DataChangeEvent veröffentlicht wurde und die zugehörige Transaktion erfolgreich abgeschlossen ist.
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleDataChanged(DataChangeEvent dataChangeEvent) {
-        if (dataChangeEvent.getEntity().equals(Entity.CHAT)) {
-            Event event = null;
-            Chat chat = (Chat) dataChangeEvent.getObject();
-            String receiver = chat.getInterestedUser().getAccountName().equals(dataChangeEvent.getAccountName()) ?
-                    chat.getPoster().getAccountName()
-                    : chat.getInterestedUser().getAccountName();
-            Long chatId = chat.getId();
+    public void handleDataChange(DataChangeEvent dataChangeEvent) {
+        switch (dataChangeEvent.getEntity()) {
+            case Entity.CHAT -> {
+                Event event = null;
+                Chat chat = (Chat) dataChangeEvent.getObject();
+                String receiver = chat.getOtherParticipantByAccountName(dataChangeEvent.getAccountName()).getAccountName();
+                Long chatId = chat.getId();
 
-            if (dataChangeEvent.getAction().equals(Action.DELETE)) {
-                event = new Event(Entity.CHAT, Action.DELETE, chatId);
-            } else if (dataChangeEvent.getAction().equals(Action.SOFT_DELETE)) {
-                event = new Event(Entity.CHAT, Action.SOFT_DELETE, chatId);
-            } else if (dataChangeEvent.getAction().equals(Action.CREATE)) {
-                event = new Event(Entity.CHAT, Action.CREATE, chatId);
-                sendChatOrMessageChangeEvent(receiver, "/new-message", event);
+                switch (dataChangeEvent.getAction()) {
+                    case Action.DELETE -> event = new Event(Entity.CHAT, Action.DELETE, chatId);
+                    case Action.SOFT_DELETE -> event = new Event(Entity.CHAT, Action.SOFT_DELETE, chatId);
+                    case Action.CREATE -> {
+                        event = new Event(Entity.CHAT, Action.CREATE, chatId);
+                        sendChatOrMessageChangeEvent(receiver, "/new-message", event);
+                    }
+                }
+
+                sendChatOrMessageChangeEventToBoth(chat, "/chats", event);
+
             }
+            case Entity.MESSAGE -> {
+                Event event = null;
+                Chat chat = (Chat) dataChangeEvent.getObject();
+                String receiver = chat.getOtherParticipantByAccountName(dataChangeEvent.getAccountName()).getAccountName();
+                Long chatId = chat.getId();
 
-            sendChatOrMessageChangeEventToBoth(chat, "/chats", event);
+                if (dataChangeEvent.getAction().equals(Action.CREATE)) {
+                    event = new Event(Entity.MESSAGE, Action.CREATE, chatId);
+                    sendChatOrMessageChangeEventToBoth(chat, "/chats/" + chatId, event);
+                    sendChatOrMessageChangeEventToBoth(chat, "/chats", event);
+                    sendChatOrMessageChangeEvent(receiver, "/new-message", event);
+                }
 
-        } else if (dataChangeEvent.getEntity().equals(Entity.MESSAGE)) {
-            Event event = null;
-            Chat chat = (Chat) dataChangeEvent.getObject();
-            String receiver = chat.getInterestedUser().getAccountName().equals(dataChangeEvent.getAccountName()) ?
-                    chat.getPoster().getAccountName()
-                    : chat.getInterestedUser().getAccountName();
-            Long chatId = chat.getId();
-
-            if (dataChangeEvent.getAction().equals(Action.CREATE)) {
-                event = new Event(Entity.MESSAGE, Action.CREATE, chatId);
-                sendChatOrMessageChangeEventToBoth(chat, "/chats/" + chatId, event);
-                sendChatOrMessageChangeEventToBoth(chat, "/chats", event); // "/new-message"
-                sendChatOrMessageChangeEvent(receiver, "/new-message", event);
             }
+            case Entity.ITEM -> {
+                Event event = null;
+                Long itemId = ((Item) dataChangeEvent.getObject()).getId();
 
-        } else if (dataChangeEvent.getEntity().equals(Entity.ITEM)) {
-            Event event = null;
-            Long itemId = ((Item) dataChangeEvent.getObject()).getId();
+                if (dataChangeEvent.getAction().equals(Action.DELETE)) {
+                    event = new Event(Entity.ITEM, Action.DELETE, itemId);
+                    sendItemChangeEvent("/topic/items/" + itemId, event);
 
-//            if (dataChangeEvent.getAction().equals(Action.CREATE)) {
-//                event = new Event(Entity.ITEM, Action.CREATE, itemId);} else
-
-            if (dataChangeEvent.getAction().equals(Action.DELETE)) {
-                event = new Event(Entity.ITEM, Action.DELETE, itemId);
-                sendItemChangeEvent("/topic/items/" + itemId, event);
-
-            } else if (dataChangeEvent.getAction().equals(Action.UPDATE)) {
-                event = new Event(Entity.ITEM, Action.UPDATE, itemId);
-                sendItemChangeEvent("/topic/items/" + itemId, event);
+                } else if (dataChangeEvent.getAction().equals(Action.UPDATE)) {
+                    event = new Event(Entity.ITEM, Action.UPDATE, itemId);
+                    sendItemChangeEvent("/topic/items/" + itemId, event);
+                }
             }
-
-//            sendItemChangeEvent("/topic/items", event);
         }
-
-
     }
 
     private void sendChatOrMessageChangeEventToBoth(Chat chat, String destination, Event event) {
@@ -92,6 +84,7 @@ public class DataChangeWebSocketListener {
     }
 
     private void sendChatOrMessageChangeEvent(String accountName, String destination, Event event) {
+        // Nachricht an einen bestimmten User senden
         messagingTemplate.convertAndSendToUser(
                 accountName,
                 destination,
@@ -100,6 +93,7 @@ public class DataChangeWebSocketListener {
     }
 
     private void sendItemChangeEvent(String destination, Event event) {
+        // Nachricht an alle Clients, die ein bestimmtes Topic abonniert haben
         messagingTemplate.convertAndSend(
                 destination,
                 event
