@@ -15,7 +15,7 @@ import sp.backend.dto.ChatResponse;
 public class ChatController {
     private final ChatService chatService;
 
-    public ChatController(ChatService chatService) {
+    private ChatController(ChatService chatService) {
         this.chatService = chatService;
     }
 
@@ -32,7 +32,7 @@ public class ChatController {
     }
 
     @GetMapping("/has-unread-message")
-    private ResponseEntity<Boolean> hasUnreadMessage(Authentication authentication) {
+    private ResponseEntity<Boolean> existsUnreadMessage(Authentication authentication) {
         Boolean result = chatService.existsUnreadMessage(authentication);
         return ResponseEntity.ok(result);
     }
