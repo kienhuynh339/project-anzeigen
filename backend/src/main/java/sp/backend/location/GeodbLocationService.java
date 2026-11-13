@@ -29,7 +29,7 @@ public class GeodbLocationService {
             Map.entry(9, "Wohnplatz")
     );
 
-    private static final Map<String, String> FEDERALSTATES = Map.ofEntries(
+    private static final Map<String, String> FEDERAL_STATES = Map.ofEntries(
             Map.entry("HB", "Bremen"),
             Map.entry("BW", "Baden-Württemberg"),
             Map.entry("HE", "Hessen"),
@@ -71,8 +71,9 @@ public class GeodbLocationService {
 
                     String extraInfo = "";
 
+                    // Duplikat vorhanden -> Zusätzliche Information zur Identifikation des Ortes
                     if (hasDuplicate) {
-                        extraInfo = "(" + TYPES.get(location.getType()) + ")" + " - " + FEDERALSTATES.get(location.getFederalState());
+                        extraInfo = "(" + TYPES.get(location.getType()) + ")" + " - " + FEDERAL_STATES.get(location.getFederalState());
                     }
 
                     return new GeodbLocationResponse(location, extraInfo);
