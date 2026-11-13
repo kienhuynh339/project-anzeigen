@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import sp.backend.item.Item;
 import sp.backend.user.User;
 
-import java.time.OffsetDateTime;
-
 @Entity
 @Table(name = "chats")
 public class Chat {
@@ -47,9 +45,14 @@ public class Chat {
         return user.equals(poster) || user.equals(interestedUser);
     }
 
-    public User otherParticipant(User user) {
+    public User getOtherParticipant(User user) {
         if (user == null) return null;
         return user.equals(poster) ? interestedUser : poster;
+    }
+
+    public User getOtherParticipantByAccountName(String accountName) {
+        if (accountName == null) return null;
+        return accountName.equals(poster.getAccountName()) ? interestedUser : poster;
     }
 
     public Long getId() {
