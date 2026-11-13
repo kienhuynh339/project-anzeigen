@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataChangePublisher {
-
     private final ApplicationEventPublisher eventPublisher;
 
     public static class Entity {
@@ -25,6 +24,7 @@ public class DataChangePublisher {
         this.eventPublisher = eventPublisher;
     }
 
+    // Event veröffentlichen
     public void publish(String entity, String action, Object object) {
         publish(entity, action, object, null);
     }
