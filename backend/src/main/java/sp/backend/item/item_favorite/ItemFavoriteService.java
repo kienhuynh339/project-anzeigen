@@ -39,6 +39,7 @@ public class ItemFavoriteService {
         ItemFavorite itemFavorite = itemFavoriteRepository.findById(itemFavoriteId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND));
 
+        // Ob der Favorite dem angemeldeten User gehört
         if (!itemFavorite.getUser().equals(loggedInUser)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
@@ -53,15 +54,18 @@ public class ItemFavoriteService {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
+        // Poster darf seine eigenen Anzeigen nicht zur Merkliste hinzufügen
         if (item.getPoster().equals(user)) {
             throw new CannotFavorOwnItemException(ExceptionMessage.POSTER_CANNOT_FAVOR_OWN_ITEM);
         }
 
+        // Gelöschte Anzeige darf nicht zur Merkliste hinzugefügt werden
         if (item.getStatus() == ItemStatus.DELETED) {
             throw new CannotFavorDeletedItemException(ExceptionMessage.CANNOT_FAVOR_DELETED_ITEM);
         }
 
         Optional<ItemFavorite> itemFavoriteOptional = itemFavoriteRepository.findByUser_IdAndItem_Id(user.getId(), item.getId());
+        // Anzeige existiert bereits in der Merkliste
         if (itemFavoriteOptional.isPresent()) {
             throw new FavoriteItemAlreadyExistsException(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS);
         }
