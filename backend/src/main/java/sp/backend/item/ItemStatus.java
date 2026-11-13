@@ -11,11 +11,15 @@ public enum ItemStatus {
     RESERVED(3),
     DELETED(4);
 
-    @EnumeratedValue //@EnumeratedValue -> value statt ordinal lesen
+    // @EnumeratedValue value -> value wird als Attributwert in der Datenbank verwendet.
+    @EnumeratedValue
     private final int value;
 
-    ItemStatus(int value){this.value = value;}
-    public int getValue(){
+    ItemStatus(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
         return this.value;
     }
 
