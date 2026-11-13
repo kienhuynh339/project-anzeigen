@@ -6,7 +6,6 @@ package sp.backend.chat.message;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,7 @@ public class MessageService {
         this.dataChangePublisher = dataChangePublisher;
     }
 
-    public MessageResponse findByMessageId(Long messageId, Authentication authentication) {
+    public MessageResponse findById(Long messageId, Authentication authentication) {
         Message message = messageRepository.findById(messageId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.MESSAGE_NOT_FOUND));
         checkIfUserIsParticipantOfChat(message.getChat().getId(), authentication, chatRepository, userRepository);
@@ -61,20 +60,15 @@ public class MessageService {
         return messageRepository.findByChatId(chatId, pageable);
     }
 
-    public Optional<Message> findFirstByChat_IdOrderByCreatedAtDesc(Long chatId, Authentication authentication) {
-        checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
-        return messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chatId);
-    }
-
     @Transactional
-    public int markMessagesAsRead(Long chatId, Authentication authentication) {
+    public void markMessagesAsRead(Long chatId, Authentication authentication) {
         ChatWithUser chatWithUser = checkIfUserIsParticipantOfChat(chatId, authentication, chatRepository, userRepository);
         User loggedInUser = chatWithUser.getUser();
         Chat chat = chatWithUser.getChat();
 
-        User otherParticipant = chat.otherParticipant(loggedInUser);
+        User otherParticipant = chat.getOtherParticipant(loggedInUser);
 
-        return messageRepository.markMessagesAsReadByChat_IdAndSender_Id(chatId, otherParticipant.getId());
+        messageRepository.markMessagesAsReadByChat_IdAndSender_Id(chatId, otherParticipant.getId());
     }
 
     @Transactional
