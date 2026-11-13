@@ -57,19 +57,20 @@ public class ItemService {
         this.dataChangePublisher = dataChangePublisher;
     }
 
-    public ItemResponse findByItemId(Long itemId, Authentication authentication) {
+    public ItemResponse findById(Long itemId, Authentication authentication) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
 
         return itemRepository.findItemById(itemId, loggedInUserId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
     }
 
-    public ItemResponse findByItemIdToEdit(Long itemId, Authentication authentication) {
+    public ItemResponse findByIdToEdit(Long itemId, Authentication authentication) {
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
 
         ItemResponse item = itemRepository.findItemById(itemId, loggedInUserId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
+        // Ob der User der Poster ist
         if (!item.getPoster().getId().equals(loggedInUserId)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
@@ -87,8 +88,11 @@ public class ItemService {
             Authentication authentication,
             Pageable pageable) {
 
+        // Breitengrad
         Float latitude = null;
+        // Längengrad
         Float longtitude = null;
+
         if (locationId != null && radiusKm != null) {
             Optional<GeodbLocation> location = geodbLocationRepository.findById(locationId);
             if (location.isPresent()) {
@@ -96,6 +100,7 @@ public class ItemService {
                 longtitude = location.get().getLongitude();
             }
         }
+
         Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
         return itemRepository.search(searchTerm, categoryId, minPrice, maxPrice, locationId, latitude, longtitude, radiusKm, loggedInUserId, pageable);
     }
@@ -106,7 +111,7 @@ public class ItemService {
         User poster = userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND));
 
-        return itemRepository.findByUserId(userId, loggedInUserId, pageable);
+        return itemRepository.findByUserId(poster.getId(), loggedInUserId, pageable);
     }
 
     public Page<ItemResponse> findFavoriteItems(Authentication authentication, Pageable pageable) {
@@ -115,12 +120,13 @@ public class ItemService {
     }
 
     @Transactional
-    public void markItemAsDeletedByItemId(Long itemId, Authentication authentication) {
+    public void markItemAsDeleted(Long itemId, Authentication authentication) {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
+        // Ob der User der Poster ist
         if (!item.getPoster().equals(loggedInUser)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
@@ -140,11 +146,12 @@ public class ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
+        // Ob der User der Poster ist
         if (!item.getPoster().equals(loggedInUser)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
-        // Gelöschtes Item darf nicht modifiziert werden
+        // Gelöschte Anzeige darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
             throw new DeletedItemModificationNotAllowedException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
         }
@@ -188,12 +195,12 @@ public class ItemService {
 
         validateImages(request.getImages());
 
-        // Gelöschtes Item darf nicht modifiziert werden
+        // Gelöschte Anzeige darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
             throw new DeletedItemModificationNotAllowedException(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
         }
 
-        // (Gilt für "Anzeige bearbeiten") Status einer entworfenen Anzeige darf nur in ACTIVE oder DRAFT geändert werden.
+        // (Gilt für "Entwurf fortsetzen") Status einer entworfenen Anzeige darf nur in ACTIVE oder DRAFT geändert werden.
         if (item.getStatus() == ItemStatus.DRAFT) {
             validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.DRAFT), request.getStatus());
         }
@@ -203,7 +210,7 @@ public class ItemService {
             validateItemStatus(EnumSet.of(ItemStatus.ACTIVE), request.getStatus());
         }
 
-        // Ist der eingeloggte User wirklich der Poster der Anzeige
+        // Ob der User der Poster ist
         if (!item.getPoster().getAccountName().equals(loggedInUser.getAccountName())) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
