@@ -1,12 +1,12 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item.item_image;
+package sp.backend.item_image;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="item_images")
+@Table(name = "item_images")
 public class ItemImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,16 +15,19 @@ public class ItemImage {
     @Lob
     private byte[] image;
 
-    @Column(name="content_type")
+    @Column(name = "content_type")
     private String contentType;
 
-    @Column(name="item_id")
+    @Column(name = "item_id")
     private Long itemId;
 
-    @Column(name="display_order")
+    @Column(name = "display_order")
     private Short displayOrder;
 
-    protected ItemImage(){};
+    protected ItemImage() {
+    }
+
+    ;
 
     public ItemImage(byte[] image, String contentType, Long itemId, Short displayOrder) {
         this.image = image;
@@ -46,9 +49,13 @@ public class ItemImage {
         this.image = image;
     }
 
-    public String getContentType(){return contentType;}
+    public String getContentType() {
+        return contentType;
+    }
 
-    public void setContentType(String contentType){this.contentType = contentType;}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
     public Long getItemId() {
         return itemId;

@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item.category;
+package sp.backend.item_category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

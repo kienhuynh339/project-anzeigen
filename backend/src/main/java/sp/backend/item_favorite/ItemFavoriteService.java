@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item.item_favorite;
+package sp.backend.item_favorite;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;

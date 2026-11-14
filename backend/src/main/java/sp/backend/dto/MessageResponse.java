@@ -3,7 +3,7 @@
  */
 package sp.backend.dto;
 
-import sp.backend.chat.message.Message;
+import sp.backend.chat_message.Message;
 
 import java.time.OffsetDateTime;
 

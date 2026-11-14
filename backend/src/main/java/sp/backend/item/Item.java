@@ -4,7 +4,7 @@
 package sp.backend.item;
 
 import jakarta.persistence.*;
-import sp.backend.item.category.Category;
+import sp.backend.item_category.Category;
 import sp.backend.location.GeodbLocation;
 import sp.backend.user.User;
 

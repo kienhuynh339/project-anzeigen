@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item.item_image;
+package sp.backend.item_image;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;

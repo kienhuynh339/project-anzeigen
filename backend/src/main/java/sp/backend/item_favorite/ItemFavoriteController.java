@@ -1,9 +1,8 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.item.item_favorite;
+package sp.backend.item_favorite;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
