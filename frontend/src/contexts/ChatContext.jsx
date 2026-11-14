@@ -38,7 +38,7 @@ const initialChat = {
     read: "",
     senderId: "",
   },
-  fistDeletedByUserId: "",
+  firstDeletedByUserId: "",
 };
 
 // Für Chats und den aktuell ausgewählten Chat
@@ -90,7 +90,7 @@ export function ChatContextProvider({ children }) {
           // SOFT_DELETE
           const fetchedChat = await getChat(event.entityId);
 
-          if (user.id === fetchedChat.fistDeletedByUserId) {
+          if (user.id === fetchedChat.firstDeletedByUserId) {
             // Chat entfernen (bei dem Löschenden)
             removeChatFromList(event.entityId);
           } else {
