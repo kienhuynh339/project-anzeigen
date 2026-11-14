@@ -43,8 +43,8 @@ export default function MessageInput() {
   };
   return (
     <div>
-      {currentChat.fistDeletedByUserId &&
-      currentChat.fistDeletedByUserId !== user.id ? (
+      {currentChat.firstDeletedByUserId &&
+      currentChat.firstDeletedByUserId !== user.id ? (
         <p className="m-0 text-center">
           {otherUser.profileName} hat den Chat verlassen.
         </p>
