@@ -3,7 +3,10 @@
  */
 package sp.backend.dto;
 
+import jakarta.persistence.EntityNotFoundException;
 import sp.backend.chat.Chat;
+import sp.backend.chat.message.Message;
+import sp.backend.exception.ExceptionMessage;
 import sp.backend.item.ItemStatus;
 
 public class ChatResponse {

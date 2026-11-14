@@ -1,8 +1,9 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.areacode;
+package sp.backend.location.areacode;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

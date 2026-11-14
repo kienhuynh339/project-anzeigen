@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.message;
+package sp.backend.chat.message;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,5 +29,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             UPDATE Message m SET m.isRead = true WHERE (m.chat.id = :chatId) AND (m.sender.id = :senderId)
             """)
     int markMessagesAsReadByChat_IdAndSender_Id(Long chatId, Long senderId);
-
+    
 }
