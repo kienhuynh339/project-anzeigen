@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.location.areacode;
+package sp.backend.areacode;
 
 import jakarta.persistence.*;
 

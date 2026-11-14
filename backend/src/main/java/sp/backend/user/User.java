@@ -20,19 +20,22 @@ public class User {
     private String profileName;
 
 
-    @Column(name="account_name")
+    @Column(name = "account_name")
     private String accountName;
 
-    @Column(name="password_hash")
+    @Column(name = "password_hash")
     private String passwordHash;
 
-    @Column(name="created_at", insertable = false, updatable = false)
+    @Column(name = "created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 
     // JPA braucht einen parameterlosen Konstruktor mit mindestens protected-Sichtbarkeit, um einen Datensatz in ein Objekt zu verwandeln
-    protected User(){};
+    protected User() {
+    }
 
-    public User(String profileName, String accountName, String passwordHash){
+    ;
+
+    public User(String profileName, String accountName, String passwordHash) {
         this.profileName = profileName;
         this.accountName = accountName;
         this.passwordHash = passwordHash;
@@ -40,6 +43,10 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getProfileName() {
@@ -68,5 +75,9 @@ public class User {
 
     public OffsetDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

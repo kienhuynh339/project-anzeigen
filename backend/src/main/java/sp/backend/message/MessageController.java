@@ -1,7 +1,7 @@
 /**
  * @author Trung Kien Huynh
  */
-package sp.backend.chat.message;
+package sp.backend.message;
 
 
 import jakarta.validation.Valid;
