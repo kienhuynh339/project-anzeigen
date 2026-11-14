@@ -26,19 +26,39 @@ public class MessageResponse {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getSenderId() {
         return senderId;
+    }
+
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
     }
 
     public String getContent() {
         return content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public boolean isRead() {
         return isRead;
     }
 
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
     public OffsetDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
