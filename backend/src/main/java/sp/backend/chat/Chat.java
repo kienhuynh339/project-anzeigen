@@ -59,16 +59,32 @@ public class Chat {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Item getItem() {
         return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public User getPoster() {
         return poster;
     }
 
+    public void setPoster(User poster) {
+        this.poster = poster;
+    }
+
     public User getInterestedUser() {
         return interestedUser;
+    }
+
+    public void setInterestedUser(User interestedUser) {
+        this.interestedUser = interestedUser;
     }
 
     public User getFirstDeletedByUser() {
