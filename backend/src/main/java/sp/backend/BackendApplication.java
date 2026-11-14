@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend;
 
 import org.springframework.boot.SpringApplication;

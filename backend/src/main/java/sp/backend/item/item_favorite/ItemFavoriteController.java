@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.item.item_favorite;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -33,7 +36,7 @@ public class ItemFavoriteController {
         URI locationOfItemFavorite = ucb
                 .path("/api/item-favorites/{itemFavoriteId}")
                 .buildAndExpand(itemFavorite.getId()).toUri();
-        
+
         return ResponseEntity.created(locationOfItemFavorite).build();
     }
 

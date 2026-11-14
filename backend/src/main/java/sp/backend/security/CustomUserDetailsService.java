@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.security;
 
 import org.springframework.security.core.userdetails.UserDetails;

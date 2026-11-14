@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.security;
 
 import jakarta.servlet.http.HttpServletResponse;

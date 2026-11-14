@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.exception;
 
 public class ImageSavingException extends RuntimeException {

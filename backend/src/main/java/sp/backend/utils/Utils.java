@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.utils;
 
 import org.springframework.security.core.Authentication;
