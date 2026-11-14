@@ -40,6 +40,15 @@ public class Chat {
         this.firstDeletedByUser = firstDeletedByUser;
     }
 
+    public Chat(Long id, Item item, User poster, User interestedUser, User firstDeletedByUser) {
+        this.id = id;
+        this.item = item;
+        this.poster = poster;
+        this.interestedUser = interestedUser;
+        this.firstDeletedByUser = firstDeletedByUser;
+    }
+
+
     public boolean isParticipant(User user) {
         if (user == null) return false;
         return user.equals(poster) || user.equals(interestedUser);

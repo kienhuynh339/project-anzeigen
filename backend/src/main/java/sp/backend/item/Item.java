@@ -46,7 +46,7 @@ public class Item {
     @Column(name = "created_at", updatable = false, insertable = false)
     private OffsetDateTime createdAt;
 
-    protected Item() {
+    public Item() {
     }
 
     public Item(User poster, String title, Category category,
@@ -63,6 +63,21 @@ public class Item {
         this.status = status;
     }
 
+    public Item(Long id, User poster, String title, Category category, String description, int price, GeodbLocation location, String postcode, String locationExtraInfo, ItemStatus status, OffsetDateTime createdAt) {
+        this.id = id;
+        this.poster = poster;
+        this.title = title;
+        this.category = category;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.postcode = postcode;
+        this.locationExtraInfo = locationExtraInfo;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
+
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {
@@ -74,9 +89,9 @@ public class Item {
         return id;
     }
 
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public User getPoster() {
         return poster;
@@ -154,9 +169,9 @@ public class Item {
         return createdAt;
     }
 
-//    public void setCreatedAt(OffsetDateTime createdAt) {
-//        this.createdAt = createdAt;
-//    }
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
 
 
