@@ -46,6 +46,18 @@ public class ItemResponse {
         this.isFavorite = isFavorite;
     }
 
+    public ItemResponse() {
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Short getCategoryId() {
         return categoryId;
     }
@@ -54,39 +66,67 @@ public class ItemResponse {
         this.categoryId = categoryId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public UserPublicResponse getPoster() {
         return poster;
+    }
+
+    public void setPoster(UserPublicResponse poster) {
+        this.poster = poster;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getPrice() {
         return price;
     }
 
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     public GeodbLocationResponse getLocation() {
         return location;
+    }
+
+    public void setLocation(GeodbLocationResponse location) {
+        this.location = location;
     }
 
     public ItemStatus getStatus() {
         return status;
     }
 
+    public void setStatus(ItemStatus status) {
+        this.status = status;
+    }
+
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Boolean getFavorite() {
         return isFavorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        isFavorite = favorite;
     }
 }
