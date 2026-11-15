@@ -65,7 +65,7 @@ public class ItemService {
     }
 
     public ItemResponse findByIdToEdit(Long itemId, Authentication authentication) {
-        Long loggedInUserId = getLoggedInUserId(authentication, userRepository);
+        Long loggedInUserId = getLoggedInUserId(authentication, userRepository, true);
 
         ItemResponse item = itemRepository.findItemById(itemId, loggedInUserId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
@@ -177,6 +177,7 @@ public class ItemService {
                 new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND));
 
         Item item = new Item(poster, request.getTitle(), category, request.getDescription(), request.getPrice(), location, request.getPostcode(), request.getLocationExtraInfo(), request.getStatus());
+
         itemRepository.save(item);
 
         saveImages(request.getImages(), item.getId());
@@ -211,7 +212,7 @@ public class ItemService {
         }
 
         // Ob der User der Poster ist
-        if (!item.getPoster().getAccountName().equals(loggedInUser.getAccountName())) {
+        if (!item.getPoster().getId().equals(loggedInUser.getId())) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
 
