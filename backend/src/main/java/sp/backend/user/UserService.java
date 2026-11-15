@@ -49,14 +49,14 @@ public class UserService {
     }
 
     public void updateProfileName(UserProfileNameUpdateRequest request, Authentication authentication) {
-        User user = getLoggedInUser(authentication, userRepository);
+        User user = getLoggedInUser(authentication, userRepository, true);
 
         user.setProfileName(request.getProfileName());
         userRepository.save(user);
     }
 
     public void updateAccountName(UserAccountNameUpdateRequest request, Authentication authentication) {
-        User user = getLoggedInUser(authentication, userRepository);
+        User user = getLoggedInUser(authentication, userRepository, true);
 
         // Der Benutzername existiert bereits
         if (userRepository.existsByAccountName(request.getAccountName())) {
@@ -68,10 +68,9 @@ public class UserService {
     }
 
     public void updatePassword(UserPasswordUpdateRequest request, Authentication authentication) {
-        User user = getLoggedInUser(authentication, userRepository);
+        User user = getLoggedInUser(authentication, userRepository, true);
 
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
     }
-
 }
