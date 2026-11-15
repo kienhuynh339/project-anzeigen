@@ -29,7 +29,7 @@ public class Item {
 
     private String description;
 
-    private int price = 0;
+    private Integer price = 0;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
@@ -63,7 +63,7 @@ public class Item {
         this.status = status;
     }
 
-    public Item(Long id, User poster, String title, Category category, String description, int price, GeodbLocation location, String postcode, String locationExtraInfo, ItemStatus status, OffsetDateTime createdAt) {
+    public Item(Long id, User poster, String title, Category category, String description, Integer price, GeodbLocation location, String postcode, String locationExtraInfo, ItemStatus status, OffsetDateTime createdAt) {
         this.id = id;
         this.poster = poster;
         this.title = title;
@@ -125,11 +125,11 @@ public class Item {
         this.description = description;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
