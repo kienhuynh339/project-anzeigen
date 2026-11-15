@@ -31,34 +31,62 @@ public class GeodbLocation {
     @Column(name = "plz")
     private String postcode;
 
-    protected GeodbLocation() {
+    public GeodbLocation() {
     }
 
     public Integer getId() {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getType() {
         return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getFederalState() {
         return federalState;
+    }
+
+    public void setFederalState(String federalState) {
+        this.federalState = federalState;
     }
 
     public Float getLatitude() {
         return latitude;
     }
 
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
     public Float getLongitude() {
         return longitude;
     }
 
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
+    }
+
     public String getPostcode() {
         return postcode;
+    }
+
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
     }
 }
