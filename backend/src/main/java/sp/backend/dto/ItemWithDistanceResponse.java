@@ -28,39 +28,78 @@ public class ItemWithDistanceResponse {
         this.isFavorite = isFavorite;
     }
 
+    public ItemWithDistanceResponse() {
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getPosterId() {
         return posterId;
     }
 
+    public void setPosterId(Long posterId) {
+        this.posterId = posterId;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getPrice() {
         return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public GeodbLocationResponse getLocation() {
         return location;
     }
 
+    public void setLocation(GeodbLocationResponse location) {
+        this.location = location;
+    }
+
     public OffsetDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Double getDistance() {
         return distance;
     }
 
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
     public Boolean getFavorite() {
         return isFavorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        isFavorite = favorite;
     }
 }
