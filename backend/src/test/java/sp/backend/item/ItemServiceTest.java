@@ -75,22 +75,20 @@ public class ItemServiceTest {
 
     @BeforeEach
     void setUp() {
-        authentication = new UsernamePasswordAuthenticationToken("loggedInUser", "123456");
-
         loggedInUser = mock(User.class);
         otherUser = mock(User.class);
         item = mock(Item.class);
-
-        when(userRepository.findByAccountName("loggedInUser")).thenReturn(Optional.of(loggedInUser));
-
-        when(item.getId()).thenReturn(1L);
-
+        
         when(loggedInUser.getId()).thenReturn(1L);
         when(loggedInUser.getAccountName()).thenReturn("loggedInUser");
+        when(userRepository.findByAccountName(loggedInUser.getAccountName())).thenReturn(Optional.of(loggedInUser));
+
+        authentication = new UsernamePasswordAuthenticationToken(loggedInUser.getAccountName(), "123456");
 
         when(otherUser.getId()).thenReturn(2L);
         when(otherUser.getAccountName()).thenReturn("otherUser");
 
+        when(item.getId()).thenReturn(1L);
     }
 
     // ---------------------------------------------------------
