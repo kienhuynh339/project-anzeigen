@@ -60,20 +60,20 @@ public class MessageServiceTest {
 
     @BeforeEach
     void setUp() {
-        authentication = new UsernamePasswordAuthenticationToken("sender", "123456");
-
         sender = mock(User.class);
         message = mock(Message.class);
         chat = mock(Chat.class);
 
-        when(userRepository.findByAccountName("sender")).thenReturn(Optional.of(sender));
-
         when(sender.getId()).thenReturn(1L);
         when(sender.getAccountName()).thenReturn("sender");
+        when(userRepository.findByAccountName(sender.getAccountName())).thenReturn(Optional.of(sender));
+
+        authentication = new UsernamePasswordAuthenticationToken(sender.getAccountName(), "123456");
 
         when(message.getId()).thenReturn(1L);
         when(message.getChat()).thenReturn(chat);
         when(message.getSender()).thenReturn(sender);
+
         when(chat.getId()).thenReturn(1L);
     }
 
