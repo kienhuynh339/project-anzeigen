@@ -59,8 +59,6 @@ class ChatServiceTest {
 
     @BeforeEach
     void setUp() {
-        authentication = new UsernamePasswordAuthenticationToken("poster", "123456");
-
         // Mockito.mock() erzeugt ein Mock-Objekt
         // das Mock-Objekt kann die Methoden des echten Objekts aufrufen
         // diese liefern aber keine echten Werte zurück (null bei Referenzdatentypen und Standardwert bei Primitivdatentypen)
@@ -70,6 +68,8 @@ class ChatServiceTest {
         chat = mock(Chat.class);
         lastMessage = mock(Message.class);
         Item item = mock(Item.class);
+
+        authentication = new UsernamePasswordAuthenticationToken("poster", "123456");
 
         when(userRepository.findByAccountName("poster")).thenReturn(Optional.of(poster));
 
