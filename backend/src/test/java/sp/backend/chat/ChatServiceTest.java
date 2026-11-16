@@ -2,9 +2,11 @@ package sp.backend.chat;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -104,203 +106,205 @@ class ChatServiceTest {
     // findById()
     // ---------------------------------------------------------
 
-    @Test
-    void findById_shouldThrowWhenUserIsNotAuthenticated() {
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> chatService.findById(1L, null));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+    @Nested
+    class FindByIdTests {
+        private final Long chatId = 1L;
 
-        // Während des Tests wurde keine einzige Methode von chatRepository oder messageRepository aufgerufen
-        verifyNoInteractions(chatRepository, messageRepository);
+        @Test
+        void findById_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> chatService.findById(chatId, null));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+
+            // Während des Tests wurde keine einzige Methode von messageRepository aufgerufen
+            verifyNoInteractions(messageRepository);
+        }
+
+        @Test
+        void findById_shouldThrowWhenChatDoesNotExist() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> chatService.findById(chatId, authentication));
+            assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
+
+            // verify(mock, Anzahl(optional, default 1)) prüft, ob eine Methode aufgerufen wurde.
+            // findFirstByChat_IdOrderByCreatedAtDesc(1L) prüft nur, dass die Methode nicht mit 1L aufgerufen wurde.
+            // anyLong() -> prüft, dass die Methode mit keinem Long-Parameter aufgerufen wurde
+            verify(messageRepository, never()).findFirstByChat_IdOrderByCreatedAtDesc(anyLong());
+        }
+
+        @Test
+        void findById_shouldThrowWhenUserIsNotParticipant() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
+
+            when(chat.isParticipant(poster)).thenReturn(false);
+
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> chatService.findById(chatId, authentication));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+
+            verifyNoInteractions(messageRepository);
+        }
+
+        @Test
+        void findById_shouldThrowWhenLastMessageDoesNotExist() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
+
+            when(chat.isParticipant(poster)).thenReturn(true);
+
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chatId))
+                    .thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> chatService.findById(chatId, authentication));
+            assertEquals(ExceptionMessage.MESSAGE_NOT_FOUND, exception.getMessage());
+        }
+
+        @Test
+        void findById_shouldReturnChatResponse() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
+
+            when(chat.isParticipant(poster)).thenReturn(true);
+
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chatId))
+                    .thenReturn(Optional.of(lastMessage));
+
+            ChatResponse chatResponse = chatService.findById(chatId, authentication);
+
+            MessageResponse messageResponse = chatResponse.getLastMessage();
+
+            assertNotNull(chatResponse);
+
+            assertEquals(chatId, chatResponse.getId());
+            assertEquals(1L, chatResponse.getItemId());
+            assertEquals("test item", chatResponse.getItemTitle());
+            assertEquals(ItemStatus.ACTIVE, chatResponse.getItemStatus());
+            assertEquals(poster.getId(), chatResponse.getPoster().getId());
+            assertEquals(interestedUser.getId(), chatResponse.getInterestedUser().getId());
+            assertEquals(1L, messageResponse.getId());
+        }
     }
-
-    @Test
-    void findById_shouldThrowWhenChatDoesNotExist() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.empty());
-
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> chatService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
-
-        // verify(mock, Anzahl(optional, default 1)) prüft, ob eine Methode aufgerufen wurde.
-        // findFirstByChat_IdOrderByCreatedAtDesc(1L) prüft nur, dass die Methode nicht mit 1L aufgerufen wurde.
-        // anyLong() -> prüft, dass die Methode mit keinem Long-Parameter aufgerufen wurde
-        verify(messageRepository, never()).findFirstByChat_IdOrderByCreatedAtDesc(anyLong());
-    }
-
-    @Test
-    void findById_shouldThrowWhenUserIsNotParticipant() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
-
-        when(chat.isParticipant(poster)).thenReturn(false);
-
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> chatService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
-
-        verifyNoInteractions(messageRepository);
-    }
-
-    @Test
-    void findById_shouldThrowWhenLastMessageDoesNotExist() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
-
-        when(chat.isParticipant(poster)).thenReturn(true);
-
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.empty());
-
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> chatService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.MESSAGE_NOT_FOUND, exception.getMessage());
-    }
-
-    @Test
-    void findById_shouldReturnChatResponse() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
-
-        when(chat.isParticipant(poster)).thenReturn(true);
-
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.of(lastMessage));
-
-        ChatResponse chatResponse = chatService.findById(1L, authentication);
-
-        MessageResponse messageResponse = chatResponse.getLastMessage();
-
-        assertNotNull(chatResponse);
-
-        assertEquals(1L, chatResponse.getId());
-        assertEquals(1L, chatResponse.getItemId());
-        assertEquals("test item", chatResponse.getItemTitle());
-        assertEquals(ItemStatus.ACTIVE, chatResponse.getItemStatus());
-        assertEquals(poster.getId(), chatResponse.getPoster().getId());
-        assertEquals(interestedUser.getId(), chatResponse.getInterestedUser().getId());
-        assertEquals(1L, messageResponse.getId());
-    }
-
 
     // ---------------------------------------------------------
     // findByUser()
     // ---------------------------------------------------------
 
-    @Test
-    void findByUser_shouldThrowWhenUserIsNotAuthenticated() {
-        PageRequest pageable = PageRequest.of(0, 10);
+    @Nested
+    class FindByUserTests {
+        private final Pageable pageable = PageRequest.of(0, 10);
 
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> chatService.findByUser(null, pageable));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+        @Test
+        void findByUser_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> chatService.findByUser(null, pageable));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-        verifyNoInteractions(chatRepository);
-    }
+            verifyNoInteractions(chatRepository);
+        }
 
-    @Test
-    void findByUser_shouldReturnEmptyPage() {
-        PageRequest pageable = PageRequest.of(0, 10);
+        @Test
+        void findByUser_shouldReturnEmptyPage() {
+            when(chatRepository.findByUserId(1L, pageable)).thenReturn(Page.empty());
 
-        when(chatRepository.findByUserId(1L, pageable)).thenReturn(Page.empty());
+            Page<ChatResponse> result = chatService.findByUser(authentication, pageable);
 
-        Page<ChatResponse> result = chatService.findByUser(authentication, pageable);
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-
-        verifyNoInteractions(messageRepository);
-    }
+            verifyNoInteractions(messageRepository);
+        }
 
 
-    @Test
-    void findByUser_shouldThrowWhenLastMessageDoesNotExist() {
-        PageRequest pageable = PageRequest.of(0, 10);
+        @Test
+        void findByUser_shouldThrowWhenLastMessageDoesNotExist() {
+            ChatResponse chatResponse = mock(ChatResponse.class);
+            when(chatResponse.getId()).thenReturn(1L);
 
-        ChatResponse chatResponse = mock(ChatResponse.class);
-        when(chatResponse.getId()).thenReturn(1L);
+            Page<ChatResponse> page = new PageImpl<>(
+                    List.of(chatResponse)
+            );
 
-        Page<ChatResponse> page = new PageImpl<>(
-                List.of(chatResponse)
-        );
+            when(chatRepository.findByUserId(1L, pageable)).thenReturn(page);
 
-        when(chatRepository.findByUserId(1L, pageable)).thenReturn(page);
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L)).thenReturn(Optional.empty());
 
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L)).thenReturn(Optional.empty());
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> chatService.findByUser(authentication, pageable));
+            assertEquals(ExceptionMessage.MESSAGE_NOT_FOUND, exception.getMessage());
+        }
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> chatService.findByUser(authentication, pageable));
-        assertEquals(ExceptionMessage.MESSAGE_NOT_FOUND, exception.getMessage());
-    }
+        @Test
+        void findByUser_shouldReturnChatsWithLastMessages() {
+            Chat chat1 = mock(Chat.class);
+            Chat chat2 = mock(Chat.class);
 
-    @Test
-    void findByUser_shouldReturnChatsWithLastMessages() {
-        Chat chat1 = mock(Chat.class);
-        Chat chat2 = mock(Chat.class);
+            Item item1 = mock(Item.class);
+            Item item2 = mock(Item.class);
 
-        Item item1 = mock(Item.class);
-        Item item2 = mock(Item.class);
+            when(chat1.getId()).thenReturn(1L);
+            when(chat1.getItem()).thenReturn(item1);
+            when(chat1.getPoster()).thenReturn(poster);
+            when(chat1.getInterestedUser()).thenReturn(interestedUser);
+            when(chat1.getFirstDeletedByUser()).thenReturn(null);
 
-        when(chat1.getId()).thenReturn(1L);
-        when(chat1.getItem()).thenReturn(item1);
-        when(chat1.getPoster()).thenReturn(poster);
-        when(chat1.getInterestedUser()).thenReturn(interestedUser);
-        when(chat1.getFirstDeletedByUser()).thenReturn(null);
+            when(chat2.getId()).thenReturn(2L);
+            when(chat2.getItem()).thenReturn(item2);
+            when(chat2.getPoster()).thenReturn(poster);
+            when(chat2.getInterestedUser()).thenReturn(interestedUser);
+            when(chat2.getFirstDeletedByUser()).thenReturn(interestedUser);
 
-        when(chat2.getId()).thenReturn(2L);
-        when(chat2.getItem()).thenReturn(item2);
-        when(chat2.getPoster()).thenReturn(poster);
-        when(chat2.getInterestedUser()).thenReturn(interestedUser);
-        when(chat2.getFirstDeletedByUser()).thenReturn(interestedUser);
+            when(item1.getId()).thenReturn(1L);
+            when(item1.getTitle()).thenReturn("Item 1");
+            when(item1.getStatus()).thenReturn(ItemStatus.ACTIVE);
 
-        when(item1.getId()).thenReturn(1L);
-        when(item1.getTitle()).thenReturn("Item 1");
-        when(item1.getStatus()).thenReturn(ItemStatus.ACTIVE);
+            when(item2.getId()).thenReturn(2L);
+            when(item2.getTitle()).thenReturn("Item 2");
+            when(item2.getStatus()).thenReturn(ItemStatus.ACTIVE);
 
-        when(item2.getId()).thenReturn(2L);
-        when(item2.getTitle()).thenReturn("Item 2");
-        when(item2.getStatus()).thenReturn(ItemStatus.ACTIVE);
+            Message lastMessage1 = mock(Message.class);
+            Message lastMessage2 = mock(Message.class);
 
-        Message lastMessage1 = mock(Message.class);
-        Message lastMessage2 = mock(Message.class);
+            when(lastMessage1.getId()).thenReturn(1L);
+            when(lastMessage1.getSender()).thenReturn(interestedUser);
+            when(lastMessage2.getId()).thenReturn(2L);
+            when(lastMessage2.getSender()).thenReturn(interestedUser);
 
-        when(lastMessage1.getId()).thenReturn(1L);
-        when(lastMessage1.getSender()).thenReturn(interestedUser);
-        when(lastMessage2.getId()).thenReturn(2L);
-        when(lastMessage2.getSender()).thenReturn(interestedUser);
+            Page<ChatResponse> page = new PageImpl<>(
+                    List.of(new ChatResponse(chat1, null),
+                            new ChatResponse(chat2, null)));
 
-        PageRequest pageable = PageRequest.of(0, 10);
-        Page<ChatResponse> page = new PageImpl<>(
-                List.of(new ChatResponse(chat1, null),
-                        new ChatResponse(chat2, null)));
+            when(chatRepository.findByUserId(1L, pageable)).thenReturn(page);
 
-        when(chatRepository.findByUserId(1L, pageable)).thenReturn(page);
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L)).thenReturn(Optional.of(lastMessage1));
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(2L)).thenReturn(Optional.of(lastMessage2));
 
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L)).thenReturn(Optional.of(lastMessage1));
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(2L)).thenReturn(Optional.of(lastMessage2));
+            Page<ChatResponse> result = chatService.findByUser(authentication, pageable);
 
-        Page<ChatResponse> result = chatService.findByUser(authentication, pageable);
+            assertNotNull(result);
+            assertEquals(2, result.getTotalElements());
 
-        assertNotNull(result);
-        assertEquals(2, result.getTotalElements());
+            ChatResponse chatResponse1 = result.getContent().get(0);
+            ChatResponse chatResponse2 = result.getContent().get(1);
 
-        ChatResponse chatResponse1 = result.getContent().get(0);
-        ChatResponse chatResponse2 = result.getContent().get(1);
+            assertEquals(1L, chatResponse1.getId());
+            assertEquals(1L, chatResponse1.getItemId());
+            assertEquals("Item 1", chatResponse1.getItemTitle());
+            assertEquals(ItemStatus.ACTIVE, chatResponse1.getItemStatus());
+            assertEquals(poster.getId(), chatResponse1.getPoster().getId());
+            assertEquals(interestedUser.getId(), chatResponse1.getInterestedUser().getId());
+            assertEquals(lastMessage1.getId(), chatResponse1.getLastMessage().getId());
+            assertNull(chatResponse1.getFirstDeletedByUserId());
 
-        assertEquals(1L, chatResponse1.getId());
-        assertEquals(1L, chatResponse1.getItemId());
-        assertEquals("Item 1", chatResponse1.getItemTitle());
-        assertEquals(ItemStatus.ACTIVE, chatResponse1.getItemStatus());
-        assertEquals(poster.getId(), chatResponse1.getPoster().getId());
-        assertEquals(interestedUser.getId(), chatResponse1.getInterestedUser().getId());
-        assertEquals(lastMessage1.getId(), chatResponse1.getLastMessage().getId());
-        assertNull(chatResponse1.getFirstDeletedByUserId());
-
-        assertEquals(2L, chatResponse2.getId());
-        assertEquals(2L, chatResponse2.getItemId());
-        assertEquals("Item 2", chatResponse2.getItemTitle());
-        assertEquals(ItemStatus.ACTIVE, chatResponse2.getItemStatus());
-        assertEquals(poster.getId(), chatResponse2.getPoster().getId());
-        assertEquals(interestedUser.getId(), chatResponse2.getInterestedUser().getId());
-        assertEquals(lastMessage2.getId(), chatResponse2.getLastMessage().getId());
-        assertEquals(interestedUser.getId(), chatResponse2.getFirstDeletedByUserId());
+            assertEquals(2L, chatResponse2.getId());
+            assertEquals(2L, chatResponse2.getItemId());
+            assertEquals("Item 2", chatResponse2.getItemTitle());
+            assertEquals(ItemStatus.ACTIVE, chatResponse2.getItemStatus());
+            assertEquals(poster.getId(), chatResponse2.getPoster().getId());
+            assertEquals(interestedUser.getId(), chatResponse2.getInterestedUser().getId());
+            assertEquals(lastMessage2.getId(), chatResponse2.getLastMessage().getId());
+            assertEquals(interestedUser.getId(), chatResponse2.getFirstDeletedByUserId());
+        }
     }
 
 
@@ -308,85 +312,90 @@ class ChatServiceTest {
     // deleteChat()
     // ---------------------------------------------------------
 
-    @Test
-    void deleteChat_shouldThrowWhenUserIsNotAuthenticated() {
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> chatService.deleteChat(1L, null));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+    @Nested
+    class DeleteChatTests {
+        private final Long chatId = 1L;
 
-        verifyNoInteractions(chatRepository);
-    }
+        @Test
+        void deleteChat_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> chatService.deleteChat(chatId, null));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-    @Test
-    void deleteChat_shouldThrowWhenChatDoesNotExist() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.empty());
+            verifyNoInteractions(chatRepository);
+        }
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> chatService.deleteChat(1L, authentication));
-        assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
+        @Test
+        void deleteChat_shouldThrowWhenChatDoesNotExist() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.empty());
 
-        verify(chat, never()).isParticipant(any());
-    }
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> chatService.deleteChat(chatId, authentication));
+            assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
 
-    @Test
-    void deleteChat_shouldThrowWhenUserIsNotParticipant() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+            verify(chat, never()).isParticipant(any());
+        }
 
-        when(chat.isParticipant(poster)).thenReturn(false);
+        @Test
+        void deleteChat_shouldThrowWhenUserIsNotParticipant() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> chatService.deleteChat(1L, authentication));
-        assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+            when(chat.isParticipant(poster)).thenReturn(false);
 
-        verify(chat, never()).setFirstDeletedByUser(any());
-        verifyNoInteractions(messageRepository);
-    }
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> chatService.deleteChat(chatId, authentication));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+
+            verify(chat, never()).setFirstDeletedByUser(any());
+            verifyNoInteractions(messageRepository);
+        }
 
 
-    @Test
-    void deleteChat_shouldSoftDeleteWhenNotDeletedBefore() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+        @Test
+        void deleteChat_shouldSoftDeleteWhenNotDeletedBefore() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-        when(chat.isParticipant(poster)).thenReturn(true);
+            when(chat.isParticipant(poster)).thenReturn(true);
 
-        when(chat.getFirstDeletedByUser()).thenReturn(null);
+            when(chat.getFirstDeletedByUser()).thenReturn(null);
 
-        chatService.deleteChat(1L, authentication);
+            chatService.deleteChat(chatId, authentication);
 
-        verify(chat).setFirstDeletedByUser(poster);
-        verify(chatRepository).save(chat);
+            verify(chat).setFirstDeletedByUser(poster);
+            verify(chatRepository).save(chat);
 
-        verify(dataChangePublisher).publish(
-                Entity.CHAT,
-                Action.SOFT_DELETE,
-                chat,
-                poster.getAccountName()
-        );
+            verify(dataChangePublisher).publish(
+                    Entity.CHAT,
+                    Action.SOFT_DELETE,
+                    chat,
+                    poster.getAccountName()
+            );
 
-        verify(messageRepository, never()).deleteByChat_Id(anyLong());
-    }
+            verify(messageRepository, never()).deleteByChat_Id(anyLong());
+        }
 
-    @Test
-    void deleteChat_shouldPermanentlyDeleteWhenAlreadyDeleted() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+        @Test
+        void deleteChat_shouldPermanentlyDeleteWhenAlreadyDeleted() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-        when(chat.isParticipant(poster)).thenReturn(true);
+            when(chat.isParticipant(poster)).thenReturn(true);
 
-        when(chat.getFirstDeletedByUser()).thenReturn(interestedUser);
+            when(chat.getFirstDeletedByUser()).thenReturn(interestedUser);
 
-        chatService.deleteChat(1L, authentication);
+            chatService.deleteChat(chatId, authentication);
 
-        verify(messageRepository).deleteByChat_Id(1L);
-        verify(chatRepository).delete(chat);
+            verify(messageRepository).deleteByChat_Id(chatId);
+            verify(chatRepository).delete(chat);
 
-        verify(dataChangePublisher).publish(
-                Entity.CHAT,
-                Action.DELETE,
-                chat,
-                poster.getAccountName()
-        );
+            verify(dataChangePublisher).publish(
+                    Entity.CHAT,
+                    Action.DELETE,
+                    chat,
+                    poster.getAccountName()
+            );
 
-        verify(chat, never()).setFirstDeletedByUser(any());
+            verify(chat, never()).setFirstDeletedByUser(any());
+        }
     }
 
 
@@ -394,96 +403,101 @@ class ChatServiceTest {
     // existsUnreadMessage()
     // ---------------------------------------------------------
 
-    @Test
-    void existsUnreadMessage_shouldThrowWhenUserIsNotAuthenticated() {
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> chatService.existsUnreadMessage(null));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+    @Nested
+    class ExistsUnreadMessageTests {
+        private final Long userId = 1L;
 
-        verifyNoInteractions(chatRepository);
-    }
+        @Test
+        void existsUnreadMessage_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> chatService.existsUnreadMessage(null));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-    @Test
-    void existsUnreadMessage_shouldReturnFalseWhenNoChatExists() {
-        when(chatRepository.findIdsByUserId(1L)).thenReturn(List.of());
+            verifyNoInteractions(chatRepository);
+        }
 
-        assertFalse(chatService.existsUnreadMessage(authentication));
+        @Test
+        void existsUnreadMessage_shouldReturnFalseWhenNoChatExists() {
+            when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of());
 
-        verifyNoInteractions(messageRepository);
-    }
+            assertFalse(chatService.existsUnreadMessage(authentication));
 
-    @Test
-    void existsUnreadMessage_shouldReturnFalseWhenNoMessageExists() {
-        when(chatRepository.findIdsByUserId(1L)).thenReturn(List.of(1L));
+            verifyNoInteractions(messageRepository);
+        }
 
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.empty());
+        @Test
+        void existsUnreadMessage_shouldReturnFalseWhenNoMessageExists() {
+            when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of(1L));
 
-        assertFalse(chatService.existsUnreadMessage(authentication));
-    }
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
+                    .thenReturn(Optional.empty());
 
-
-    @Test
-    void existsUnreadMessage_shouldReturnTrueWhenUnreadMessageExists() {
-        when(chatRepository.findIdsByUserId(1L)).thenReturn(List.of(1L));
-
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.of(lastMessage));
-
-        when(lastMessage.getSender()).thenReturn(interestedUser);
-        when(lastMessage.isRead()).thenReturn(false);
-
-        assertTrue(chatService.existsUnreadMessage(authentication));
-    }
-
-    @Test
-    void existsUnreadMessage_shouldReturnFalseWhenMessageIsRead() {
-        when(chatRepository.findIdsByUserId(1L)).thenReturn(List.of(1L));
-
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.of(lastMessage));
-
-        when(lastMessage.getSender()).thenReturn(interestedUser);
-        when(lastMessage.isRead()).thenReturn(true);
-
-        assertFalse(chatService.existsUnreadMessage(authentication));
-    }
-
-    @Test
-    void existsUnreadMessage_shouldReturnFalseWhenLastMessageWasSentByLoggedInUser() {
-        when(chatRepository.findIdsByUserId(1L)).thenReturn(List.of(1L));
-
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.of(lastMessage));
-
-        when(lastMessage.getSender()).thenReturn(poster);
-
-        assertFalse(chatService.existsUnreadMessage(authentication));
-
-        verify(lastMessage, never()).isRead();
-    }
+            assertFalse(chatService.existsUnreadMessage(authentication));
+        }
 
 
-    @Test
-    void existsUnreadMessage_shouldReturnTrueWhenAnyChatHasUnreadMessage() {
-        when(chatRepository.findIdsByUserId(1L)).thenReturn(List.of(1L, 2L));
+        @Test
+        void existsUnreadMessage_shouldReturnTrueWhenUnreadMessageExists() {
+            when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of(1L));
 
-        Message readMessage = mock(Message.class);
-        Message unreadMessage = mock(Message.class);
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
+                    .thenReturn(Optional.of(lastMessage));
 
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
-                .thenReturn(Optional.of(readMessage));
+            when(lastMessage.getSender()).thenReturn(interestedUser);
+            when(lastMessage.isRead()).thenReturn(false);
 
-        when(readMessage.getSender()).thenReturn(interestedUser);
-        when(readMessage.isRead()).thenReturn(true);
+            assertTrue(chatService.existsUnreadMessage(authentication));
+        }
 
-        when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(2L))
-                .thenReturn(Optional.of(unreadMessage));
+        @Test
+        void existsUnreadMessage_shouldReturnFalseWhenMessageIsRead() {
+            when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of(1L));
 
-        when(unreadMessage.getSender()).thenReturn(interestedUser);
-        when(unreadMessage.isRead()).thenReturn(false);
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
+                    .thenReturn(Optional.of(lastMessage));
 
-        assertTrue(chatService.existsUnreadMessage(authentication));
+            when(lastMessage.getSender()).thenReturn(interestedUser);
+            when(lastMessage.isRead()).thenReturn(true);
+
+            assertFalse(chatService.existsUnreadMessage(authentication));
+        }
+
+        @Test
+        void existsUnreadMessage_shouldReturnFalseWhenLastMessageWasSentByLoggedInUser() {
+            when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of(1L));
+
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
+                    .thenReturn(Optional.of(lastMessage));
+
+            when(lastMessage.getSender()).thenReturn(poster);
+
+            assertFalse(chatService.existsUnreadMessage(authentication));
+
+            verify(lastMessage, never()).isRead();
+        }
+
+
+        @Test
+        void existsUnreadMessage_shouldReturnTrueWhenAnyChatHasUnreadMessage() {
+            when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of(1L, 2L));
+
+            Message readMessage = mock(Message.class);
+            Message unreadMessage = mock(Message.class);
+
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
+                    .thenReturn(Optional.of(readMessage));
+
+            when(readMessage.getSender()).thenReturn(interestedUser);
+            when(readMessage.isRead()).thenReturn(true);
+
+            when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(2L))
+                    .thenReturn(Optional.of(unreadMessage));
+
+            when(unreadMessage.getSender()).thenReturn(interestedUser);
+            when(unreadMessage.isRead()).thenReturn(false);
+
+            assertTrue(chatService.existsUnreadMessage(authentication));
+        }
     }
 }
 
