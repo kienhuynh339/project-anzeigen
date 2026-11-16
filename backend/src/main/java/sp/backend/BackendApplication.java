@@ -15,9 +15,9 @@ public class BackendApplication {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         System.out.println("Samwise - samwise:sam123456 - passwordHash: " + encoder.encode("sam123456"));
-        System.out.println("Merry - merryy:mer123456 - passwordHash: " + encoder.encode("mer123456"));
+        System.out.println("Merry - merry:mer123456 - passwordHash: " + encoder.encode("mer123456"));
         System.out.println("Pippin - pippin:pip123456 - passwordHash: " + encoder.encode("pip123456"));
-        System.out.println("Frodo - frodoo:fro123456 - passwordHash: " + encoder.encode("fro123456"));
+        System.out.println("Frodo - frodo:fro123456 - passwordHash: " + encoder.encode("fro123456"));
     }
 
 }
