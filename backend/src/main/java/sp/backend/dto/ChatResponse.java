@@ -38,6 +38,9 @@ public class ChatResponse {
         this.firstDeletedByUserId = chat.getFirstDeletedByUser() != null ? chat.getFirstDeletedByUser().getId() : null;
     }
 
+    public ChatResponse() {
+    }
+
     public Long getId() {
         return id;
     }
