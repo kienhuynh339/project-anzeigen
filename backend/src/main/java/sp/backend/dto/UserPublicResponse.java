@@ -18,6 +18,10 @@ public class UserPublicResponse {
         this.createdAt = user.getCreatedAt();
     }
 
+    public UserPublicResponse() {
+    }
+
+
     public Long getId() {
         return id;
     }
