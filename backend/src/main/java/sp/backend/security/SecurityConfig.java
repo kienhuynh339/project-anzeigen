@@ -21,6 +21,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import sp.backend.exception.ExceptionMessage;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class SecurityConfig {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json");
                             response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("{\"message\":\"Benutzer ist nicht authentifiziert.\"}");
+                            response.getWriter().write("{\"message\":\"" + ExceptionMessage.USER_NOT_AUTHENTICATED + "\"}");
                         }))
                 // Session-Management konfigurieren
                 .sessionManagement(session ->
