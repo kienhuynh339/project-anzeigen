@@ -20,6 +20,10 @@ public class UserPrivateResponse {
         this.createdAt = user.getCreatedAt();
     }
 
+    public UserPrivateResponse() {
+    }
+
+
     public Long getId() {
         return id;
     }
