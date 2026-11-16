@@ -1,6 +1,7 @@
 package sp.backend.item;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -61,21 +62,24 @@ public class ItemControllerIntegrationTest {
     // findById()
     // ---------------------------------------------------------
 
-    @Test
-    void findById_shouldReturnItem_whenItemExists() {
+    @Nested
+    class FindByIdTests {
+        @Test
+        void findById_shouldReturnItem_whenItemExists() {
 
-        ResponseEntity<ItemResponse> response =
-                tRTemplate(User.MERRY)
-                        .getForEntity(
-                                "/api/items/{itemId}",
-                                ItemResponse.class,
-                                1
-                        );
+            ResponseEntity<ItemResponse> response =
+                    tRTemplate(User.MERRY)
+                            .getForEntity(
+                                    "/api/items/{itemId}",
+                                    ItemResponse.class,
+                                    1
+                            );
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getId()).isEqualTo(1L);
-        System.out.println(response.getBody().getTitle());
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).isNotNull();
+            assertThat(response.getBody().getId()).isEqualTo(1L);
+            System.out.println(response.getBody().getTitle());
+        }
     }
 //
 //    @Test
