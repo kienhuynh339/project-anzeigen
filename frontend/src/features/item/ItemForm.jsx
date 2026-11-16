@@ -94,7 +94,12 @@ export default function ItemForm({
             name="price"
             className="form-control border-dark-subtle"
             value={item.price}
-            onChange={(e) => updateItemDetails("price", e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || Number(value) >= 0) {
+                updateItemDetails("price", value);
+              }
+            }}
           />
           &nbsp;,00&euro;
         </div>
