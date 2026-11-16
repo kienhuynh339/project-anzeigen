@@ -22,6 +22,10 @@ public class MessageResponse {
         this.createdAt = message.getCreatedAt();
     }
 
+    public MessageResponse() {
+    }
+
+
     public Long getId() {
         return id;
     }
