@@ -31,14 +31,14 @@ ALTER TABLE items ALTER COLUMN id RESTART WITH 19;
 
 INSERT INTO item_images (content_type,image, item_id, display_order)
 VALUES
-    ('image/jpeg',FILE_READ('src/main/resources/images/user_1_pc_videospiele_nintendoswitch2.jpg'), 1, 0),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user1_audio_headset (1).jpg'), 2, 0),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user1_audio_headset (2).jpg'), 3, 0),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user2_Uhren_3_Uhren (1).jpg'), 16, 0),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user2_Uhren_3_Uhren (2).jpg'), 16, 1),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user2_Uhren_3_Uhren (3).jpg'), 16, 2),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 17, 0),
-    ('image/jpeg',FILE_READ('src/main/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 18, 0);
+    ('image/jpeg',FILE_READ('src/test/resources/images/user_1_pc_videospiele_nintendoswitch2.jpg'), 1, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (1).jpg'), 2, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (2).jpg'), 3, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (1).jpg'), 16, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (2).jpg'), 16, 1),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (3).jpg'), 16, 2),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 17, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 18, 0);
 
 
 INSERT INTO item_favorites(user_id, item_id)
