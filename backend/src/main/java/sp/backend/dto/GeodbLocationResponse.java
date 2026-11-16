@@ -27,6 +27,9 @@ public class GeodbLocationResponse {
         this.extraInfo = extraInfo;
     }
 
+    public GeodbLocationResponse() {
+    }
+
     public Integer getId() {
         return id;
     }
