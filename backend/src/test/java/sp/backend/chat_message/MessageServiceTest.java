@@ -81,183 +81,191 @@ public class MessageServiceTest {
     // findById()
     // ---------------------------------------------------------
 
-    @Test
-    void findById_shouldThrowWhenMessageDoesNotExist() {
-        when(messageRepository.findById(1L)).thenReturn(Optional.empty());
+    @Nested
+    class FindByIdTests {
+        private final Long messageId = 1L;
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> messageService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.MESSAGE_NOT_FOUND, exception.getMessage());
+        @Test
+        void findById_shouldThrowWhenMessageDoesNotExist() {
+            when(messageRepository.findById(messageId)).thenReturn(Optional.empty());
 
-        verifyNoInteractions(userRepository);
-    }
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> messageService.findById(messageId, authentication));
+            assertEquals(ExceptionMessage.MESSAGE_NOT_FOUND, exception.getMessage());
 
-    @Test
-    void findById_shouldThrowWhenUserIsNotAuthenticated() {
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(message));
+            verifyNoInteractions(userRepository);
+        }
 
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> messageService.findById(1L, null));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+        @Test
+        void findById_shouldThrowWhenUserIsNotAuthenticated() {
+            when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
-        verifyNoInteractions(chatRepository);
-    }
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> messageService.findById(messageId, null));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-    @Test
-    void findById_shouldThrowWhenChatDoesNotExist() {
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(message));
+            verifyNoInteractions(chatRepository);
+        }
 
-        when(chatRepository.findById(1L)).thenReturn(Optional.empty());
+        @Test
+        void findById_shouldThrowWhenChatDoesNotExist() {
+            when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> messageService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
+            when(chatRepository.findById(1L)).thenReturn(Optional.empty());
 
-        verify(chat, never()).isParticipant(any());
-    }
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> messageService.findById(messageId, authentication));
+            assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
 
-    @Test
-    void findById_shouldThrowWhenUserIsNotParticipant() {
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(message));
+            verify(chat, never()).isParticipant(any());
+        }
 
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+        @Test
+        void findById_shouldThrowWhenUserIsNotParticipant() {
+            when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
-        when(chat.isParticipant(sender)).thenReturn(false);
+            when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> messageService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
-    }
+            when(chat.isParticipant(sender)).thenReturn(false);
 
-    @Test
-    void findById_shouldReturnMessageResponse() {
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(message));
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> messageService.findById(messageId, authentication));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+        }
 
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+        @Test
+        void findById_shouldReturnMessageResponse() {
+            when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
-        when(chat.isParticipant(sender)).thenReturn(true);
+            when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
 
-        MessageResponse messageResponse = messageService.findById(1L, authentication);
+            when(chat.isParticipant(sender)).thenReturn(true);
 
-        assertNotNull(messageResponse);
-        assertEquals(message.getId(), messageResponse.getId());
-        assertEquals(sender.getId(), messageResponse.getSenderId());
+            MessageResponse messageResponse = messageService.findById(messageId, authentication);
+
+            assertNotNull(messageResponse);
+            assertEquals(message.getId(), messageResponse.getId());
+            assertEquals(sender.getId(), messageResponse.getSenderId());
+        }
     }
 
     // ---------------------------------------------------------
     // findByChatId()
     // ---------------------------------------------------------
 
-    @Test
-    void findByChatId_shouldThrowWhenUserIsNotAuthenticated() {
-        Pageable pageable = PageRequest.of(0, 10);
+    @Nested
+    class FindByChatIdTests {
+        private final Pageable pageable = PageRequest.of(0, 10);
+        private final Long chatId = 1L;
 
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> messageService.findByChatId(1L, null, pageable));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+        @Test
+        void findByChatId_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> messageService.findByChatId(chatId, null, pageable));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-        verifyNoInteractions(chatRepository);
-    }
+            verifyNoInteractions(chatRepository);
+        }
 
-    @Test
-    void findByChatId_shouldThrowWhenChatDoesNotExist() {
-        Pageable pageable = PageRequest.of(0, 10);
+        @Test
+        void findByChatId_shouldThrowWhenChatDoesNotExist() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.empty());
 
-        when(chatRepository.findById(1L)).thenReturn(Optional.empty());
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> messageService.findByChatId(chatId, authentication, pageable));
+            assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> messageService.findByChatId(1L, authentication, pageable));
-        assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
+            verify(chat, never()).isParticipant(any());
+        }
 
-        verify(chat, never()).isParticipant(any());
-    }
+        @Test
+        void findByChatId_shouldThrowWhenUserIsNotParticipant() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-    @Test
-    void findByChatId_shouldThrowWhenUserIsNotParticipant() {
-        Pageable pageable = PageRequest.of(0, 10);
+            when(chat.isParticipant(sender)).thenReturn(false);
 
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> messageService.findByChatId(chatId, authentication, pageable));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+        }
 
-        when(chat.isParticipant(sender)).thenReturn(false);
+        @Test
+        void findByChatId_shouldReturnMessageResponses() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> messageService.findByChatId(1L, authentication, pageable));
-        assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
-    }
+            when(chat.isParticipant(sender)).thenReturn(true);
 
-    @Test
-    void findByChatId_shouldReturnMessageResponses() {
-        Pageable pageable = PageRequest.of(0, 10);
+            Page<MessageResponse> page = new PageImpl<>(List.of(new MessageResponse(message)));
 
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+            when(messageRepository.findByChatId(chatId, pageable)).thenReturn(page);
 
-        when(chat.isParticipant(sender)).thenReturn(true);
+            Page<MessageResponse> result = messageService.findByChatId(chatId, authentication, pageable);
 
-        Page<MessageResponse> page = new PageImpl<>(List.of(new MessageResponse(message)));
+            assertNotNull(result);
+            assertEquals(1, result.getTotalElements());
 
-        when(messageRepository.findByChatId(1L, pageable)).thenReturn(page);
+            MessageResponse messageResponse = result.getContent().get(0);
 
-        Page<MessageResponse> result = messageService.findByChatId(1L, authentication, pageable);
-
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-
-        MessageResponse messageResponse = result.getContent().get(0);
-
-        assertEquals(1L, messageResponse.getId());
+            assertEquals(1L, messageResponse.getId());
+        }
     }
 
     // ---------------------------------------------------------
     // markMessagesAsRead()
     // ---------------------------------------------------------
 
-    @Test
-    void markMessagesAsRead_shouldThrowWhenUserIsNotAuthenticated() {
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> messageService.markMessagesAsRead(1L, null));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+    @Nested
+    class MarkMessagesAsReadTests {
+        private final Long chatId = 1L;
 
-        verifyNoInteractions(chatRepository);
-    }
+        @Test
+        void markMessagesAsRead_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> messageService.markMessagesAsRead(chatId, null));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-    @Test
-    void markMessagesAsRead_shouldThrowWhenChatDoesNotExist() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.empty());
+            verifyNoInteractions(chatRepository);
+        }
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> messageService.markMessagesAsRead(1L, authentication));
-        assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
+        @Test
+        void markMessagesAsRead_shouldThrowWhenChatDoesNotExist() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.empty());
 
-        verify(chat, never()).isParticipant(any());
-    }
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> messageService.markMessagesAsRead(chatId, authentication));
+            assertEquals(ExceptionMessage.CHAT_NOT_FOUND, exception.getMessage());
 
-    @Test
-    void markMessagesAsRead_shouldThrowWhenUserIsNotParticipant() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+            verify(chat, never()).isParticipant(any());
+        }
 
-        when(chat.isParticipant(sender)).thenReturn(false);
+        @Test
+        void markMessagesAsRead_shouldThrowWhenUserIsNotParticipant() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> messageService.markMessagesAsRead(1L, authentication));
-        assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+            when(chat.isParticipant(sender)).thenReturn(false);
 
-        verify(chat, never()).getOtherParticipant(any());
-    }
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> messageService.markMessagesAsRead(chatId, authentication));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
 
-    @Test
-    void markMessagesAsRead_shouldMarkMessagesAsRead() {
-        when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
+            verify(chat, never()).getOtherParticipant(any());
+        }
 
-        when(chat.isParticipant(sender)).thenReturn(true);
+        @Test
+        void markMessagesAsRead_shouldMarkMessagesAsRead() {
+            when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
-        User otherParticipant = mock(User.class);
-        when(otherParticipant.getId()).thenReturn(2L);
+            when(chat.isParticipant(sender)).thenReturn(true);
 
-        when(chat.getOtherParticipant(sender)).thenReturn(otherParticipant);
+            User otherParticipant = mock(User.class);
+            when(otherParticipant.getId()).thenReturn(2L);
 
-        messageService.markMessagesAsRead(1L, authentication);
+            when(chat.getOtherParticipant(sender)).thenReturn(otherParticipant);
 
-        verify(messageRepository).markMessagesAsReadByChat_IdAndSender_Id(1L, 2L);
+            messageService.markMessagesAsRead(chatId, authentication);
+
+            verify(messageRepository).markMessagesAsReadByChat_IdAndSender_Id(chatId, 2L);
+        }
     }
 
     // ---------------------------------------------------------
