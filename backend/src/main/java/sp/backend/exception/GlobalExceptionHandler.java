@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import sp.backend.dto.ErrorResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             EntityNotFoundException exception) {
 
         HttpStatus status = HttpStatus.NOT_FOUND;
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             AccessDeniedException exception) {
 
         HttpStatus status = HttpStatus.FORBIDDEN;
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             AuthenticationException exception) {
 
         HttpStatus status = HttpStatus.UNAUTHORIZED;
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             MethodArgumentNotValidException exception) {
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DeletedItemModificationNotAllowedException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             DeletedItemModificationNotAllowedException exception) {
 
         // Gelöschtes Item gilt als nicht existent
@@ -65,7 +66,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CannotFavorOwnItemException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             CannotFavorOwnItemException exception) {
 
         HttpStatus status = HttpStatus.FORBIDDEN;
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CannotFavorDeletedItemException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             CannotFavorDeletedItemException exception) {
 
         HttpStatus status = HttpStatus.FORBIDDEN;
@@ -83,7 +84,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CannotStartNewChatForDeletedItemException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             CannotStartNewChatForDeletedItemException exception) {
 
         HttpStatus status = HttpStatus.FORBIDDEN;
@@ -92,7 +93,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(FavoriteItemAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             FavoriteItemAlreadyExistsException exception) {
 
         HttpStatus status = HttpStatus.CONFLICT;
@@ -101,7 +102,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleException(
+    public ResponseEntity<ErrorResponse> handleException(
             IllegalArgumentException exception) {
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -109,12 +110,9 @@ public class GlobalExceptionHandler {
         return createResponseEntity(exception, status);
     }
 
-    private ResponseEntity<Map<String, String>> createResponseEntity(Exception exception, HttpStatus status) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", exception.getMessage());
-
+    private ResponseEntity<ErrorResponse> createResponseEntity(Exception exception, HttpStatus status) {
         return ResponseEntity
                 .status(status)
-                .body(response);
+                .body(new ErrorResponse(exception.getMessage()));
     }
 }
