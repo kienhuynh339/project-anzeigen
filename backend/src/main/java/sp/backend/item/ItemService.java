@@ -141,8 +141,6 @@ public class ItemService {
     public void updateItemStatus(Long itemId, ItemStatus itemStatus, Authentication authentication) {
         User loggedInUser = getLoggedInUser(authentication, userRepository, true);
 
-        validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.RESERVED, ItemStatus.DELETED), itemStatus);
-
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
 
@@ -150,6 +148,8 @@ public class ItemService {
         if (!item.getPoster().equals(loggedInUser)) {
             throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
         }
+
+        validateItemStatus(EnumSet.of(ItemStatus.ACTIVE, ItemStatus.RESERVED, ItemStatus.DELETED), itemStatus);
 
         // Gelöschte Anzeige darf nicht modifiziert werden
         if (item.getStatus() == ItemStatus.DELETED) {
@@ -176,11 +176,12 @@ public class ItemService {
         GeodbLocation location = geodbLocationRepository.findById(request.getLocationId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.LOCATION_NOT_FOUND));
 
+
         Item item = new Item(poster, request.getTitle(), category, request.getDescription(), request.getPrice(), location, request.getPostcode(), request.getLocationExtraInfo(), request.getStatus());
 
-        itemRepository.save(item);
-
         saveImages(request.getImages(), item.getId());
+
+        itemRepository.save(item);
 
 //        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item);
 
@@ -193,6 +194,11 @@ public class ItemService {
 
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ITEM_NOT_FOUND));
+
+        // Ob der User der Poster ist
+        if (!item.getPoster().getId().equals(loggedInUser.getId())) {
+            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
+        }
 
         validateImages(request.getImages());
 
@@ -211,11 +217,6 @@ public class ItemService {
             validateItemStatus(EnumSet.of(ItemStatus.ACTIVE), request.getStatus());
         }
 
-        // Ob der User der Poster ist
-        if (!item.getPoster().getId().equals(loggedInUser.getId())) {
-            throw new AccessDeniedException(ExceptionMessage.ACCESS_DENIED);
-        }
-
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND));
 
@@ -224,6 +225,9 @@ public class ItemService {
 
         // Lösche alle Bilder der Anzeige in der DB
         itemImageRepository.deleteAllByItemId(itemId);
+
+        // Bilder speichern
+        saveImages(request.getImages(), item.getId());
 
         // Item aktualisieren
         item.setTitle(request.getTitle());
@@ -236,9 +240,6 @@ public class ItemService {
         item.setStatus(request.getStatus());
 
         itemRepository.save(item);
-
-        // Bilder speichern
-        saveImages(request.getImages(), item.getId());
 
         dataChangePublisher.publish(Entity.ITEM, Action.UPDATE, item);
 
