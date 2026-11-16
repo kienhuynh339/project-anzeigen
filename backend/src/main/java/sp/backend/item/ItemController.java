@@ -48,6 +48,7 @@ public class ItemController {
             @RequestParam(required = false) Integer locationId,
             @RequestParam(required = false) Integer radiusKm, Authentication authentication,
             Pageable pageable) {
+
         Page<ItemWithDistanceResponse> page = itemService.search(searchTerm, categoryId, minPrice, maxPrice, locationId, radiusKm, authentication, pageable);
         return ResponseEntity.ok(page);
     }
@@ -58,6 +59,7 @@ public class ItemController {
         return ResponseEntity.ok(page);
     }
 
+    //#**
     @GetMapping("/user/favorites")
     private ResponseEntity<Page<ItemResponse>> findFavoriteItems(Authentication authentication, Pageable pageable) {
         Page<ItemResponse> page = itemService.findFavoriteItems(authentication, pageable);
