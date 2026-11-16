@@ -119,7 +119,12 @@ export default function SearchBar({}) {
                 className="form-control"
                 placeholder="von"
                 value={priceMin}
-                onChange={(e) => updateFilter("priceMin", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "" || Number(value) >= 0) {
+                    updateFilter("priceMin", value);
+                  }
+                }}
                 autoComplete="off"
                 style={{ width: "7rem" }}
               />
@@ -130,7 +135,12 @@ export default function SearchBar({}) {
                 className="form-control"
                 placeholder="bis"
                 value={priceMax}
-                onChange={(e) => updateFilter("priceMax", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "" || Number(value) >= 0) {
+                    updateFilter("priceMax", value);
+                  }
+                }}
                 autoComplete="off"
                 style={{ width: "7rem" }}
               />
