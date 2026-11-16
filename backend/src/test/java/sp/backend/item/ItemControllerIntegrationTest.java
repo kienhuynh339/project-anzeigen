@@ -8,14 +8,22 @@ import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
+import sp.backend.dto.ErrorResponse;
 import sp.backend.dto.ItemResponse;
+import sp.backend.exception.ExceptionMessage;
 import sp.backend.item_category.Category;
 import sp.backend.item_category.CategoryRepository;
 import sp.backend.item_image.ItemImageRepository;
 import sp.backend.location.GeodbLocation;
 import sp.backend.location.GeodbLocationRepository;
+import sp.backend.user.User;
 import sp.backend.user.UserRepository;
+
+import java.time.OffsetDateTime;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,80 +73,71 @@ public class ItemControllerIntegrationTest {
     @Nested
     class FindByIdTests {
         @Test
-        void findById_shouldReturnItem_whenItemExists() {
+        void findById_shouldThrowWhenItemDoesNotExist() {
+            ResponseEntity<ErrorResponse> response = tRTemplate()
+                    .getForEntity("/api/items/{itemId}", ErrorResponse.class, 99);
 
-            ResponseEntity<ItemResponse> response =
-                    tRTemplate(User.MERRY)
-                            .getForEntity(
-                                    "/api/items/{itemId}",
-                                    ItemResponse.class,
-                                    1
-                            );
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
+        }
+
+        @Test
+        void findById_shouldReturnItemResponseWithFavoriteFalseWhenUnauthenticated() {
+            asserting(null, false);
+        }
+
+        @Test
+        void findById_shouldReturnItemResponseWithFavoriteFalseWhenUserIsSamwise() {
+            asserting(UserEnum.SAMWISE, false);
+        }
+
+        @Test
+        void findById_shouldReturnItemResponseWithFavoriteTrueWhenUserIsFrodo() {
+            asserting(UserEnum.FRODO, true);
+        }
+
+        private void asserting(UserEnum userEnum, Boolean isFavorite) {
+            ResponseEntity<ItemResponse> response = tRTemplate(userEnum)
+                    .getForEntity("/api/items/{itemId}", ItemResponse.class, 1);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getId()).isEqualTo(1L);
-            System.out.println(response.getBody().getTitle());
+
+            assertThat(response.getBody()).isNotNull().extracting(
+                    ItemResponse::getId,
+                    ItemResponse::getCategoryId,
+                    i -> i.getPoster().getId(),
+                    ItemResponse::getTitle,
+                    ItemResponse::getDescription,
+                    ItemResponse::getPrice,
+                    i -> i.getLocation().getId(),
+                    ItemResponse::getStatus,
+                    i -> i.getCreatedAt().toInstant(),
+                    ItemResponse::getFavorite).containsExactly(
+                    1L, (short) 2, 1L, "Anzeige 1", "Beschreibung...", 100, 26488, ItemStatus.RESERVED, OffsetDateTime.parse("2026-09-01T08:00:00+02").toInstant(), isFavorite
+            );
         }
     }
-//
-//    @Test
-//    void findById_shouldReturn404_whenItemDoesNotExist() {
-//
-//        ResponseEntity<String> response =
-//                trTemplate(User.SAMWISE)
-//                        .getForEntity(
-//                                "/api/items/999999",
-//                                String.class
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NOT_FOUND);
-//    }
-//
-//    @Test
-//    void findByIdToEdit_shouldReturnItem_whenUserIsOwner() {
-//
-//        ResponseEntity<ItemResponse> response =
-//                trTemplate(User.SAMWISE)
-//                        .getForEntity(
-//                                "/api/items/{itemId}/edit",
-//                                ItemResponse.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//    }
-//
-//    @Test
-//    void findByIdToEdit_shouldReturn403_whenUserIsNotOwner() {
-//
-//        ResponseEntity<String> response =
-//                authenticatedClient(anotherUser.getAccountName())
-//                        .getForEntity(
-//                                "/api/items/{itemId}/edit",
-//                                String.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.FORBIDDEN);
-//    }
-//
-//    @Test
-//    void findByIdToEdit_shouldReturn404_whenItemDoesNotExist() {
-//
-//        ResponseEntity<String> response =
-//                trTemplate(User.SAMWISE)
-//                        .getForEntity(
-//                                "/api/items/999999/edit",
-//                                String.class
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NOT_FOUND);
-//    }
+
+
+    // ---------------------------------------------------------
+    // findByIdToEdit()
+    // ---------------------------------------------------------
+
+    @Nested
+    class FindByIdToEditTests {
+        @Test
+        void findByIdToEdit_shouldThrowWhenUnauthenticated() {
+            ResponseEntity<ItemResponse> response = tRTemplate()
+                    .getForEntity("/api/items/{itemId}/edit", ItemResponse.class, 1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED)
+        }
+
+    }
+
+
 //
 //    @Test
 //    void search_shouldReturnItems() {
@@ -486,15 +485,15 @@ public class ItemControllerIntegrationTest {
 //
 
 
-    enum User {SAMWISE, MERRY, PIPPIN, FRODO,}
+    enum UserEnum {SAMWISE, MERRY, PIPPIN, FRODO,}
 
     private TestRestTemplate tRTemplate() {
         return restTemplate;
     }
 
-    private TestRestTemplate tRTemplate(User user) {
-        if (user == null) return restTemplate;
-        return switch (user) {
+    private TestRestTemplate tRTemplate(UserEnum userEnum) {
+        if (userEnum == null) return restTemplate;
+        return switch (userEnum) {
             case SAMWISE -> restTemplate.withBasicAuth("samwise", "sam123456");
             case MERRY -> restTemplate.withBasicAuth("merry", "mer123456");
             case PIPPIN -> restTemplate.withBasicAuth("pippin", "pip123456");
