@@ -14,6 +14,10 @@ public class LoginResponse {
         this.accountName = accountName;
     }
 
+    public LoginResponse() {
+    }
+
+
     public Long getId() {
         return id;
     }
