@@ -14,7 +14,7 @@ public class ItemResponse {
     private UserPublicResponse poster;
     private String title;
     private String description;
-    private int price;
+    private Integer price;
     private GeodbLocationResponse location;
     private ItemStatus status;
     private OffsetDateTime createdAt;
@@ -33,7 +33,7 @@ public class ItemResponse {
         this.isFavorite = isFavorite;
     }
 
-    public ItemResponse(Long id, Short categoryId, UserPublicResponse poster, String title, String description, int price, GeodbLocationResponse location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
+    public ItemResponse(Long id, Short categoryId, UserPublicResponse poster, String title, String description, Integer price, GeodbLocationResponse location, ItemStatus status, OffsetDateTime createdAt, Boolean isFavorite) {
         this.id = id;
         this.categoryId = categoryId;
         this.poster = poster;
@@ -90,11 +90,11 @@ public class ItemResponse {
         this.description = description;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
