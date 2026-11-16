@@ -1,38 +1,26 @@
 package sp.backend.item;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.test.context.ActiveProfiles;
 import sp.backend.dto.ItemResponse;
-import sp.backend.dto.ItemStatusUpdateRequest;
-import sp.backend.dto.ItemWithDistanceResponse;
 import sp.backend.item_category.Category;
 import sp.backend.item_category.CategoryRepository;
 import sp.backend.item_image.ItemImageRepository;
 import sp.backend.location.GeodbLocation;
 import sp.backend.location.GeodbLocationRepository;
-import sp.backend.user.User;
 import sp.backend.user.UserRepository;
-import tools.jackson.databind.JsonNode;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
+@ActiveProfiles("test")
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ItemControllerIntegrationTest {
     @Autowired
@@ -63,52 +51,38 @@ public class ItemControllerIntegrationTest {
 
     private Long itemId;
 
+
     @BeforeEach
     void setUp() {
         // Testdaten vorbereiten
     }
 
-    private TestRestTemplate guest(String username) {
-        return restTemplate;
-    }
-
-    private TestRestTemplate samwise() {
-        return restTemplate.withBasicAuth("samwise", "sam123456");
-    }
-
-    private TestRestTemplate merry() {
-        return restTemplate.withBasicAuth("merry", "mer123456");
-    }
-
-    private TestRestTemplate pippin() {
-        return restTemplate.withBasicAuth("pippin", "pip123456");
-    }
-
-    private TestRestTemplate frodo() {
-        return restTemplate.withBasicAuth("frodo", "fro123456");
-    }
+    // ---------------------------------------------------------
+    // findById()
+    // ---------------------------------------------------------
 
     @Test
     void findById_shouldReturnItem_whenItemExists() {
 
         ResponseEntity<ItemResponse> response =
-                samwise()
+                tRTemplate(User.MERRY)
                         .getForEntity(
                                 "/api/items/{itemId}",
                                 ItemResponse.class,
-                                itemId
+                                1
                         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getId()).isEqualTo(itemId);
+        assertThat(response.getBody().getId()).isEqualTo(1L);
+        System.out.println(response.getBody().getTitle());
     }
 //
 //    @Test
 //    void findById_shouldReturn404_whenItemDoesNotExist() {
 //
 //        ResponseEntity<String> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .getForEntity(
 //                                "/api/items/999999",
 //                                String.class
@@ -122,7 +96,7 @@ public class ItemControllerIntegrationTest {
 //    void findByIdToEdit_shouldReturnItem_whenUserIsOwner() {
 //
 //        ResponseEntity<ItemResponse> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .getForEntity(
 //                                "/api/items/{itemId}/edit",
 //                                ItemResponse.class,
@@ -152,7 +126,7 @@ public class ItemControllerIntegrationTest {
 //    void findByIdToEdit_shouldReturn404_whenItemDoesNotExist() {
 //
 //        ResponseEntity<String> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .getForEntity(
 //                                "/api/items/999999/edit",
 //                                String.class
@@ -166,7 +140,7 @@ public class ItemControllerIntegrationTest {
 //    void search_shouldReturnItems() {
 //
 //        ResponseEntity<RestResponsePage<ItemWithDistanceResponse>> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items",
 //                                HttpMethod.GET,
@@ -215,7 +189,7 @@ public class ItemControllerIntegrationTest {
 //                .toUriString();
 //
 //        ResponseEntity<RestResponsePage<ItemWithDistanceResponse>> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                url,
 //                                HttpMethod.GET,
@@ -232,7 +206,7 @@ public class ItemControllerIntegrationTest {
 //    void findByUserId_shouldReturnItemsOfUser() {
 //
 //        ResponseEntity<RestResponsePage<ItemResponse>> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/user/" + user.getId(),
 //                                HttpMethod.GET,
@@ -249,7 +223,7 @@ public class ItemControllerIntegrationTest {
 //    void findByUserId_shouldReturn404_whenUserDoesNotExist() {
 //
 //        ResponseEntity<String> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .getForEntity(
 //                                "/api/items/user/999999",
 //                                String.class
@@ -263,7 +237,7 @@ public class ItemControllerIntegrationTest {
 //    void findFavoriteItems_shouldReturnFavorites() {
 //
 //        ResponseEntity<RestResponsePage<ItemResponse>> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/user/favorites",
 //                                HttpMethod.GET,
@@ -280,7 +254,7 @@ public class ItemControllerIntegrationTest {
 //    void markItemAsDeleted_shouldSetStatusToDeleted() {
 //
 //        ResponseEntity<Void> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/{itemId}",
 //                                HttpMethod.DELETE,
@@ -319,7 +293,7 @@ public class ItemControllerIntegrationTest {
 //    void markItemAsDeleted_shouldReturn404_whenItemDoesNotExist() {
 //
 //        ResponseEntity<String> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/999999",
 //                                HttpMethod.DELETE,
@@ -338,7 +312,7 @@ public class ItemControllerIntegrationTest {
 //        request.setStatus(ItemStatus.RESERVED);
 //
 //        ResponseEntity<Void> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/{itemId}",
 //                                HttpMethod.PATCH,
@@ -382,7 +356,7 @@ public class ItemControllerIntegrationTest {
 //        request.setStatus(ItemStatus.DRAFT);
 //
 //        ResponseEntity<String> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/{itemId}",
 //                                HttpMethod.PATCH,
@@ -406,7 +380,7 @@ public class ItemControllerIntegrationTest {
 //        request.setStatus(ItemStatus.ACTIVE);
 //
 //        ResponseEntity<String> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/{itemId}",
 //                                HttpMethod.PATCH,
@@ -440,7 +414,7 @@ public class ItemControllerIntegrationTest {
 //                new HttpEntity<>(body, headers);
 //
 //        ResponseEntity<Void> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .postForEntity(
 //                                "/api/items",
 //                                request,
@@ -486,7 +460,7 @@ public class ItemControllerIntegrationTest {
 //                new HttpEntity<>(body, headers);
 //
 //        ResponseEntity<Void> response =
-//                samwise()
+//                trTemplate(User.SAMWISE)
 //                        .exchange(
 //                                "/api/items/{itemId}",
 //                                HttpMethod.PUT,
@@ -507,4 +481,21 @@ public class ItemControllerIntegrationTest {
 //    }
 //
 
+
+    enum User {SAMWISE, MERRY, PIPPIN, FRODO,}
+
+    private TestRestTemplate tRTemplate() {
+        return restTemplate;
+    }
+
+    private TestRestTemplate tRTemplate(User user) {
+        if (user == null) return restTemplate;
+        return switch (user) {
+            case SAMWISE -> restTemplate.withBasicAuth("samwise", "sam123456");
+            case MERRY -> restTemplate.withBasicAuth("merry", "mer123456");
+            case PIPPIN -> restTemplate.withBasicAuth("pippin", "pip123456");
+            case FRODO -> restTemplate.withBasicAuth("frodo", "fro123456");
+            default -> restTemplate;
+        };
+    }
 }
