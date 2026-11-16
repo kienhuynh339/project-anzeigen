@@ -14,6 +14,10 @@ public class Event {
         this.entityId = entityId;
     }
 
+    public Event() {
+    }
+
+
     public String getEntity() {
         return entity;
     }
