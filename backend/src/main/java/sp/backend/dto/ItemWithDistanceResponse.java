@@ -10,13 +10,13 @@ public class ItemWithDistanceResponse {
     private Long posterId;
     private String title;
     private String description;
-    private int price;
+    private Integer price;
     private GeodbLocationResponse location;
     private OffsetDateTime createdAt;
     private Double distance;
     private Boolean isFavorite;
 
-    public ItemWithDistanceResponse(Long id, Long posterId, String title, String description, int price, GeodbLocationResponse location, OffsetDateTime createdAt, Double distance, Boolean isFavorite) {
+    public ItemWithDistanceResponse(Long id, Long posterId, String title, String description, Integer price, GeodbLocationResponse location, OffsetDateTime createdAt, Double distance, Boolean isFavorite) {
         this.id = id;
         this.posterId = posterId;
         this.title = title;
@@ -63,11 +63,11 @@ public class ItemWithDistanceResponse {
         this.description = description;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
