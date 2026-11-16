@@ -115,13 +115,14 @@ export default function SearchBar({}) {
               <span className="">Preis: </span>
               {/* Preis min */}
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 className="form-control"
                 placeholder="von"
                 value={priceMin}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value === "" || Number(value) >= 0) {
+                  if (/^(|0|[1-9]\d*)$/.test(value)) {
                     updateFilter("priceMin", value);
                   }
                 }}
@@ -131,13 +132,14 @@ export default function SearchBar({}) {
               <span className="">-</span>
               {/* Preis max */}
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 className="form-control"
                 placeholder="bis"
                 value={priceMax}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value === "" || Number(value) >= 0) {
+                  if (/^(|0|[1-9]\d*)$/.test(value)) {
                     updateFilter("priceMax", value);
                   }
                 }}
