@@ -89,14 +89,15 @@ export default function ItemForm({
         </label>
         <div className="col-5 d-flex align-items-center">
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             id="price"
             name="price"
             className="form-control border-dark-subtle"
             value={item.price}
             onChange={(e) => {
               const value = e.target.value;
-              if (value === "" || Number(value) >= 0) {
+              if (/^(|0|[1-9]\d*)$/.test(value)) {
                 updateItemDetails("price", value);
               }
             }}
