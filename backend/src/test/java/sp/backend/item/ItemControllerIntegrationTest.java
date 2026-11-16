@@ -8,11 +8,11 @@ import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.dto.ErrorResponse;
 import sp.backend.dto.ItemResponse;
+import sp.backend.dto.ItemWithDistanceResponse;
 import sp.backend.exception.ExceptionMessage;
 import sp.backend.item_category.Category;
 import sp.backend.item_category.CategoryRepository;
@@ -21,11 +21,18 @@ import sp.backend.location.GeodbLocation;
 import sp.backend.location.GeodbLocationRepository;
 import sp.backend.user.User;
 import sp.backend.user.UserRepository;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
+import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Map;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
@@ -34,6 +41,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ItemControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private ItemRepository itemRepository;
@@ -60,6 +70,8 @@ public class ItemControllerIntegrationTest {
 
     private Long itemId;
 
+    private final Object[] ITEM_RESPONSE_1_FAVORITE = {1L, (short) 2, 1L, "Anzeige 1", "Beschreibung...", 100, 26488, ItemStatus.RESERVED, OffsetDateTime.parse("2026-09-01T08:00:00+02").toInstant(), true};
+    private final Object[] ITEM_RESPONSE_1_NOT_FAVORITE = {1L, (short) 2, 1L, "Anzeige 1", "Beschreibung...", 100, 26488, ItemStatus.RESERVED, OffsetDateTime.parse("2026-09-01T08:00:00+02").toInstant(), false};
 
     @BeforeEach
     void setUp() {
@@ -85,38 +97,26 @@ public class ItemControllerIntegrationTest {
 
         @Test
         void findById_shouldReturnItemResponseWithFavoriteFalseWhenUnauthenticated() {
-            asserting(null, false);
+            asserting(null, ITEM_RESPONSE_1_NOT_FAVORITE);
         }
 
         @Test
         void findById_shouldReturnItemResponseWithFavoriteFalseWhenUserIsSamwise() {
-            asserting(UserEnum.SAMWISE, false);
+            asserting(UserEnum.SAMWISE, ITEM_RESPONSE_1_NOT_FAVORITE);
         }
 
         @Test
         void findById_shouldReturnItemResponseWithFavoriteTrueWhenUserIsFrodo() {
-            asserting(UserEnum.FRODO, true);
+            asserting(UserEnum.FRODO, ITEM_RESPONSE_1_FAVORITE);
         }
 
-        private void asserting(UserEnum userEnum, Boolean isFavorite) {
+        private void asserting(UserEnum userEnum, Object[] expected) {
             ResponseEntity<ItemResponse> response = tRTemplate(userEnum)
                     .getForEntity("/api/items/{itemId}", ItemResponse.class, 1);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-            assertThat(response.getBody()).isNotNull().extracting(
-                    ItemResponse::getId,
-                    ItemResponse::getCategoryId,
-                    i -> i.getPoster().getId(),
-                    ItemResponse::getTitle,
-                    ItemResponse::getDescription,
-                    ItemResponse::getPrice,
-                    i -> i.getLocation().getId(),
-                    ItemResponse::getStatus,
-                    i -> i.getCreatedAt().toInstant(),
-                    ItemResponse::getFavorite).containsExactly(
-                    1L, (short) 2, 1L, "Anzeige 1", "Beschreibung...", 100, 26488, ItemStatus.RESERVED, OffsetDateTime.parse("2026-09-01T08:00:00+02").toInstant(), isFavorite
-            );
+            assertItemResponse(response.getBody(), expected);
         }
     }
 
@@ -129,16 +129,216 @@ public class ItemControllerIntegrationTest {
     class FindByIdToEditTests {
         @Test
         void findByIdToEdit_shouldThrowWhenUnauthenticated() {
-            ResponseEntity<ItemResponse> response = tRTemplate()
-                    .getForEntity("/api/items/{itemId}/edit", ItemResponse.class, 1);
+            ResponseEntity<ErrorResponse> response = tRTemplate()
+                    .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 1);
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED)
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
         }
 
+        @Test
+        void findByIdToEdit_shouldThrowWhenItemDoesNotExist() {
+            ResponseEntity<ErrorResponse> response = tRTemplate(UserEnum.SAMWISE)
+                    .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 99);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
+        }
+
+        @Test
+        void findByIdToEdit_shouldThrowWhenNotOwner() {
+            ResponseEntity<ErrorResponse> response = tRTemplate(UserEnum.MERRY)
+                    .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ACCESS_DENIED);
+        }
+
+        @Test
+        void findByIdToEdit_shouldReturnItemResponseWhenUserIsSamwise() {
+            ResponseEntity<ItemResponse> response = tRTemplate(UserEnum.SAMWISE)
+                    .getForEntity("/api/items/{itemId}/edit", ItemResponse.class, 1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            assertItemResponse(response.getBody(), ITEM_RESPONSE_1_NOT_FAVORITE);
+        }
     }
 
+    // ---------------------------------------------------------
+    // search()
+    // ---------------------------------------------------------
 
-//
+    @Nested
+    class SearchTests {
+        private final Object[] ITEM_2_WITH_DISTANCE_NULL_NOT_FAVORITE = {
+                2L,
+                1L,
+                "Anzeige 2",
+                "Beschreibung...",
+                101,
+                26488,
+                OffsetDateTime.parse("2026-09-01T08:15:00+02").toInstant(),
+                null,
+                false};
+
+        @Test
+        void search_withoutParameters_shouldReturn5Items() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("page", 0).queryParam("size", 10).build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            // 5, da "Anzeige 1" reserviert ist
+            assertEquals(5, items.size());
+        }
+
+
+        @Test
+        void search_withSearchTerm_anzeige2_shouldReturn_item2() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("searchTerm", "Anzeige 2").queryParam("page", 0).queryParam("size", 10).build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertItemWithDistanceResponse(items.getFirst(), ITEM_2_WITH_DISTANCE_NULL_NOT_FAVORITE);
+        }
+
+
+        @Test
+        void search_withCategoryId_2_shouldReturn_items_2_3() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("categoryId", 2).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            // Anzeige 1 ist reserviert -> 2 statt 3
+            assertEquals(2, items.size());
+            assertEquals(2L, items.get(0).getId());
+            assertEquals(3L, items.get(1).getId());
+        }
+
+        @Test
+        void search_withMinPrice_102_andMaxPrice_300_shouldReturn_items_3_4_5() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("minPrice", 102).queryParam("maxPrice", 300).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertEquals(3, items.size());
+            assertEquals(3L, items.get(0).getId());
+            assertEquals(4L, items.get(1).getId());
+            assertEquals(5L, items.get(2).getId());
+        }
+
+        @Test
+        void search_withLocationId_26488_shouldReturn_items_2_3() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertEquals(2, items.size());
+            assertEquals(2L, items.get(0).getId());
+            assertEquals(3L, items.get(1).getId());
+        }
+
+        @Test
+        void search_withLocationId_26488_andRadiusKm_29_shouldReturn_items_2_3() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 29).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertEquals(2, items.size());
+            assertEquals(2L, items.get(0).getId());
+            assertEquals(3L, items.get(1).getId());
+        }
+
+        @Test
+        void search_withLocationId_26488_andRadiusKm_30_shouldReturn_items_2_3_4() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 30).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertEquals(3, items.size());
+            assertEquals(2L, items.get(0).getId());
+            assertEquals(3L, items.get(1).getId());
+            // Entfernung zu 26488 = 29,5
+            assertEquals(4L, items.get(2).getId());
+
+            Double distanceFrom4To26488 = items.get(2).getDistance();
+            assertTrue(29 <= distanceFrom4To26488 && distanceFrom4To26488 <= 30);
+        }
+
+        @Test
+        void search_withLocationId_26488_andRadiusKm_40_shouldReturn_items_2_3_4() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 40).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertEquals(3, items.size());
+            assertEquals(2L, items.get(0).getId());
+            assertEquals(3L, items.get(1).getId());
+            // Entfernung zu 26488 = 29,5
+            assertEquals(4L, items.get(2).getId());
+        }
+
+        @Test
+        void search_withLocationId_26488_andRadiusKm_41_shouldReturn_items_2_3_4_5_6() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 41).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+
+            assertEquals(5, items.size());
+            assertEquals(2L, items.get(0).getId());
+            assertEquals(3L, items.get(1).getId());
+
+            // Entfernung zu 26488 = 29,5
+            assertEquals(4L, items.get(2).getId());
+
+            Double distanceFrom4To26488 = items.get(2).getDistance();
+            assertTrue(29 <= distanceFrom4To26488 && distanceFrom4To26488 <= 30);
+
+            // Entfernung zu 26488 = 40,5
+            assertEquals(5L, items.get(3).getId());
+
+            Double distanceFrom5To26488 = items.get(3).getDistance();
+            assertTrue(40 <= distanceFrom5To26488 && distanceFrom5To26488 <= 41);
+
+            assertEquals(6L, items.get(4).getId());
+        }
+    }
+
+    // ---------------------------------------------------------
+    // findByUserId()
+    // ---------------------------------------------------------
+
+    @Nested
+    class FindByUserIdTests {
+        private final URI uri = UriComponentsBuilder.fromPath("/api/items/user/3").queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+        @Test
+        void findByUserId_userDoesNotExist_shouldThrow() {
+            ResponseEntity<ErrorResponse> response = tRTemplate()
+                    .getForEntity("/api/items/user/{userId}", ErrorResponse.class, 99);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_FOUND);
+        }
+
+        @Test
+        void findByUserId_withUserId_3_shouldReturn_items_5_6() {
+            List<ItemResponse> items = findItems(uri, ItemResponse.class);
+
+            assertEquals(2, items.size());
+            assertEquals(5L, items.get(0).getId());
+            assertEquals(6L, items.get(1).getId());
+        }
+    }
+
+    //
 //    @Test
 //    void search_shouldReturnItems() {
 //
@@ -483,7 +683,47 @@ public class ItemControllerIntegrationTest {
 //        assertThat(updatedItem.getPrice()).isEqualTo(300);
 //    }
 //
+    private <T> List<T> findItems(URI uri, Class<T> responseType) {
+        ResponseEntity<JsonNode> response = tRTemplate()
+                .exchange(uri,
+                        HttpMethod.GET,
+                        null,
+                        JsonNode.class);
 
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        JsonNode body = response.getBody();
+        assertNotNull(body);
+
+        return objectMapper.readerForListOf(responseType)
+                .readValue(body.get("content"));
+    }
+
+    private void assertItemResponse(ItemResponse itemResponse, Object[] expected) {
+        assertThat(itemResponse).isNotNull().extracting(ItemResponse::getId,
+                        ItemResponse::getCategoryId,
+                        i -> i.getPoster().getId(),
+                        ItemResponse::getTitle,
+                        ItemResponse::getDescription,
+                        ItemResponse::getPrice,
+                        i -> i.getLocation().getId(),
+                        ItemResponse::getStatus,
+                        i -> i.getCreatedAt().toInstant(),
+                        ItemResponse::getFavorite)
+                .containsExactly(expected);
+    }
+
+    private void assertItemWithDistanceResponse(ItemWithDistanceResponse itemWithDistanceResponse, Object[] expected) {
+        assertThat(itemWithDistanceResponse).isNotNull().extracting(ItemWithDistanceResponse::getId,
+                        ItemWithDistanceResponse::getPosterId,
+                        ItemWithDistanceResponse::getTitle,
+                        ItemWithDistanceResponse::getDescription,
+                        ItemWithDistanceResponse::getPrice,
+                        i -> i.getLocation().getId(),
+                        i -> i.getCreatedAt().toInstant(),
+                        ItemWithDistanceResponse::getDistance,
+                        ItemWithDistanceResponse::getFavorite)
+                .containsExactly(expected);
+    }
 
     enum UserEnum {SAMWISE, MERRY, PIPPIN, FRODO,}
 
