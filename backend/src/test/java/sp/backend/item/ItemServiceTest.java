@@ -78,7 +78,7 @@ public class ItemServiceTest {
         loggedInUser = mock(User.class);
         otherUser = mock(User.class);
         item = mock(Item.class);
-        
+
         when(loggedInUser.getId()).thenReturn(1L);
         when(loggedInUser.getAccountName()).thenReturn("loggedInUser");
         when(userRepository.findByAccountName(loggedInUser.getAccountName())).thenReturn(Optional.of(loggedInUser));
@@ -95,80 +95,90 @@ public class ItemServiceTest {
     // findById()
     // ---------------------------------------------------------
 
-    @Test
-    void findById_shouldThrowWhenItemDoesNotExist() {
-        when(itemRepository.findItemById(1L, loggedInUser.getId())).thenReturn(Optional.empty());
+    @Nested
+    class FindByIdTests {
+        private final Long itemId = 1L;
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> itemService.findById(1L, authentication));
-        assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
-    }
+        @Test
+        void findById_shouldThrowWhenItemDoesNotExist() {
+            when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.empty());
 
-    @Test
-    void findById_shouldReturnItemResponse() {
-        ItemResponse itemResponse = mock(ItemResponse.class);
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> itemService.findById(itemId, authentication));
+            assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
+        }
 
-        when(itemRepository.findItemById(1L, loggedInUser.getId())).thenReturn(Optional.of(itemResponse));
+        @Test
+        void findById_shouldReturnItemResponse() {
+            ItemResponse itemResponse = mock(ItemResponse.class);
 
-        ItemResponse result = itemService.findById(1L, authentication);
-        assertNotNull(result);
+            when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.of(itemResponse));
+
+            ItemResponse result = itemService.findById(itemId, authentication);
+            assertNotNull(result);
+        }
     }
 
     // ---------------------------------------------------------
     // findByIdToEdit()
     // ---------------------------------------------------------
 
-    @Test
-    void findByIdToEdit_shouldThrowWhenUserIsNotAuthenticated() {
-        AuthenticationException exception = assertThrows(AuthenticationException.class,
-                () -> itemService.findByIdToEdit(1L, null));
-        assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
+    @Nested
+    class FindByIdToEditTests {
+        private final Long itemId = 1L;
 
-        verifyNoInteractions(itemRepository);
-    }
+        @Test
+        void findByIdToEdit_shouldThrowWhenUserIsNotAuthenticated() {
+            AuthenticationException exception = assertThrows(AuthenticationException.class,
+                    () -> itemService.findByIdToEdit(itemId, null));
+            assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-    @Test
-    void findByIdToEdit_shouldThrowWhenItemDoesNotExist() {
-        when(itemRepository.findItemById(1L, loggedInUser.getId())).thenReturn(Optional.empty());
+            verifyNoInteractions(itemRepository);
+        }
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> itemService.findByIdToEdit(1L, authentication));
-        assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
+        @Test
+        void findByIdToEdit_shouldThrowWhenItemDoesNotExist() {
+            when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.empty());
 
-        verify(item, never()).getPoster();
-    }
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> itemService.findByIdToEdit(itemId, authentication));
+            assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
 
-    @Test
-    void findByIdToEdit_shouldThrowWhenUserIsNotTheOwner() {
-        ItemResponse itemResponse = mock(ItemResponse.class);
+            verify(item, never()).getPoster();
+        }
 
-        UserPublicResponse poster = new UserPublicResponse(otherUser);
+        @Test
+        void findByIdToEdit_shouldThrowWhenUserIsNotTheOwner() {
+            ItemResponse itemResponse = mock(ItemResponse.class);
 
-        when(itemResponse.getPoster()).thenReturn(poster);
+            UserPublicResponse poster = new UserPublicResponse(otherUser);
 
-        when(itemRepository.findItemById(1L, loggedInUser.getId())).thenReturn(Optional.of(itemResponse));
+            when(itemResponse.getPoster()).thenReturn(poster);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> itemService.findByIdToEdit(1L, authentication));
-        assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
-    }
+            when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.of(itemResponse));
 
-    @Test
-    void findByIdToEdit_shouldReturnItemResponse() {
-        ItemResponse itemResponse = mock(ItemResponse.class);
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> itemService.findByIdToEdit(itemId, authentication));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+        }
 
-        when(itemResponse.getId()).thenReturn(1L);
+        @Test
+        void findByIdToEdit_shouldReturnItemResponse() {
+            ItemResponse itemResponse = mock(ItemResponse.class);
 
-        UserPublicResponse poster = new UserPublicResponse(loggedInUser);
+            when(itemResponse.getId()).thenReturn(itemId);
 
-        when(itemResponse.getPoster()).thenReturn(poster);
+            UserPublicResponse poster = new UserPublicResponse(loggedInUser);
 
-        when(itemRepository.findItemById(1L, loggedInUser.getId())).thenReturn(Optional.of(itemResponse));
+            when(itemResponse.getPoster()).thenReturn(poster);
 
-        ItemResponse result = itemService.findByIdToEdit(1L, authentication);
+            when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.of(itemResponse));
 
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
+            ItemResponse result = itemService.findByIdToEdit(itemId, authentication);
+
+            assertNotNull(result);
+            assertEquals(itemId, result.getId());
+        }
     }
 
     // ---------------------------------------------------------
@@ -359,12 +369,10 @@ public class ItemServiceTest {
         void findByUserId_shouldReturnItemResponses() {
             when(userRepository.findById(otherUser.getId())).thenReturn(Optional.of(otherUser));
 
-            Page<ItemResponse> page;
-
             ItemResponse ItemResponse1 = new ItemResponse();
             ItemResponse ItemResponse2 = new ItemResponse();
 
-            page = new PageImpl<>(List.of(
+            Page<ItemResponse> page = new PageImpl<>(List.of(
                     ItemResponse1,
                     ItemResponse2
             ));
@@ -396,12 +404,10 @@ public class ItemServiceTest {
 
         @Test
         void findFavoriteItems_shouldReturnItemResponses() {
-            Page<ItemResponse> page;
-
             ItemResponse ItemResponse1 = new ItemResponse();
             ItemResponse ItemResponse2 = new ItemResponse();
 
-            page = new PageImpl<>(List.of(
+            Page<ItemResponse> page = new PageImpl<>(List.of(
                     ItemResponse1,
                     ItemResponse2
             ));
@@ -421,11 +427,12 @@ public class ItemServiceTest {
 
     @Nested
     class MarkItemAsDeletedTests {
+        private final Long itemId = 1L;
 
         @Test
         void markItemAsDeleted_shouldThrowWhenUserIsNotAuthenticated() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
-                    () -> itemService.markItemAsDeleted(1L, null));
+                    () -> itemService.markItemAsDeleted(itemId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
             verifyNoInteractions(itemRepository);
@@ -433,10 +440,10 @@ public class ItemServiceTest {
 
         @Test
         void markItemAsDeleted_shouldThrowWhenItemDoesNotExist() {
-            when(itemRepository.findById(1L)).thenReturn(Optional.empty());
+            when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                    () -> itemService.markItemAsDeleted(1L, authentication));
+                    () -> itemService.markItemAsDeleted(itemId, authentication));
             assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
 
             verify(item, never()).getPoster();
@@ -444,12 +451,12 @@ public class ItemServiceTest {
 
         @Test
         void markItemAsDeleted_shouldThrowWhenUserIsNotTheOwner() {
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+            when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(otherUser);
 
             AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                    () -> itemService.markItemAsDeleted(1L, authentication));
+                    () -> itemService.markItemAsDeleted(itemId, authentication));
             assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
 
             verify(item, never()).setStatus(ItemStatus.DELETED);
@@ -457,11 +464,11 @@ public class ItemServiceTest {
 
         @Test
         void markItemAsDeleted_shouldMarkItemAsDeleted() {
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+            when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(loggedInUser);
 
-            itemService.markItemAsDeleted(1L, authentication);
+            itemService.markItemAsDeleted(itemId, authentication);
 
             verify(item).setStatus(ItemStatus.DELETED);
             verify(itemRepository).save(item);
@@ -486,16 +493,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItemStatus(itemId, ItemStatus.ACTIVE, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-            verifyNoInteractions(itemRepository);
-        }
-
-        @Test
-        void updateItemStatus_shouldThrowWhenStatusIsDraft() {
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                    () -> itemService.updateItemStatus(itemId, ItemStatus.DRAFT, authentication));
-            assertEquals(ExceptionMessage.STATUS_NOT_VALID, exception.getMessage());
-
-            verifyNoInteractions(itemRepository);
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -506,7 +504,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItemStatus(itemId, ItemStatus.ACTIVE, authentication));
             assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
 
-            verify(item, never()).getPoster();
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -519,7 +517,20 @@ public class ItemServiceTest {
                     () -> itemService.updateItemStatus(itemId, ItemStatus.ACTIVE, authentication));
             assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
 
-            verify(item, never()).getStatus();
+            verifyNoInteractions(dataChangePublisher);
+        }
+
+        @Test
+        void updateItemStatus_shouldThrowWhenStatusIsDraft() {
+            when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+
+            when(item.getPoster()).thenReturn(loggedInUser);
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> itemService.updateItemStatus(itemId, ItemStatus.DRAFT, authentication));
+            assertEquals(ExceptionMessage.STATUS_NOT_VALID, exception.getMessage());
+
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -534,7 +545,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItemStatus(itemId, ItemStatus.ACTIVE, authentication));
             assertEquals(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED, exception.getMessage());
 
-            verify(item, never()).setStatus(ItemStatus.ACTIVE);
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -572,7 +583,7 @@ public class ItemServiceTest {
                     () -> itemService.createItem(request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-            verifyNoInteractions(categoryRepository);
+            verify(itemRepository, never()).save(any());
         }
 
         @ParameterizedTest
@@ -584,7 +595,7 @@ public class ItemServiceTest {
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.STATUS_NOT_VALID, exception.getMessage());
 
-            verifyNoInteractions(categoryRepository);
+            verify(itemRepository, never()).save(any());
         }
 
         @Test
@@ -595,7 +606,7 @@ public class ItemServiceTest {
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.STATUS_NOT_VALID, exception.getMessage());
 
-            verifyNoInteractions(categoryRepository);
+            verify(itemRepository, never()).save(any());
         }
 
         @Test
@@ -616,7 +627,7 @@ public class ItemServiceTest {
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.IMAGES_TOTAL_SIZE, exception.getMessage());
 
-            verifyNoInteractions(categoryRepository);
+            verify(itemRepository, never()).save(any());
         }
 
         @Test
@@ -640,7 +651,7 @@ public class ItemServiceTest {
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.CATEGORY_NOT_FOUND, exception.getMessage());
 
-            verifyNoInteractions(geodbLocationRepository);
+            verify(itemRepository, never()).save(any());
         }
 
         @Test
@@ -660,7 +671,7 @@ public class ItemServiceTest {
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.LOCATION_NOT_FOUND, exception.getMessage());
 
-            verifyNoInteractions(itemRepository);
+            verify(itemRepository, never()).save(any());
         }
 
         @Test
@@ -687,6 +698,8 @@ public class ItemServiceTest {
             ImageSavingException exception = assertThrows(ImageSavingException.class,
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.ERROR_SAVING_IMAGE, exception.getMessage());
+
+            verify(itemRepository, never()).save(any());
         }
 
         @Test
@@ -742,7 +755,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
 
-            verifyNoInteractions(itemRepository);
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -753,12 +766,27 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.ITEM_NOT_FOUND, exception.getMessage());
 
-            verify(item, never()).getStatus();
+            verifyNoInteractions(dataChangePublisher);
+        }
+
+        @Test
+        void updateItem_shouldThrowWhenUserIsNotTheOwner() {
+            when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+
+            when(item.getPoster()).thenReturn(otherUser);
+
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
+                    () -> itemService.updateItem(itemId, request, authentication));
+            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
+
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
         void updateItem_shouldThrowWhenTotalImageSizeExceedsLimit() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+
+            when(item.getPoster()).thenReturn(loggedInUser);
 
             MultipartFile image1 = mock(MultipartFile.class);
             MultipartFile image2 = mock(MultipartFile.class);
@@ -775,12 +803,14 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.IMAGES_TOTAL_SIZE, exception.getMessage());
 
-            verify(item, never()).getStatus();
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
         void updateItem_shouldThrowWhenItemIsDeleted() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+
+            when(item.getPoster()).thenReturn(loggedInUser);
 
             request.setImages(List.of());
 
@@ -790,7 +820,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED, exception.getMessage());
 
-            verify(item, never()).getPoster();
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @ParameterizedTest
@@ -803,11 +833,13 @@ public class ItemServiceTest {
 
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
+            when(item.getPoster()).thenReturn(loggedInUser);
+
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.STATUS_NOT_VALID, exception.getMessage());
 
-            verify(item, never()).getPoster();
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @ParameterizedTest
@@ -820,29 +852,13 @@ public class ItemServiceTest {
 
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
+            when(item.getPoster()).thenReturn(loggedInUser);
+
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.STATUS_NOT_VALID, exception.getMessage());
 
-            verify(item, never()).getPoster();
-        }
-
-        @Test
-        void updateItem_shouldThrowWhenUserIsNotTheOwner() {
-            when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
-
-            request.setImages(List.of());
-            request.setStatus(ItemStatus.ACTIVE);
-
-            when(item.getStatus()).thenReturn(ItemStatus.ACTIVE);
-
-            when(item.getPoster()).thenReturn(otherUser);
-
-            AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                    () -> itemService.updateItem(itemId, request, authentication));
-            assertEquals(ExceptionMessage.ACCESS_DENIED, exception.getMessage());
-
-            verifyNoInteractions(categoryRepository);
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -864,7 +880,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.CATEGORY_NOT_FOUND, exception.getMessage());
 
-            verifyNoInteractions(geodbLocationRepository);
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -890,7 +906,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.LOCATION_NOT_FOUND, exception.getMessage());
 
-            verifyNoInteractions(itemImageRepository);
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
@@ -922,7 +938,7 @@ public class ItemServiceTest {
                     () -> itemService.updateItem(itemId, request, authentication));
             assertEquals(ExceptionMessage.ERROR_SAVING_IMAGE, exception.getMessage());
 
-            verify(dataChangePublisher, never()).publish(any(), any(), any());
+            verifyNoInteractions(dataChangePublisher);
         }
 
         @Test
