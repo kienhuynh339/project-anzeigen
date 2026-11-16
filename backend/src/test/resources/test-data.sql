@@ -21,11 +21,11 @@ VALUES (1, 1, 'Anzeige 1', 2, 'Beschreibung...', 100, 26488,'42103', 3,
         '2026-09-01 08:15:00+02'),
        (3, 1, 'Anzeige 3', 2, 'Beschreibung...', 102, 26488,'42109', 2,
         '2026-09-02 08:30:00+02'),
-       (16, 2, 'Anzeige 16', 3, 'Beschreibung...', 200, 15879,'40212', 2,
+       (4, 2, 'Anzeige 4', 3, 'Beschreibung...', 200, 15879,'40212', 2,
         '2026-08-01 12:00:00+02'),
-       (17, 3, 'Anzeige 17', 3, 'Beschreibung...', 300, 19511,'50733', 2,
+       (5, 3, 'Anzeige 5', 3, 'Beschreibung...', 300, 19511,'50733', 2,
         '2026-07-01 08:00:00+02'),
-       (18, 3, 'Anzeige 18', 4, 'Beschreibung...', 301, 19511,'50733', 2,
+       (6, 3, 'Anzeige 6', 4, 'Beschreibung...', 301, 19511,'50733', 2,
         '2026-07-02 08:15:00+02');
 ALTER TABLE items ALTER COLUMN id RESTART WITH 19;
 
@@ -34,21 +34,21 @@ VALUES
     ('image/jpeg',FILE_READ('src/test/resources/images/user_1_pc_videospiele_nintendoswitch2.jpg'), 1, 0),
     ('image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (1).jpg'), 2, 0),
     ('image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (2).jpg'), 3, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (1).jpg'), 16, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (2).jpg'), 16, 1),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (3).jpg'), 16, 2),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 17, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 18, 0);
+    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (1).jpg'), 4, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (2).jpg'), 4, 1),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (3).jpg'), 4, 2),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 5, 0),
+    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 6, 0);
 
 
 INSERT INTO item_favorites(user_id, item_id)
 VALUES (4,1),
        (4,2),
-       (4,16),
+       (4,4),
        (2,1),
        (2,2),
        (2,3),
-       (2,17),
+       (2,5),
        (3,1),
        (3,2);
 
@@ -56,7 +56,7 @@ INSERT INTO chats(id, item_id, poster_id, interested_user_id, first_deleted_by_u
 VALUES (1,1,1,2,2),
        (2,1,1,3,null),
        (3,2,1,4,null),
-       (4,16,2,1,null);
+       (4,4,2,1,null);
 ALTER TABLE chats ALTER COLUMN id RESTART WITH 8;
 
 INSERT INTO messages(id, chat_id, sender_id, content, is_read, created_at)
