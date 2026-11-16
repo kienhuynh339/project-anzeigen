@@ -1,9 +1,9 @@
 -- Damit Default-Werte verwendet werden, müssen andere Spalten explizit angegeben werden
 INSERT INTO users (id, profile_name, account_name, password_hash, created_at)
 VALUES (1, 'Samwise', 'samwise', '$2a$10$s8YJDZ5VN/c8A8ULp0g/heEdyuKG9GvlGS8XxGzrHm.KxagWyruiS', '2020-01-01 01:01:00+02:00'),
-       (2, 'Merry', 'merryy', '$2a$10$TLxIDNTFEs35vLPHVi3BKejJD2IROU6AR9wcpXIZHFFLju2YPXbDe', '2022-02-02 02:02:00+02:00'),
+       (2, 'Merry', 'merry', '$2a$10$TLxIDNTFEs35vLPHVi3BKejJD2IROU6AR9wcpXIZHFFLju2YPXbDe', '2022-02-02 02:02:00+02:00'),
        (3, 'Pippin', 'pippin', '$2a$10$GD7dU0C2qy/morusnemzUeFCQ8N6akGpg2P1GIYG62/Y7uRF0Q2uy', '2024-04-04 04:04:00+02:00'),
-       (4, 'Frodo', 'frodoo', '$2a$10$ANKEnq3WwF51zjGiTy8PteZY8ODxb31zaCECVQ3skYEr2jTEf0gAe', '2025-05-05 05:05:00+02:00');
+       (4, 'Frodo', 'frodo', '$2a$10$ANKEnq3WwF51zjGiTy8PteZY8ODxb31zaCECVQ3skYEr2jTEf0gAe', '2025-05-05 05:05:00+02:00');
 ALTER TABLE users ALTER COLUMN id RESTART WITH 5;
 
 INSERT INTO item_categories(id, name)
@@ -47,7 +47,7 @@ ALTER TABLE item_categories ALTER COLUMN id RESTART WITH 37;
 
 -- status: 1(DRAFT)/2(ACTIVE)/3(RESERVED)/4(DELETED)
 INSERT INTO items(id, poster_id, title, category_id, description, price, location_id,postcode, status, created_at)
-VALUES (1, 1, 'Nintendo switch 2', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 100, 26488,'42103', 2,
+VALUES (1, 1, 'Nintendo switch 2', 28, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 100, 26488,'42103', 3,
     '2026-09-01 08:00:00+02'),
     (2, 1, 'Gaming Headset', 34, E'Schreib mir gerne, wenn du weitere Informationen benötigst.\n\nDies ist ein Privatverkauf, ich schließe Gewährleistung und Rückgabe aus.', 101, 26488,'42103', 2,
     '2026-09-01 08:15:00+02'),
@@ -155,7 +155,7 @@ VALUES (4,1),
        (3,2);
 
 INSERT INTO chats(id, item_id, poster_id, interested_user_id, first_deleted_by_user_id)
-VALUES (1,1,1,2,null),
+VALUES (1,1,1,2,2),
        (2,1,1,3,null),
        (3,1,1,4,null),
        (4,2,1,4,null),
@@ -166,113 +166,102 @@ ALTER TABLE chats ALTER COLUMN id RESTART WITH 8;
 
 INSERT INTO messages(id, chat_id, sender_id, content, is_read, created_at)
 VALUES
--- Chat 1: Nintendo Switch 2, ca. 15 Nachrichten
--- Erste Nachricht: sender_id = 2, 2026-10-09 18:00:00+02
+-- Chat 1: Nintendo Switch 2
 (1, 1, 2, 'Hallo, ist die Nintendo Switch 2 noch verfügbar?', TRUE, '2026-10-09 18:00:00+02'),
 (2, 1, 1, 'Hallo! Ja, die Nintendo Switch 2 ist noch verfügbar.', TRUE, '2026-10-09 18:02:00+02'),
-(3, 1, 2, 'Super! Ist die Konsole in einem guten Zustand?', TRUE, '2026-10-09 18:04:00+02'),
-(4, 1, 1, 'Ja, sie ist in einem sehr guten Zustand und funktioniert einwandfrei.', TRUE, '2026-10-09 18:06:00+02'),
-(5, 1, 2, 'Ist die Originalverpackung auch dabei?', TRUE, '2026-10-09 18:08:00+02'),
-(6, 1, 1, 'Ja, die Originalverpackung und das gesamte Zubehör sind dabei.', TRUE, '2026-10-09 18:10:00+02'),
-(7, 1, 2, 'Wie lange hast du die Konsole schon?', TRUE, '2026-10-09 18:12:00+02'),
-(8, 1, 1, 'Ich habe sie erst seit ein paar Monaten.', TRUE, '2026-10-09 18:14:00+02'),
-(9, 1, 2, 'Würdest du beim Preis noch etwas entgegenkommen?', TRUE, '2026-10-09 18:17:00+02'),
-(10, 1, 1, 'Ein bisschen Spielraum habe ich noch.', TRUE, '2026-10-09 18:20:00+02'),
-(11, 1, 2, 'Wären 400 Euro für dich in Ordnung? Kann ich die Switch am Wochenende abholen?', TRUE, '2026-10-09 18:23:00+02'),
-(12, 1, 1, 'Ja, 400 Euro wären in Ordnung und Samstag passt.', TRUE, '2026-10-09 18:26:00+02'),
-(13, 1, 2, 'Perfekt!', FALSE, '2026-10-09 18:29:00+02'),
-(14, 1, 2, 'Ich melde mich am Samstag noch einmal.', FALSE, '2026-10-09 18:29:02+02'),
-(15, 1, 2, 'Danke!', FALSE, '2026-10-09 18:29:04+02'),
+(3, 1, 2, 'Ist die Originalverpackung auch dabei?', TRUE, '2026-10-09 18:08:00+02'),
+(4, 1, 1, 'Ja, die Originalverpackung und das gesamte Zubehör sind dabei.', TRUE, '2026-10-09 18:10:00+02'),
+(5, 1, 2, 'Wie lange hast du die Konsole schon?', TRUE, '2026-10-09 18:12:00+02'),
+(6, 1, 1, 'Ich habe sie erst seit ein paar Monaten.', TRUE, '2026-10-09 18:14:00+02'),
+(7, 1, 2, 'Super', FALSE, '2026-10-09 18:22:00+02'),
 
--- Chat 2: Nintendo Switch 2, ca. 10 Nachrichten
--- Erste Nachricht: sender_id = 3, 2026-10-10 20:00:00+02
-(16, 2, 3, 'Guten Abend, ich interessiere mich für deine Nintendo Switch 2.', TRUE, '2026-10-10 20:00:00+02'),
-(17, 2, 1, 'Guten Abend! Die Konsole ist noch zu haben.', TRUE, '2026-10-10 20:03:00+02'),
-(18, 2, 3, 'Sind Joy-Cons und Ladekabel im Lieferumfang enthalten?', TRUE, '2026-10-10 20:05:00+02'),
-(19, 2, 1, 'Ja, beide Joy-Cons, das Ladekabel und das Dock sind dabei.', TRUE, '2026-10-10 20:08:00+02'),
-(20, 2, 3, 'Gibt es Kratzer auf dem Display?', TRUE, '2026-10-10 20:10:00+02'),
-(21, 2, 1, 'Nein, das Display ist sauber und hat keine sichtbaren Kratzer.', TRUE, '2026-10-10 20:13:00+02'),
-(22, 2, 3, 'Wäre Versand möglich?', TRUE, '2026-10-10 20:16:00+02'),
-(23, 2, 1, 'Ja, Versand ist möglich. Die Versandkosten müssten wir noch abstimmen.', TRUE, '2026-10-10 20:19:00+02'),
-(24, 2, 3, 'Alles klar, ich würde sie gerne kaufen.', TRUE, '2026-10-10 20:22:00+02'),
-(25, 2, 1, 'Sehr gerne! Dann besprechen wir die Versanddetails.', FALSE, '2026-10-10 20:25:00+02'),
-
+-- Chat 2: Nintendo Switch 2
+(8, 2, 3, 'Hallo, ich interessiere mich für deine Nintendo Switch 2. Ist sie noch verfügbar?', TRUE, '2026-11-15 20:00:00+01'),
+(9, 2, 1, 'Hallo! Ja, die Nintendo Switch 2 ist noch verfügbar.', TRUE, '2026-11-15 20:02:00+01'),
+(10, 2, 3, 'Wann hast du die Konsole denn gekauft?', TRUE, '2026-11-15 20:04:00+01'),
+(11, 2, 1, 'Ich habe sie vor ungefähr vier Monaten gekauft.', TRUE, '2026-11-15 20:06:00+01'),
+(12, 2, 3, 'Wie lange hält der Akku bei normaler Nutzung ungefähr?', TRUE, '2026-11-15 20:09:00+01'),
+(13, 2, 1, 'Je nach Spiel hält der Akku etwa 4 bis 5 Stunden. Der Zustand ist noch sehr gut.', TRUE, '2026-11-15 20:12:00+01'),
+(14, 2, 3, 'Ist das komplette Zubehör noch vorhanden?', TRUE, '2026-11-15 20:14:00+01'),
+(15, 2, 1, 'Ja, das komplette Zubehör ist dabei, einschließlich Joy-Cons, Netzteil und Dock.', TRUE, '2026-11-15 20:16:00+01'),
+(16, 2, 3, 'Hast du auch noch die Originalverpackung?', TRUE, '2026-11-15 20:18:00+01'),
+(17, 2, 1, 'Ja, die Originalverpackung habe ich ebenfalls noch.', TRUE, '2026-11-15 20:20:00+01'),
+(18, 2, 3, 'Wären vielleicht 80 Euro möglich?', TRUE, '2026-11-15 20:28:00+01'),
+(19, 2, 1, '80 Euro sind mir ehrlich gesagt etwas zu wenig.', TRUE, '2026-11-15 20:30:00+01'),
+(20, 2, 3, 'Verstehe ich. Wie wäre es mit 90 Euro?', TRUE, '2026-11-15 20:33:00+01'),
+(21, 2, 1, '90 Euro wären für mich in Ordnung.', TRUE, '2026-11-15 20:35:00+01'),
+(22, 2, 3, 'Super, dann nehme ich sie für 90 Euro. Wann könnte ich sie abholen?', TRUE, '2026-11-15 20:38:00+01'),
+(23, 2, 1, 'Morgen Nachmittag würde es bei mir gut passen. Wie wäre es gegen 15 Uhr?', TRUE, '2026-11-15 20:40:00+01'),
+(24, 2, 3, 'Perfekt, morgen um 15 Uhr passt mir. Dann bis morgen!', FALSE, '2026-11-15 20:42:00+01'),
 -- Chat 3: Nintendo Switch 2, ca. 5 Nachrichten
 -- Erste Nachricht: sender_id = 4, 2026-10-11 20:30:00+02
-(26, 3, 4, 'Hallo, ist deine Nintendo Switch 2 noch zu verkaufen?', TRUE, '2026-10-11 20:30:00+02'),
-(27, 3, 1, 'Hallo! Ja, sie ist noch verfügbar.', TRUE, '2026-10-11 20:33:00+02'),
-(28, 3, 4, 'Ist auch das originale Netzteil dabei?', TRUE, '2026-10-11 20:35:00+02'),
-(29, 3, 1, 'Ja, das originale Netzteil ist ebenfalls dabei.', TRUE, '2026-10-11 20:38:00+02'),
-(30, 3, 4, 'Prima, ich überlege es mir und gebe dir später Bescheid.', TRUE, '2026-10-11 20:41:00+02'),
+(25, 3, 4, 'Hallo, ist deine Nintendo Switch 2 noch zu verkaufen?', TRUE, '2026-10-11 20:30:00+02'),
+(26, 3, 1, 'Hallo! Ja, sie ist noch verfügbar.', TRUE, '2026-10-11 20:33:00+02'),
+(27, 3, 4, 'Ist auch das originale Netzteil dabei?', TRUE, '2026-10-11 20:35:00+02'),
+(28, 3, 1, 'Ja, das originale Netzteil ist ebenfalls dabei.', TRUE, '2026-10-11 20:38:00+02'),
+(29, 3, 4, 'Prima, ich überlege es mir und gebe dir später Bescheid.', TRUE, '2026-10-11 20:41:00+02'),
 
--- Chat 4: Gaming Headset, ca. 10 Nachrichten
--- Erste Nachricht: sender_id = 4, 2026-10-12 12:15:00+02
-(31, 4, 4, 'Hallo, ich habe Interesse an deinem Gaming Headset.', TRUE, '2026-10-12 12:15:00+02'),
-(32, 4, 1, 'Hallo! Das Headset ist noch verfügbar.', TRUE, '2026-10-12 12:18:00+02'),
-(33, 4, 4, 'Funktioniert das Mikrofon einwandfrei?', TRUE, '2026-10-12 12:20:00+02'),
-(34, 4, 1, 'Ja, Mikrofon und Kopfhörer funktionieren problemlos.', TRUE, '2026-10-12 12:23:00+02'),
-(35, 4, 4, 'Ist es kabellos oder kabelgebunden?', TRUE, '2026-10-12 12:25:00+02'),
-(36, 4, 1, 'Es ist kabellos und kann auch per Kabel verwendet werden.', TRUE, '2026-10-12 12:28:00+02'),
-(37, 4, 4, 'Wie alt ist das Headset ungefähr?', TRUE, '2026-10-12 12:31:00+02'),
-(38, 4, 1, 'Es ist ungefähr ein Jahr alt und wurde gut gepflegt.', TRUE, '2026-10-12 12:34:00+02'),
-(39, 4, 4, 'Würdest du es für 50 Euro verkaufen?', TRUE, '2026-10-12 12:37:00+02'),
-(40, 4, 1, 'Ja, 50 Euro sind in Ordnung.', FALSE, '2026-10-12 12:40:00+02'),
+-- Chat 4: Gaming Headset
+(30, 4, 4, 'Hallo, ich interessiere mich für dein Gaming-Headset. Ist es noch verfügbar?', TRUE, '2026-11-15 12:15:00+01'),
+(31, 4, 1, 'Hallo! Ja, das Headset ist noch verfügbar.', TRUE, '2026-11-15 12:17:00+01'),
+(32, 4, 4, 'Wann hast du es denn gekauft?', TRUE, '2026-11-15 12:19:00+01'),
+(33, 4, 1, 'Ich habe es vor ungefähr acht Monaten gekauft.', TRUE, '2026-11-15 12:21:00+01'),
+(34, 4, 4, 'Wie lange hält der Akku bei voller Ladung?', TRUE, '2026-11-15 12:23:00+01'),
+(35, 4, 1, 'Der Akku hält je nach Nutzung ungefähr 25 bis 30 Stunden.', TRUE, '2026-11-15 12:25:00+01'),
+(36, 4, 4, 'Ist das komplette Zubehör noch vorhanden?', TRUE, '2026-11-15 12:27:00+01'),
+(37, 4, 1, 'Ja.', TRUE, '2026-11-15 12:29:00+01'),
+(38, 4, 4, 'Hast du auch noch die Originalverpackung?', TRUE, '2026-11-15 12:31:00+01'),
+(39, 4, 1, 'Ja, die Originalverpackung ist ebenfalls noch vorhanden.', TRUE, '2026-11-15 12:33:00+01'),
+(40, 4, 4, 'Wären 90 Euro statt der angesetzten 101 Euro für dich in Ordnung?', FALSE, '2026-11-15 12:35:00+01'),
 
--- Chat 5: Zwei weiße Tastaturen, ca. 15 Nachrichten
--- Erste Nachricht: sender_id = 4, 2026-10-13 12:30:00+02
+-- Chat 5: Zwei weiße Tastaturen
 (41, 5, 4, 'Hallo, ich interessiere mich für die beiden weißen Tastaturen.', TRUE, '2026-10-13 12:30:00+02'),
 (42, 5, 1, 'Hallo! Beide Tastaturen sind noch verfügbar.', TRUE, '2026-10-13 12:33:00+02'),
-(43, 5, 4, 'Sind beide mechanisch?', TRUE, '2026-10-13 12:35:00+02'),
-(44, 5, 1, 'Ja, beide sind mechanische Tastaturen.', TRUE, '2026-10-13 12:38:00+02'),
-(45, 5, 4, 'Haben sie ein deutsches QWERTZ-Layout?', TRUE, '2026-10-13 12:40:00+02'),
-(46, 5, 1, 'Ja, beide haben ein deutsches QWERTZ-Layout.', TRUE, '2026-10-13 12:43:00+02'),
-(47, 5, 4, 'Sind die Tastenkappen noch in gutem Zustand?', TRUE, '2026-10-13 12:45:00+02'),
-(48, 5, 1, 'Ja, die Tastenkappen sind sauber und kaum abgenutzt.', TRUE, '2026-10-13 12:48:00+02'),
-(49, 5, 4, 'Kann ich auch nur eine der beiden kaufen?', TRUE, '2026-10-13 12:50:00+02'),
-(50, 5, 1, 'Ja, du kannst auch nur eine Tastatur kaufen.', TRUE, '2026-10-13 12:53:00+02'),
-(51, 5, 4, 'Wie viel möchtest du für beide zusammen haben?', TRUE, '2026-10-13 12:55:00+02'),
-(52, 5, 1, 'Für beide zusammen hätte ich gerne 100 Euro.', TRUE, '2026-10-13 12:58:00+02'),
-(53, 5, 4, 'Wären 90 Euro für beide möglich?', TRUE, '2026-10-13 13:00:00+02'),
-(54, 5, 1, 'Einverstanden, 90 Euro für beide passen.', TRUE, '2026-10-13 13:03:00+02'),
-(55, 5, 4, 'Super, dann nehme ich beide. Wann kann ich sie abholen?', TRUE, '2026-10-13 13:06:00+02'),
+(43, 5, 4, 'Sind sie noch in gutem Zustand?', TRUE, '2026-10-13 12:45:00+02'),
+(44, 5, 1, 'Ja, sie sind sauber und kaum abgenutzt.', TRUE, '2026-10-13 12:48:00+02'),
+(45, 5, 4, 'Kann ich auch nur eine der beiden kaufen?', TRUE, '2026-10-13 12:50:00+02'),
+(46, 5, 1, 'Ja, du kannst auch nur eine Tastatur kaufen.', TRUE, '2026-10-13 12:53:00+02'),
+(47, 5, 4, 'Wie viel möchtest du für die dünne Tastatur haben?', TRUE, '2026-10-13 12:55:00+02'),
+(48, 5, 1, 'Für die hätte ich gerne 65 Euro.', TRUE, '2026-10-13 12:58:00+02'),
+(49, 5, 4, 'Wären 50 Euro möglich?', TRUE, '2026-10-13 13:00:00+02'),
+(50, 5, 1, 'Einverstanden, 50 Euro passen.', TRUE, '2026-10-13 13:03:00+02'),
+(51, 5, 4, 'Super, dann nehme ich die dünne Tastatur. Wann kann ich sie abholen?', TRUE, '2026-10-13 13:06:00+02'),
 
--- Chat 6: Rolex, Fossil und Omega Uhren, ca. 15 Nachrichten
--- Erste Nachricht: sender_id = 1, 2026-10-14 12:45:00+02
-(56, 6, 1, 'Hallo! Interessierst du dich für eine bestimmte der drei Uhren?', TRUE, '2026-10-14 12:45:00+02'),
-(57, 6, 2, 'Hallo, ich würde gerne mehr über die Rolex erfahren.', TRUE, '2026-10-14 12:48:00+02'),
-(58, 6, 1, 'Die Rolex ist gebraucht, aber in einem guten Zustand.', TRUE, '2026-10-14 12:50:00+02'),
-(59, 6, 2, 'Gibt es einen Kaufbeleg oder Echtheitsnachweis?', TRUE, '2026-10-14 12:53:00+02'),
-(60, 6, 1, 'Die vorhandenen Unterlagen kann ich dir gerne zeigen.', TRUE, '2026-10-14 12:56:00+02'),
-(61, 6, 2, 'Danke! Und wie sieht es mit der Omega aus?', TRUE, '2026-10-14 12:58:00+02'),
-(62, 6, 1, 'Die Omega ist ebenfalls gepflegt und funktioniert einwandfrei.', TRUE, '2026-10-14 13:01:00+02'),
-(63, 6, 2, 'Ist die Omega automatisch oder batteriebetrieben?', TRUE, '2026-10-14 13:04:00+02'),
-(64, 6, 1, 'Das genaue Modell und Uhrwerk kann ich dir anhand der Referenznummer nennen.', TRUE, '2026-10-14 13:07:00+02'),
-(65, 6, 2, 'Alles klar. Was kannst du mir zur Fossil sagen?', TRUE, '2026-10-14 13:10:00+02'),
-(66, 6, 1, 'Die Fossil ist eine schöne Alltagsuhr und wurde wenig getragen.', TRUE, '2026-10-14 13:13:00+02'),
-(67, 6, 2, 'Würdest du bei einem Kauf von zwei Uhren einen Rabatt geben?', TRUE, '2026-10-14 13:16:00+02'),
-(68, 6, 1, 'Ja, bei Interesse an zwei Uhren können wir über den Preis sprechen.', TRUE, '2026-10-14 13:19:00+02'),
-(69, 6, 2, 'Ich würde gerne die Rolex und die Fossil nehmen.', TRUE, '2026-10-14 13:22:00+02'),
-(70, 6, 1, 'Gerne! Lass uns die Preise und die Übergabe im Detail abstimmen.', FALSE, '2026-10-14 13:25:00+02'),
+-- Chat 6: Rolex, Fossil und Omega Uhren
+(52, 6, 1, 'Hallo, ich interessiere mich für deine drei Uhren. Sind alle noch verfügbar?', TRUE, '2026-11-15 14:00:00+01'),
+(53, 6, 2, 'Hallo! Ja, alle drei Uhren sind noch verfügbar.', TRUE, '2026-11-15 14:02:00+01'),
+(54, 6, 1, 'Kannst du mir die einzelnen Preise für die Rolex, Omega und Fossil nennen?', TRUE, '2026-11-15 14:04:00+01'),
+(55, 6, 2, 'Die Rolex kostet 100 Euro, die Omega 60 Euro und die Fossil 40 Euro.', TRUE, '2026-11-15 14:07:00+01'),
+(56, 6, 1, 'Sind die Preise noch etwas verhandelbar?', TRUE, '2026-11-15 14:09:00+01'),
+(57, 6, 2, 'Bei ernsthaftem Interesse können wir gerne über die Preise sprechen.', TRUE, '2026-11-15 14:11:00+01'),
+(58, 6, 1, 'Für die Rolex würde ich 85 Euro anbieten.', TRUE, '2026-11-15 14:13:00+01'),
+(59, 6, 2, '85 Euro sind mir etwas zu wenig. 95 Euro wären möglich.', TRUE, '2026-11-15 14:15:00+01'),
+(60, 6, 1, 'Okay, 95 Euro für die Rolex klingt fair. Wie sieht es bei der Omega aus?', TRUE, '2026-11-15 14:17:00+01'),
+(61, 6, 2, 'Bei der Omega könnte ich auf 55 Euro runtergehen.', TRUE, '2026-11-15 14:19:00+01'),
+(62, 6, 1, 'Wären 50 Euro für die Omega möglich?', TRUE, '2026-11-15 14:21:00+01'),
+(63, 6, 2, 'Machen wir 50 Euro, dann sind wir uns einig.', TRUE, '2026-11-15 14:23:00+01'),
+(64, 6, 1, 'Einverstanden. Und was wäre dein letzter Preis für die Fossil?', TRUE, '2026-11-15 14:25:00+01'),
+(65, 6, 2, 'Die Fossil könnte ich dir für 35 Euro überlassen.', TRUE, '2026-11-15 14:27:00+01'),
+(66, 6, 1, 'Wenn ich alle drei nehme, könntest du insgesamt 170 Euro machen?', TRUE, '2026-11-15 14:29:00+01'),
+(67, 6, 2, 'Ja, 170 Euro für alle drei zusammen sind in Ordnung.', TRUE, '2026-11-15 14:31:00+01'),
+(68, 6, 1, 'Super, dann nehme ich alle drei für 170 Euro. Wann wäre eine Abholung möglich?', TRUE, '2026-11-15 14:33:00+01'),
+(69, 6, 2, 'Morgen Nachmittag wäre gut. Gegen 16 Uhr hätte ich Zeit.', TRUE, '2026-11-15 14:35:00+01'),
+(70, 6, 1, 'Perfekt, dann komme ich morgen um 16 Uhr vorbei. Bis dann!', FALSE, '2026-11-15 14:37:00+01'),
 
--- Chat 7: Weißer Gartenstuhl, ca. 15 Nachrichten
--- Erste Nachricht: sender_id = 1, 2026-10-15 12:50:00+02
-(71, 7, 1, 'Hallo! Danke für dein Interesse an meinem weißen Gartenstuhl.', TRUE, '2026-10-15 12:50:00+02'),
-(72, 7, 3, 'Hallo, ist der Gartenstuhl noch verfügbar?', TRUE, '2026-10-15 12:53:00+02'),
-(73, 7, 1, 'Ja, der Gartenstuhl ist noch verfügbar.', TRUE, '2026-10-15 12:55:00+02'),
-(74, 7, 3, 'Aus welchem Material besteht er?', TRUE, '2026-10-15 12:58:00+02'),
-(75, 7, 1, 'Er besteht aus weißem Kunststoff und ist für den Außenbereich geeignet.', TRUE, '2026-10-15 13:01:00+02'),
-(76, 7, 3, 'Ist er stabil und gibt es Beschädigungen?', TRUE, '2026-10-15 13:04:00+02'),
-(77, 7, 1, 'Er ist stabil und hat keine größeren Beschädigungen.', TRUE, '2026-10-15 13:07:00+02'),
-(78, 7, 3, 'Sind die Armlehnen ebenfalls weiß?', TRUE, '2026-10-15 13:10:00+02'),
-(79, 7, 1, 'Ja, der gesamte Gartenstuhl ist weiß.', TRUE, '2026-10-15 13:13:00+02'),
-(80, 7, 3, 'Kann ich den Stuhl vor dem Kauf anschauen?', TRUE, '2026-10-15 13:16:00+02'),
-(81, 7, 1, 'Natürlich, du kannst ihn gerne vor Ort anschauen.', TRUE, '2026-10-15 13:19:00+02'),
-(82, 7, 3, 'Wäre beim Preis noch etwas möglich?', TRUE, '2026-10-15 13:22:00+02'),
-(83, 7, 1, 'Wenn du ihn selbst abholst, können wir über den Preis sprechen.', TRUE, '2026-10-15 13:25:00+02'),
-(84, 7, 3, 'Das klingt gut. Ich könnte am Samstag vorbeikommen.', TRUE, '2026-10-15 13:28:00+02'),
-(85, 7, 1, 'Perfekt, Samstag passt. Schreib mir einfach vorher kurz.', FALSE, '2026-10-15 13:31:00+02');
--- IDENTITY-Zähler auf 86 setzen, ansonsten startet er nach dem Seeding mit 1
+-- Chat 7: Weißer Gartenstuhl
+(71, 7, 1, 'Hallo, ich interessiere mich für deinen weißen Gartenstuhl. Ist er noch verfügbar?', TRUE, '2026-11-15 15:00:00+01'),
+(72, 7, 3, 'Hallo! Ja, der Gartenstuhl ist noch verfügbar.', TRUE, '2026-11-15 15:02:00+01'),
+(73, 7, 1, 'Aus welchem Material besteht der Stuhl?', TRUE, '2026-11-15 15:04:00+01'),
+(74, 7, 3, 'Er besteht aus robustem weißen Kunststoff und ist für den Außenbereich geeignet.', TRUE, '2026-11-15 15:06:00+01'),
+(75, 7, 1, 'Ist er noch stabil oder gibt es irgendwelche Beschädigungen?', TRUE, '2026-11-15 15:08:00+01'),
+(76, 7, 3, 'Er ist stabil und hat nur leichte Gebrauchsspuren, aber keine Risse oder größeren Schäden.', TRUE, '2026-11-15 15:10:00+01'),
+(77, 7, 1, 'Wären 250 Euro für dich in Ordnung?', TRUE, '2026-11-15 15:20:00+01'),
+(78, 7, 3, '250 Euro sind mir etwas zu wenig. 270 Euro wären möglich.', TRUE, '2026-11-15 15:22:00+01'),
+(79, 7, 1, 'Okay, 270 Euro klingt fair. Dann würde ich ihn gerne nehmen.', TRUE, '2026-11-15 15:24:00+01'),
+(80, 7, 3, 'Sehr gerne! Wann möchtest du ihn abholen?', TRUE, '2026-11-15 15:26:00+01'),
+(81, 7, 1, 'Morgen gegen 17 Uhr würde mir gut passen. Bis dann!', FALSE, '2026-11-15 15:28:00+01');
+-- IDENTITY-Zähler auf 82 setzen, ansonsten startet er nach dem Seeding mit 1
 ALTER TABLE messages
-    ALTER COLUMN id RESTART WITH 86;
+    ALTER COLUMN id RESTART WITH 82;
 
 
