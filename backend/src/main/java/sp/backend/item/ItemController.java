@@ -58,7 +58,7 @@ public class ItemController {
         Page<ItemResponse> page = itemService.findByUserId(userId, authentication, pageable);
         return ResponseEntity.ok(page);
     }
-    
+
     @GetMapping("/user/favorites")
     private ResponseEntity<Page<ItemResponse>> findFavoriteItems(Authentication authentication, Pageable pageable) {
         Page<ItemResponse> page = itemService.findFavoriteItems(authentication, pageable);
@@ -83,7 +83,7 @@ public class ItemController {
     private ResponseEntity<Void> createItem(@Valid @ModelAttribute ItemCreateRequest request, UriComponentsBuilder ucb, Authentication authentication) {
         Long itemId = itemService.createItem(request, authentication);
 
-        URI createdItemLocation = ucb.path("/{itemId}").buildAndExpand(itemId).toUri();
+        URI createdItemLocation = ucb.path("/api/items/{itemId}").buildAndExpand(itemId).toUri();
 
         return ResponseEntity.created(createdItemLocation).build();
     }
