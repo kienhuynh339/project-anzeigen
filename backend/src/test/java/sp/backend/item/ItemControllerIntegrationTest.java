@@ -3,18 +3,21 @@ package sp.backend.item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
-import sp.backend.dto.ErrorResponse;
-import sp.backend.dto.ItemResponse;
-import sp.backend.dto.ItemStatusUpdateRequest;
-import sp.backend.dto.ItemWithDistanceResponse;
+import sp.backend.dto.*;
 import sp.backend.exception.ExceptionMessage;
 import sp.backend.item_category.Category;
 import sp.backend.item_category.CategoryRepository;
@@ -26,6 +29,7 @@ import sp.backend.user.UserRepository;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -35,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
@@ -61,6 +66,9 @@ public class ItemControllerIntegrationTest {
 
     @Autowired
     private ItemImageRepository itemImageRepository;
+
+    @MockitoBean
+    private ItemImageRepository mockItemImageRepository;
 
 //    @Autowired
 //    private TestEntityManager entityManager;
@@ -555,185 +563,257 @@ public class ItemControllerIntegrationTest {
             Item item = itemRepository.findById(1L).orElseThrow();
             assertEquals(ItemStatus.ACTIVE, item.getStatus());
         }
-
     }
 
+    // ---------------------------------------------------------
+    // createItem()
+    // ---------------------------------------------------------
 
-    //    @Test
-//    void updateItemStatus_shouldUpdateStatus() {
-//
-//        ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
-//        request.setStatus(ItemStatus.RESERVED);
-//
-//        ResponseEntity<Void> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.PATCH,
-//                                new HttpEntity<>(request),
-//                                Void.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NO_CONTENT);
-//
-//        Item updatedItem = itemRepository.findById(itemId).orElseThrow();
-//
-//        assertThat(updatedItem.getStatus()).isEqualTo(ItemStatus.RESERVED);
-//    }
-//
-//    @Test
-//    void updateItemStatus_shouldReturn403_whenUserIsNotOwner() {
-//
-//        ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
-//        request.setStatus(ItemStatus.RESERVED);
-//
-//        ResponseEntity<String> response =
-//                authenticatedClient(anotherUser.getAccountName())
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.PATCH,
-//                                new HttpEntity<>(request),
-//                                String.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.FORBIDDEN);
-//    }
-//
-//    @Test
-//    void updateItemStatus_shouldReturn400_whenStatusIsInvalid() {
-//
-//        ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
-//        request.setStatus(ItemStatus.DRAFT);
-//
-//        ResponseEntity<String> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.PATCH,
-//                                new HttpEntity<>(request),
-//                                String.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @Test
-//    void updateItemStatus_shouldReturnError_whenItemIsAlreadyDeleted() {
-//
-//        Item item = itemRepository.findById(itemId).orElseThrow();
-//        item.setStatus(ItemStatus.DELETED);
-//        itemRepository.save(item);
-//
-//        ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
-//        request.setStatus(ItemStatus.ACTIVE);
-//
-//        ResponseEntity<String> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.PATCH,
-//                                new HttpEntity<>(request),
-//                                String.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @Test
-//    void createItem_shouldCreateItem() {
-//
-//        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//
-//        body.add("title", "Test Fahrrad");
-//        body.add("description", "Ein gebrauchtes Fahrrad");
-//        body.add("price", "250");
-//        body.add("categoryId", category.getId().toString());
-//        body.add("locationId", location.getId().toString());
-//        body.add("postcode", "52062");
-//        body.add("locationExtraInfo", "Innenstadt");
-//        body.add("status", ItemStatus.ACTIVE.name());
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//
-//        HttpEntity<MultiValueMap<String, Object>> request =
-//                new HttpEntity<>(body, headers);
-//
-//        ResponseEntity<Void> response =
-//                trTemplate(User.SAMWISE)
-//                        .postForEntity(
-//                                "/api/items",
-//                                request,
-//                                Void.class
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.CREATED);
-//
-//        assertThat(response.getHeaders().getLocation()).isNotNull();
-//
-//        String locationHeader = response.getHeaders().getLocation().toString();
-//
-//        assertThat(locationHeader).contains("/api/items/");
-//
-//        Item createdItem = itemRepository.findAll().stream()
-//                .filter(item -> item.getTitle().equals("Test Fahrrad"))
-//                .findFirst()
-//                .orElseThrow();
-//
-//        assertThat(createdItem.getStatus()).isEqualTo(ItemStatus.ACTIVE);
-//        assertThat(createdItem.getPoster().getId()).isEqualTo(user.getId());
-//    }
-//
-//    @Test
-//    void updateItem_shouldUpdateExistingItem() {
-//
-//        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//
-//        body.add("title", "Aktualisiertes Fahrrad");
-//        body.add("description", "Aktualisierte Beschreibung");
-//        body.add("price", "300");
-//        body.add("categoryId", category.getId().toString());
-//        body.add("locationId", location.getId().toString());
-//        body.add("postcode", "52062");
-//        body.add("locationExtraInfo", "Neue Information");
-//        body.add("status", ItemStatus.ACTIVE.name());
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//
-//        HttpEntity<MultiValueMap<String, Object>> request =
-//                new HttpEntity<>(body, headers);
-//
-//        ResponseEntity<Void> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.PUT,
-//                                request,
-//                                Void.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NO_CONTENT);
-//
-//        Item updatedItem = itemRepository.findById(itemId).orElseThrow();
-//
-//        assertThat(updatedItem.getTitle())
-//                .isEqualTo("Aktualisiertes Fahrrad");
-//
-//        assertThat(updatedItem.getPrice()).isEqualTo(300);
-//    }
-//
+    @Nested
+    class CreateItemTests {
+        MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+
+        @BeforeEach
+        void setUp() {
+            requestBody.add("title", "Neue Anzeige");
+            requestBody.add("categoryId", 4);
+            requestBody.add("description", "Beschreibung");
+            requestBody.add("locationId", 16706);
+            requestBody.add("postcode", "15848");
+            requestBody.add("locationExtraInfo", "extraInfo");
+            requestBody.add("price", 999);
+            requestBody.add("status", ItemStatus.ACTIVE.name());
+            requestBody.add("images", null);
+        }
+
+        @Test
+        void createItem_unauthenticated_shouldThrow() {
+            TestRestTemplate template = tRTemplate();
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void createItem_blankTitle_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("title", "   ");
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .asString()
+                    .contains(ExceptionMessage.ITEM_TITEL_NOT_BLANK, ExceptionMessage.ITEM_TITEL_SIZE);
+        }
+
+        @Test
+        void createItem_TitleIsTooShort_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("title", "1234");
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_TITEL_SIZE);
+        }
+
+        @Test
+        void createItem_TitleIsTooLong_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("title", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890#");
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_TITEL_SIZE);
+        }
+
+        @Test
+        void createItem_categoryIsNull_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("categoryId", null);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.CATEGORY_ID_NOT_NULL);
+        }
+
+        @Test
+        void createItem_categoryIsNegative_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("categoryId", -1);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.CATEGORY_ID_POSITIVE);
+        }
+
+        @Test
+        void createItem_categoryIsNotANumber_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("categoryId", "abc");
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.invalidInput("categoryId"));
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = ItemStatus.class, names = {"DELETED", "RESERVED"})
+        void createItem_invalidItemStatus_shouldThrow(ItemStatus status) {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("status", status.name());
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.STATUS_NOT_VALID);
+        }
+
+        @Test
+        void createItem_totalImageSizeExceedsLimit_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            MockMultipartFile image1 = new MockMultipartFile("images", "image1", MediaType.IMAGE_JPEG_VALUE, new byte[50 * 1024 * 1024]);
+            MockMultipartFile image2 = new MockMultipartFile("images", "image2", MediaType.IMAGE_JPEG_VALUE, new byte[1]);
+            requestBody.add("images", image1.getResource());
+            requestBody.add("images", image2.getResource());
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.IMAGES_TOTAL_SIZE);
+        }
+
+        @Test
+        void createItem_totalImageAmountExceedsLimit_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            for (int i = 0; i < 11; i++) {
+                MockMultipartFile image = new MockMultipartFile("images", "image" + i, MediaType.IMAGE_JPEG_VALUE, new byte[1]);
+                requestBody.add("images", image.getResource());
+            }
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.IMAGES_AMOUNT);
+        }
+
+        @Test
+        void createItem_categoryDoesNotExist_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("categoryId", 5);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.CATEGORY_NOT_FOUND);
+        }
+
+        @Test
+        void createItem_locationDoesNotExist_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.set("locationId", 99999);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.LOCATION_NOT_FOUND);
+        }
+
+
+        @Test
+        @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        void createItem_shouldCreateItem() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.MULTIPART_FORM_DATA),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(response.getHeaders().getLocation()).isNotNull().hasPath("/api/items/8");
+        }
+    }
+
+    
     private HttpEntity<Void> requestEntity(TestRestTemplate template) {
         return requestEntity(template, null, null);
     }
