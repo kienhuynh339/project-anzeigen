@@ -179,9 +179,10 @@ public class ItemService {
 
         Item item = new Item(poster, request.getTitle(), category, request.getDescription(), request.getPrice(), location, request.getPostcode(), request.getLocationExtraInfo(), request.getStatus());
 
-        saveImages(request.getImages(), item.getId());
-
         itemRepository.save(item);
+
+        // itemRepository.save(item) zuerst, da itemId automatisch generiert wird.
+        saveImages(request.getImages(), item.getId());
 
 //        dataChangePublisher.publish(Entity.ITEM, Action.CREATE, item);
 
