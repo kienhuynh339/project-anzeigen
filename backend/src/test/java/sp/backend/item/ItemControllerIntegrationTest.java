@@ -8,7 +8,9 @@ import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.dto.ErrorResponse;
 import sp.backend.dto.ItemResponse;
@@ -26,7 +28,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,7 +79,7 @@ public class ItemControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Testdaten vorbereiten
+
     }
 
     // ---------------------------------------------------------
@@ -85,7 +89,7 @@ public class ItemControllerIntegrationTest {
     @Nested
     class FindByIdTests {
         @Test
-        void findById_shouldThrowWhenItemDoesNotExist() {
+        void findById_itemDoesNotExist_shouldThrow() {
             ResponseEntity<ErrorResponse> response = tRTemplate()
                     .getForEntity("/api/items/{itemId}", ErrorResponse.class, 99);
 
@@ -96,17 +100,17 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void findById_shouldReturnItemResponseWithFavoriteFalseWhenUnauthenticated() {
+        void findById_unauthenticated_shouldReturnItemResponseWithFavoriteFalse() {
             asserting(null, ITEM_RESPONSE_1_NOT_FAVORITE);
         }
 
         @Test
-        void findById_shouldReturnItemResponseWithFavoriteFalseWhenUserIsSamwise() {
+        void findById_user_samwise_itemId_1_shouldReturnItemResponseWithFavoriteFalse() {
             asserting(UserEnum.SAMWISE, ITEM_RESPONSE_1_NOT_FAVORITE);
         }
 
         @Test
-        void findById_shouldReturnItemResponseWithFavoriteTrueWhenUserIsFrodo() {
+        void findById_user_frodo_itemId_1_shouldReturnItemResponseWithFavoriteTrue() {
             asserting(UserEnum.FRODO, ITEM_RESPONSE_1_FAVORITE);
         }
 
@@ -128,7 +132,7 @@ public class ItemControllerIntegrationTest {
     @Nested
     class FindByIdToEditTests {
         @Test
-        void findByIdToEdit_shouldThrowWhenUnauthenticated() {
+        void findByIdToEdit_unauthenticated_shouldThrow() {
             ResponseEntity<ErrorResponse> response = tRTemplate()
                     .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 1);
 
@@ -139,7 +143,7 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void findByIdToEdit_shouldThrowWhenItemDoesNotExist() {
+        void findByIdToEdit_itemDoesNotExist_shouldThrow() {
             ResponseEntity<ErrorResponse> response = tRTemplate(UserEnum.SAMWISE)
                     .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 99);
 
@@ -150,7 +154,7 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void findByIdToEdit_shouldThrowWhenNotOwner() {
+        void findByIdToEdit_notOwner_shouldThrow() {
             ResponseEntity<ErrorResponse> response = tRTemplate(UserEnum.MERRY)
                     .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 1);
 
@@ -161,7 +165,7 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void findByIdToEdit_shouldReturnItemResponseWhenUserIsSamwise() {
+        void findByIdToEdit_shouldReturnItemResponse() {
             ResponseEntity<ItemResponse> response = tRTemplate(UserEnum.SAMWISE)
                     .getForEntity("/api/items/{itemId}/edit", ItemResponse.class, 1);
 
@@ -192,7 +196,7 @@ public class ItemControllerIntegrationTest {
         void search_withoutParameters_shouldReturn5Items() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("page", 0).queryParam("size", 10).build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             // 5, da "Anzeige 1" reserviert ist
             assertEquals(5, items.size());
@@ -200,20 +204,20 @@ public class ItemControllerIntegrationTest {
 
 
         @Test
-        void search_withSearchTerm_anzeige2_shouldReturn_item2() {
+        void search_searchTerm_anzeige2_shouldReturn_item2() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("searchTerm", "Anzeige 2").queryParam("page", 0).queryParam("size", 10).build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertItemWithDistanceResponse(items.getFirst(), ITEM_2_WITH_DISTANCE_NULL_NOT_FAVORITE);
         }
 
 
         @Test
-        void search_withCategoryId_2_shouldReturn_items_2_3() {
+        void search_categoryId_2_shouldReturn_items_2_3() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("categoryId", 2).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             // Anzeige 1 ist reserviert -> 2 statt 3
             assertEquals(2, items.size());
@@ -222,10 +226,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void search_withMinPrice_102_andMaxPrice_300_shouldReturn_items_3_4_5() {
+        void search_minPrice_102_maxPrice_300_shouldReturn_items_3_4_5() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("minPrice", 102).queryParam("maxPrice", 300).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertEquals(3, items.size());
             assertEquals(3L, items.get(0).getId());
@@ -234,10 +238,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void search_withLocationId_26488_shouldReturn_items_2_3() {
+        void search_locationId_26488_shouldReturn_items_2_3() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertEquals(2, items.size());
             assertEquals(2L, items.get(0).getId());
@@ -245,10 +249,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void search_withLocationId_26488_andRadiusKm_29_shouldReturn_items_2_3() {
+        void search_locationId_26488_radiusKm_29_shouldReturn_items_2_3() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 29).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertEquals(2, items.size());
             assertEquals(2L, items.get(0).getId());
@@ -256,10 +260,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void search_withLocationId_26488_andRadiusKm_30_shouldReturn_items_2_3_4() {
+        void search_locationId_26488_radiusKm_30_shouldReturn_items_2_3_4() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 30).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertEquals(3, items.size());
             assertEquals(2L, items.get(0).getId());
@@ -272,10 +276,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void search_withLocationId_26488_andRadiusKm_40_shouldReturn_items_2_3_4() {
+        void search_locationId_26488_radiusKm_40_shouldReturn_items_2_3_4() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 40).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertEquals(3, items.size());
             assertEquals(2L, items.get(0).getId());
@@ -285,10 +289,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void search_withLocationId_26488_andRadiusKm_41_shouldReturn_items_2_3_4_5_6() {
+        void search_locationId_26488_radiusKm_41_shouldReturn_items_2_3_4_5_6() {
             URI uri = UriComponentsBuilder.fromPath("/api/items").queryParam("locationId", 26488).queryParam("radiusKm", 41).queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
-            List<ItemWithDistanceResponse> items = findItems(uri, ItemWithDistanceResponse.class);
+            List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
             assertEquals(5, items.size());
             assertEquals(2L, items.get(0).getId());
@@ -316,7 +320,6 @@ public class ItemControllerIntegrationTest {
 
     @Nested
     class FindByUserIdTests {
-        private final URI uri = UriComponentsBuilder.fromPath("/api/items/user/3").queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
 
         @Test
         void findByUserId_userDoesNotExist_shouldThrow() {
@@ -329,8 +332,10 @@ public class ItemControllerIntegrationTest {
         }
 
         @Test
-        void findByUserId_withUserId_3_shouldReturn_items_5_6() {
-            List<ItemResponse> items = findItems(uri, ItemResponse.class);
+        void findByUserId_userId_3_shouldReturn_items_5_6() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items/user/3").queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemResponse> items = findItems(null, uri, ItemResponse.class);
 
             assertEquals(2, items.size());
             assertEquals(5L, items.get(0).getId());
@@ -338,122 +343,100 @@ public class ItemControllerIntegrationTest {
         }
     }
 
-    //
-//    @Test
-//    void search_shouldReturnItems() {
-//
-//        ResponseEntity<RestResponsePage<ItemWithDistanceResponse>> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items",
-//                                HttpMethod.GET,
-//                                null,
-//                                new ParameterizedTypeReference<>() {
-//                                }
-//                        );
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//    }
-//
-//    public class RestResponsePage<T> extends PageImpl<T> {
-//
-//        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-//        public RestResponsePage(
-//                @JsonProperty("content") List<T> content,
-//                @JsonProperty("number") int number,
-//                @JsonProperty("size") int size,
-//                @JsonProperty("totalElements") long totalElements,
-//                @JsonProperty("pageable") JsonNode pageable,
-//                @JsonProperty("last") boolean last,
-//                @JsonProperty("totalPages") int totalPages,
-//                @JsonProperty("sort") JsonNode sort,
-//                @JsonProperty("first") boolean first,
-//                @JsonProperty("numberOfElements") int numberOfElements,
-//                @JsonProperty("empty") boolean empty
-//        ) {
-//            super(content, PageRequest.of(number, size), totalElements);
-//        }
-//    }
-//
-//    @Test
-//    void search_shouldApplyAllFilters() {
-//
-//        String url = UriComponentsBuilder
-//                .fromPath("/api/items")
-//                .queryParam("searchTerm", "Fahrrad")
-//                .queryParam("categoryId", category.getId())
-//                .queryParam("minPrice", 100)
-//                .queryParam("maxPrice", 500)
-//                .queryParam("locationId", location.getId())
-//                .queryParam("radiusKm", 20)
-//                .queryParam("page", 0)
-//                .queryParam("size", 10)
-//                .toUriString();
-//
-//        ResponseEntity<RestResponsePage<ItemWithDistanceResponse>> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                url,
-//                                HttpMethod.GET,
-//                                null,
-//                                new ParameterizedTypeReference<>() {
-//                                }
-//                        );
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//    }
-//
-//    @Test
-//    void findByUserId_shouldReturnItemsOfUser() {
-//
-//        ResponseEntity<RestResponsePage<ItemResponse>> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/user/" + user.getId(),
-//                                HttpMethod.GET,
-//                                null,
-//                                new ParameterizedTypeReference<>() {
-//                                }
-//                        );
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//    }
-//
-//    @Test
-//    void findByUserId_shouldReturn404_whenUserDoesNotExist() {
-//
-//        ResponseEntity<String> response =
-//                trTemplate(User.SAMWISE)
-//                        .getForEntity(
-//                                "/api/items/user/999999",
-//                                String.class
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NOT_FOUND);
-//    }
-//
-//    @Test
-//    void findFavoriteItems_shouldReturnFavorites() {
-//
-//        ResponseEntity<RestResponsePage<ItemResponse>> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/user/favorites",
-//                                HttpMethod.GET,
-//                                null,
-//                                new ParameterizedTypeReference<>() {
-//                                }
-//                        );
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//    }
-//
-//    @Test
+    // ---------------------------------------------------------
+    // findFavoriteItems()
+    // ---------------------------------------------------------
+
+    @Nested
+    class FindFavoriteItemsTests {
+        @Test
+        void findFavoriteItems_unauthenticated_shouldThrow() {
+            ResponseEntity<ErrorResponse> response = tRTemplate()
+                    .getForEntity("/api/items/user/favorites", ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void findFavoriteItems_user_frodo_shouldReturn_items_1_2_4() {
+            URI uri = UriComponentsBuilder.fromPath("/api/items/user/favorites").queryParam("page", 0).queryParam("size", 10).queryParam("sort", "id,asc").build().encode().toUri();
+
+            List<ItemResponse> items = findItems(UserEnum.FRODO, uri, ItemResponse.class);
+
+            assertEquals(3, items.size());
+            assertEquals(1L, items.get(0).getId());
+            assertEquals(2L, items.get(1).getId());
+            assertEquals(4L, items.get(2).getId());
+        }
+    }
+
+    // ---------------------------------------------------------
+    // markItemAsDeleted()
+    // ---------------------------------------------------------
+
+    @Nested
+    class MarkItemAsDeletedTests {
+        private final Long itemId = 1L;
+
+        @Test
+        void markItemAsDeleted_unauthenticated_shouldThrow() {
+            TestRestTemplate template = tRTemplate();
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), ErrorResponse.class, itemId);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void markItemAsDeleted_itemDoesNotExist_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), ErrorResponse.class, 99);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
+        }
+
+        @Test
+        void markItemAsDeleted_notOwner_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), ErrorResponse.class, itemId);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ACCESS_DENIED);
+        }
+
+        @Test
+        @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        void markItemAsDeleted_shouldDeleteItem() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<Void> response = template
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), Void.class, itemId);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+            Item deletedItem = itemRepository.findById(itemId).orElseThrow();
+            assertThat(deletedItem.getStatus()).isEqualTo(ItemStatus.DELETED);
+        }
+    }
+
+
+    //    @Test
 //    void markItemAsDeleted_shouldSetStatusToDeleted() {
 //
 //        ResponseEntity<Void> response =
@@ -683,8 +666,36 @@ public class ItemControllerIntegrationTest {
 //        assertThat(updatedItem.getPrice()).isEqualTo(300);
 //    }
 //
-    private <T> List<T> findItems(URI uri, Class<T> responseType) {
-        ResponseEntity<JsonNode> response = tRTemplate()
+    private HttpEntity<Void> csrfEntity(TestRestTemplate template) {
+        ResponseEntity<String> response = template.getForEntity(
+                "/api/auth/csrf",
+                String.class
+        );
+
+        List<String> cookies = response.getHeaders()
+                .get(HttpHeaders.SET_COOKIE);
+
+        String csrfCookie = cookies.stream()
+                .filter(cookie -> cookie.startsWith("XSRF-TOKEN="))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("CSRF-Cookie fehlt"));
+
+        // Cookie inklusive Name und Wert
+        String cookieValue = csrfCookie.split(";")[0];
+
+        // Den rohen Token aus dem Cookie auslesen
+        String token = cookieValue.substring("XSRF-TOKEN=".length());
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add(HttpHeaders.COOKIE, cookieValue);
+        headers.add("X-XSRF-TOKEN", token);
+
+        return new HttpEntity<>(headers);
+    }
+
+    private <T> List<T> findItems(UserEnum user, URI uri, Class<T> responseType) {
+        ResponseEntity<JsonNode> response = tRTemplate(user)
                 .exchange(uri,
                         HttpMethod.GET,
                         null,
