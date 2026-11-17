@@ -8,12 +8,12 @@ import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.dto.ErrorResponse;
 import sp.backend.dto.ItemResponse;
+import sp.backend.dto.ItemStatusUpdateRequest;
 import sp.backend.dto.ItemWithDistanceResponse;
 import sp.backend.exception.ExceptionMessage;
 import sp.backend.item_category.Category;
@@ -28,9 +28,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -386,7 +384,7 @@ public class ItemControllerIntegrationTest {
             TestRestTemplate template = tRTemplate();
 
             ResponseEntity<ErrorResponse> response = template
-                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), ErrorResponse.class, itemId);
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), ErrorResponse.class, itemId);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 
@@ -399,7 +397,7 @@ public class ItemControllerIntegrationTest {
             TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
 
             ResponseEntity<ErrorResponse> response = template
-                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), ErrorResponse.class, 99);
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), ErrorResponse.class, 99);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -412,7 +410,7 @@ public class ItemControllerIntegrationTest {
             TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
 
             ResponseEntity<ErrorResponse> response = template
-                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), ErrorResponse.class, itemId);
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), ErrorResponse.class, itemId);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
@@ -426,7 +424,7 @@ public class ItemControllerIntegrationTest {
             TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
 
             ResponseEntity<Void> response = template
-                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, csrfEntity(template), Void.class, itemId);
+                    .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), Void.class, itemId);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
@@ -435,63 +433,27 @@ public class ItemControllerIntegrationTest {
         }
     }
 
+    // ---------------------------------------------------------
+    // updateItemStatus()
+    // ---------------------------------------------------------
+
+    @Nested
+    class UpdateItemStatusTests {
+        private final Long itemId = 1L;
+
+//        @Test
+//        void updateItemStatus_unauthenticated_shouldThrow() {
+//            ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
+//            HttpEntity<ItemStatusUpdateRequest> requestEntity = new HttpEntity<>(request);
+//
+//            ResponseEntity<ErrorResponse> response = tRTemplate()
+//                    .exchange("/api/items/{itemId}", HttpMethod.PATCH, requestEntity, ErrorResponse.class, itemId);
+//        }
+
+    }
+
 
     //    @Test
-//    void markItemAsDeleted_shouldSetStatusToDeleted() {
-//
-//        ResponseEntity<Void> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.DELETE,
-//                                null,
-//                                Void.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NO_CONTENT);
-//
-//        Item deletedItem = itemRepository.findById(itemId).orElseThrow();
-//
-//        assertThat(deletedItem.getStatus()).isEqualTo(ItemStatus.DELETED);
-//    }
-//
-//    @Test
-//    void markItemAsDeleted_shouldReturn403_whenUserIsNotOwner() {
-//
-//        ResponseEntity<String> response =
-//                authenticatedClient(anotherUser.getAccountName())
-//                        .exchange(
-//                                "/api/items/{itemId}",
-//                                HttpMethod.DELETE,
-//                                null,
-//                                String.class,
-//                                itemId
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.FORBIDDEN);
-//    }
-//
-//
-//    @Test
-//    void markItemAsDeleted_shouldReturn404_whenItemDoesNotExist() {
-//
-//        ResponseEntity<String> response =
-//                trTemplate(User.SAMWISE)
-//                        .exchange(
-//                                "/api/items/999999",
-//                                HttpMethod.DELETE,
-//                                null,
-//                                String.class
-//                        );
-//
-//        assertThat(response.getStatusCode())
-//                .isEqualTo(HttpStatus.NOT_FOUND);
-//    }
-//
-//    @Test
 //    void updateItemStatus_shouldUpdateStatus() {
 //
 //        ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
@@ -666,14 +628,17 @@ public class ItemControllerIntegrationTest {
 //        assertThat(updatedItem.getPrice()).isEqualTo(300);
 //    }
 //
-    private HttpEntity<Void> csrfEntity(TestRestTemplate template) {
+    private HttpEntity<Void> requestEntity(TestRestTemplate template) {
+        return requestEntity(template, null, null);
+    }
+
+    private <T> HttpEntity<T> requestEntity(TestRestTemplate template, T body, MediaType contentType) {
         ResponseEntity<String> response = template.getForEntity(
                 "/api/auth/csrf",
                 String.class
         );
 
-        List<String> cookies = response.getHeaders()
-                .get(HttpHeaders.SET_COOKIE);
+        List<String> cookies = response.getHeaders().get(HttpHeaders.SET_COOKIE);
 
         String csrfCookie = cookies.stream()
                 .filter(cookie -> cookie.startsWith("XSRF-TOKEN="))
@@ -687,11 +652,14 @@ public class ItemControllerIntegrationTest {
         String token = cookieValue.substring("XSRF-TOKEN=".length());
 
         HttpHeaders headers = new HttpHeaders();
-
         headers.add(HttpHeaders.COOKIE, cookieValue);
         headers.add("X-XSRF-TOKEN", token);
 
-        return new HttpEntity<>(headers);
+        if (contentType != null) {
+            headers.setContentType(contentType);
+        }
+
+        return new HttpEntity<>(body, headers);
     }
 
     private <T> List<T> findItems(UserEnum user, URI uri, Class<T> responseType) {
