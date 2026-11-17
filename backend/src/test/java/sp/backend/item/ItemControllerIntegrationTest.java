@@ -439,16 +439,122 @@ public class ItemControllerIntegrationTest {
 
     @Nested
     class UpdateItemStatusTests {
-        private final Long itemId = 1L;
 
-//        @Test
-//        void updateItemStatus_unauthenticated_shouldThrow() {
-//            ItemStatusUpdateRequest request = new ItemStatusUpdateRequest();
-//            HttpEntity<ItemStatusUpdateRequest> requestEntity = new HttpEntity<>(request);
-//
-//            ResponseEntity<ErrorResponse> response = tRTemplate()
-//                    .exchange("/api/items/{itemId}", HttpMethod.PATCH, requestEntity, ErrorResponse.class, itemId);
-//        }
+        @Test
+        void updateItemStatus_unauthenticated_shouldThrow() {
+            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
+            requestBody.setStatus(ItemStatus.DELETED);
+
+            TestRestTemplate template = tRTemplate();
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}",
+                            HttpMethod.PATCH,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void updateItemStatus_itemDoesNotExist_shouldThrow() {
+            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
+            requestBody.setStatus(ItemStatus.DELETED);
+
+            TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}",
+                            HttpMethod.PATCH,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class,
+                            99);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
+        }
+
+        @Test
+        void updateItemStatus_notOwner_shouldThrow() {
+            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
+            requestBody.setStatus(ItemStatus.DELETED);
+
+            TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}",
+                            HttpMethod.PATCH,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ACCESS_DENIED);
+        }
+
+        @Test
+        void updateItemStatus_requestItemStatus_draft_shouldThrow() {
+            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
+            requestBody.setStatus(ItemStatus.DRAFT);
+
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}",
+                            HttpMethod.PATCH,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.STATUS_NOT_VALID);
+        }
+
+        @Test
+        void updateItemStatus_itemIsDeleted_shouldThrow() {
+            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
+            requestBody.setStatus(ItemStatus.ACTIVE);
+
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/items/{itemId}",
+                            HttpMethod.PATCH,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class,
+                            7);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.DELETED_ITEM_EDITING_NOT_ALLOWED);
+        }
+
+        @Test
+        @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        void updateItemStatus_shouldUpdateItemStatus() {
+            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
+            requestBody.setStatus(ItemStatus.ACTIVE);
+
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<Void> response = template
+                    .exchange("/api/items/{itemId}",
+                            HttpMethod.PATCH,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            Void.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+            Item item = itemRepository.findById(1L).orElseThrow();
+            assertEquals(ItemStatus.ACTIVE, item.getStatus());
+        }
 
     }
 
