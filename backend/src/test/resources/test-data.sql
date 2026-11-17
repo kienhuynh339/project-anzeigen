@@ -28,20 +28,22 @@ VALUES (1, 1, 'Anzeige 1', 2, 'Beschreibung...', 100, 26488,'42103', 3,
        (6, 3, 'Anzeige 6', 4, 'Beschreibung...', 301, 19511,'50733', 2,
         '2026-07-02 08:15:00+02'),
        (7, 1, 'Anzeige 7', 2, 'Beschreibung...', 50, 26488,'42103', 4,
-        '2026-09-02 08:35:00+02');
-ALTER TABLE items ALTER COLUMN id RESTART WITH 8;
+        '2026-09-02 08:35:00+02'),
+        (8, 1, 'Anzeige 8', 2, 'Beschreibung...', 999, 26488,'42103', 1,
+        '2026-09-02 08:40:00+02');
+ALTER TABLE items ALTER COLUMN id RESTART WITH 9;
 
-INSERT INTO item_images (content_type,image, item_id, display_order)
+INSERT INTO item_images (id,content_type,image, item_id, display_order)
 VALUES
-    ('image/jpeg',FILE_READ('src/test/resources/images/user_1_pc_videospiele_nintendoswitch2.jpg'), 1, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (1).jpg'), 2, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (2).jpg'), 3, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (1).jpg'), 4, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (2).jpg'), 4, 1),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (3).jpg'), 4, 2),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 5, 0),
-    ('image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 6, 0);
-
+    (1,'image/jpeg',FILE_READ('src/test/resources/images/user_1_pc_videospiele_nintendoswitch2.jpg'), 1, 0),
+    (2,'image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (1).jpg'), 2, 0),
+    (3,'image/jpeg',FILE_READ('src/test/resources/images/user1_audio_headset (2).jpg'), 3, 0),
+    (4,'image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (1).jpg'), 4, 0),
+    (5,'image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (2).jpg'), 4, 1),
+    (6,'image/jpeg',FILE_READ('src/test/resources/images/user2_Uhren_3_Uhren (3).jpg'), 4, 2),
+    (7,'image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (2).jpg'), 5, 0),
+    (8,'image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 6, 0);
+ALTER TABLE item_images ALTER COLUMN id RESTART WITH 9;
 
 INSERT INTO item_favorites(user_id, item_id)
 VALUES (4,1),
