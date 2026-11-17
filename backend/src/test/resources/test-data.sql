@@ -26,8 +26,10 @@ VALUES (1, 1, 'Anzeige 1', 2, 'Beschreibung...', 100, 26488,'42103', 3,
        (5, 3, 'Anzeige 5', 3, 'Beschreibung...', 300, 19511,'50733', 2,
         '2026-07-01 08:00:00+02'),
        (6, 3, 'Anzeige 6', 4, 'Beschreibung...', 301, 19511,'50733', 2,
-        '2026-07-02 08:15:00+02');
-ALTER TABLE items ALTER COLUMN id RESTART WITH 19;
+        '2026-07-02 08:15:00+02'),
+       (7, 1, 'Anzeige 7', 2, 'Beschreibung...', 50, 26488,'42103', 4,
+        '2026-09-02 08:35:00+02');
+ALTER TABLE items ALTER COLUMN id RESTART WITH 8;
 
 INSERT INTO item_images (content_type,image, item_id, display_order)
 VALUES
