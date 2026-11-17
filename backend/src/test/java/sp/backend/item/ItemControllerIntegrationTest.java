@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,6 +23,7 @@ import sp.backend.dto.*;
 import sp.backend.exception.ExceptionMessage;
 import sp.backend.item_category.Category;
 import sp.backend.item_category.CategoryRepository;
+import sp.backend.item_image.ItemImage;
 import sp.backend.item_image.ItemImageRepository;
 import sp.backend.location.GeodbLocation;
 import sp.backend.location.GeodbLocationRepository;
@@ -66,9 +69,6 @@ public class ItemControllerIntegrationTest {
 
     @Autowired
     private ItemImageRepository itemImageRepository;
-
-    @MockitoBean
-    private ItemImageRepository mockItemImageRepository;
 
 //    @Autowired
 //    private TestEntityManager entityManager;
@@ -799,8 +799,13 @@ public class ItemControllerIntegrationTest {
 
         @Test
         @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-        void createItem_shouldCreateItem() {
+        void createItem_shouldCreateItem() throws IOException {
             TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            for (int i = 0; i < 3; i++) {
+                MockMultipartFile image = new MockMultipartFile("images", "image" + i, MediaType.IMAGE_JPEG_VALUE, new byte[1]);
+                requestBody.add("images", image.getResource());
+            }
 
             ResponseEntity<ErrorResponse> response = template
                     .exchange("/api/items",
@@ -810,10 +815,34 @@ public class ItemControllerIntegrationTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertThat(response.getHeaders().getLocation()).isNotNull().hasPath("/api/items/8");
+
+            Item createdItem = itemRepository.findById(8L).orElseThrow();
+            assertThat(createdItem).isNotNull().extracting(
+                            Item::getTitle,
+                            i -> i.getCategory().getId(),
+                            Item::getDescription,
+                            i -> i.getLocation().getId(),
+                            Item::getPostcode,
+                            Item::getLocationExtraInfo,
+                            Item::getPrice,
+                            Item::getStatus,
+                            i -> i.getPoster().getId())
+                    .containsExactly("Neue Anzeige", (short) 4, "Beschreibung", 16706, "15848", "extraInfo", 999, ItemStatus.ACTIVE, 1L);
+
+            ItemImage itemImage1 = itemImageRepository.findById(9L).orElseThrow();
+            ItemImage itemImage2 = itemImageRepository.findById(10L).orElseThrow();
+            ItemImage itemImage3 = itemImageRepository.findById(11L).orElseThrow();
+            assertEquals(8L, itemImage1.getItemId());
+            assertEquals(0, itemImage1.getDisplayOrder().intValue());
+            assertEquals(8L, itemImage2.getItemId());
+            assertEquals(1, itemImage2.getDisplayOrder().intValue());
+            assertEquals(8L, itemImage3.getItemId());
+            assertEquals(2, itemImage3.getDisplayOrder().intValue());
+
         }
     }
 
-    
+
     private HttpEntity<Void> requestEntity(TestRestTemplate template) {
         return requestEntity(template, null, null);
     }
