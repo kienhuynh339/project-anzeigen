@@ -58,8 +58,7 @@ public class ItemController {
         Page<ItemResponse> page = itemService.findByUserId(userId, authentication, pageable);
         return ResponseEntity.ok(page);
     }
-
-    //#**
+    
     @GetMapping("/user/favorites")
     private ResponseEntity<Page<ItemResponse>> findFavoriteItems(Authentication authentication, Pageable pageable) {
         Page<ItemResponse> page = itemService.findFavoriteItems(authentication, pageable);
