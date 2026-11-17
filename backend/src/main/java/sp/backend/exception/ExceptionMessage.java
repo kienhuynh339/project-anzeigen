@@ -51,4 +51,8 @@ public class ExceptionMessage {
     public static final String PASSWORD_SIZE = "Das Passwort muss zwischen 5 und 30 Zeichen lang sein.";
     public static final String MESSAGE_NOT_EMPTY = "Die Nachricht darf nicht leer sein.";
     public static final String MESSAGE_SIZE = "Die Nachricht muss zwischen 1 und 4000 Zeichen lang sein.";
+
+    public static String invalidInput(String inputFieldName) {
+        return "Ungültiger Wert für " + inputFieldName + ".";
+    }
 }
