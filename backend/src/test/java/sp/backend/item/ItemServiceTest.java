@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.item;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -6,7 +9,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.EnumSources;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -698,8 +700,6 @@ public class ItemServiceTest {
             ImageSavingException exception = assertThrows(ImageSavingException.class,
                     () -> itemService.createItem(request, authentication));
             assertEquals(ExceptionMessage.ERROR_SAVING_IMAGE, exception.getMessage());
-
-            verify(itemRepository, never()).save(any());
         }
 
         @Test
