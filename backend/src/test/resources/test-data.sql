@@ -45,16 +45,17 @@ VALUES
     (8,'image/jpeg',FILE_READ('src/test/resources/images/user3_fahrzeuge_fahrrad (3).jpg'), 6, 0);
 ALTER TABLE item_images ALTER COLUMN id RESTART WITH 9;
 
-INSERT INTO item_favorites(user_id, item_id)
-VALUES (4,1),
-       (4,2),
-       (4,4),
-       (2,1),
-       (2,2),
-       (2,3),
-       (2,5),
-       (3,1),
-       (3,2);
+INSERT INTO item_favorites(id,user_id, item_id)
+VALUES (1,4,1),
+       (2,4,2),
+       (3,4,4),
+       (4,2,1),
+       (5,2,2),
+       (6,2,3),
+       (7,2,5),
+       (8,3,1),
+       (9,3,2);
+ALTER TABLE item_favorites ALTER COLUMN id RESTART WITH 10;
 
 INSERT INTO chats(id, item_id, poster_id, interested_user_id, first_deleted_by_user_id)
 VALUES (1,1,1,2,2),
