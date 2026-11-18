@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.chat;
 
 import jakarta.persistence.EntityNotFoundException;
