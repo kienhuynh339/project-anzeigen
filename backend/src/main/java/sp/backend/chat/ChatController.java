@@ -18,17 +18,17 @@ public class ChatController {
     private ChatController(ChatService chatService) {
         this.chatService = chatService;
     }
+    
+    @GetMapping("/{chatId}")
+    private ResponseEntity<ChatResponse> findById(@PathVariable Long chatId, Authentication authentication) {
+        ChatResponse chatResponse = chatService.findById(chatId, authentication);
+        return ResponseEntity.ok(chatResponse);
+    }
 
     @GetMapping
     private ResponseEntity<Page<ChatResponse>> findByUser(Authentication authentication, Pageable pageable) {
         Page<ChatResponse> page = chatService.findByUser(authentication, pageable);
         return ResponseEntity.ok(page);
-    }
-
-    @GetMapping("/{chatId}")
-    private ResponseEntity<ChatResponse> findById(@PathVariable Long chatId, Authentication authentication) {
-        ChatResponse chatResponse = chatService.findById(chatId, authentication);
-        return ResponseEntity.ok(chatResponse);
     }
 
     @GetMapping("/has-unread-message")
