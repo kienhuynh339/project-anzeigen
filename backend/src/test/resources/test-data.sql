@@ -60,22 +60,23 @@ INSERT INTO chats(id, item_id, poster_id, interested_user_id, first_deleted_by_u
 VALUES (1,1,1,2,2),
        (2,1,1,3,null),
        (3,2,1,4,null),
-       (4,4,2,1,null);
-ALTER TABLE chats ALTER COLUMN id RESTART WITH 8;
+       (4,3,2,1,null),
+       (5,5,3,4,null);
+ALTER TABLE chats ALTER COLUMN id RESTART WITH 6;
 
 INSERT INTO messages(id, chat_id, sender_id, content, is_read, created_at)
 VALUES
--- Chat 1: Nintendo Switch 2
+-- Chat 1:
 (1, 1, 2, 'Message 1', TRUE, '2026-10-09 18:00:00+02'),
 (2, 1, 1, 'Message 2', TRUE, '2026-10-09 18:02:00+02'),
 
--- Chat 2: Nintendo Switch 2
+-- Chat 2:
 (3, 2, 3, 'Message 3', TRUE, '2026-11-15 20:00:00+01'),
 (4, 2, 1, 'Message 4', TRUE, '2026-11-15 20:02:00+01'),
 (5, 2, 3, 'Message 5', TRUE, '2026-11-15 20:04:00+01'),
 (6, 2, 1, 'Message 6', TRUE, '2026-11-15 20:06:00+01'),
 
--- Chat 3: Gaming Headset
+-- Chat 3:
 (7, 3, 4, 'Message 7', TRUE, '2026-11-15 12:15:00+01'),
 (8, 3, 1, 'Message 8', TRUE, '2026-11-15 12:17:00+01'),
 (9, 3, 4, 'Message 9', TRUE, '2026-11-15 12:19:00+01'),
@@ -83,11 +84,11 @@ VALUES
 (11, 3, 4, 'Message 11', FALSE, '2026-11-15 12:23:00+01'),
 (12, 3, 4, 'Message 12', FALSE, '2026-11-15 12:27:00+01'),
 
--- Chat 4: Rolex, Fossil und Omega Uhren
+-- Chat 4:
 (13, 4, 1, 'Message 13', TRUE, '2026-11-15 14:00:00+01'),
 (14, 4, 2, 'Message 14', TRUE, '2026-11-15 14:02:00+01'),
 (15, 4, 1, 'Message 15', TRUE, '2026-11-15 14:04:00+01');
--- IDENTITY-Zähler auf 82 setzen, ansonsten startet er nach dem Seeding mit 1
+
 ALTER TABLE messages
     ALTER COLUMN id RESTART WITH 16;
 
