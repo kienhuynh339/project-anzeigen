@@ -56,7 +56,7 @@ public class UserController {
         Long userId = userService.createUser(request);
 
         URI createdUserLocation = ucb
-                .path("/{userId}")
+                .path("/api/users/{userId}")
                 .buildAndExpand(userId).toUri();
 
         return ResponseEntity.created(createdUserLocation).build();
