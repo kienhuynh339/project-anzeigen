@@ -11,14 +11,14 @@ public class MessageResponse {
     private Long id;
     private Long senderId;
     private String content;
-    private boolean isRead;
+    private Boolean isRead;
     private OffsetDateTime createdAt;
 
     public MessageResponse(Message message) {
         this.id = message.getId();
         this.senderId = message.getSender().getId();
         this.content = message.getContent();
-        this.isRead = message.isRead();
+        this.isRead = message.getRead();
         this.createdAt = message.getCreatedAt();
     }
 
@@ -50,11 +50,11 @@ public class MessageResponse {
         this.content = content;
     }
 
-    public boolean isRead() {
+    public Boolean getRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(Boolean read) {
         isRead = read;
     }
 
