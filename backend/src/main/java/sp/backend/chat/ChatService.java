@@ -94,7 +94,7 @@ public class ChatService {
         return chatIds.stream().anyMatch((chatId) -> {
             Message message = messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(chatId).orElse(null);
             if (message != null && !message.getSender().equals(loggedInUser)) {
-                return !message.isRead();
+                return !message.getRead();
             }
             return false;
         });
