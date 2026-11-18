@@ -47,7 +47,7 @@ public class MessageController {
     private ResponseEntity<Void> createMessage(@Valid @RequestBody MessageCreateRequest messageCreateRequest, UriComponentsBuilder ucb, Authentication authentication) {
         Message message = messageService.createMessage(messageCreateRequest, authentication);
 
-        URI locationOfNewMessage = ucb.path("/{messageId}").buildAndExpand(message.getId()).toUri();
+        URI locationOfNewMessage = ucb.path("/api/messages/{messageId}").buildAndExpand(message.getId()).toUri();
 
         return ResponseEntity.created(locationOfNewMessage).build();
     }
