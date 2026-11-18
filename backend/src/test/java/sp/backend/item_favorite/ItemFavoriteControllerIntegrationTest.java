@@ -1,44 +1,21 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.item_favorite;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.TestUtils;
-import sp.backend.chat.Chat;
-import sp.backend.chat.ChatRepository;
-import sp.backend.chat_message.Message;
-import sp.backend.chat_message.MessageRepository;
 import sp.backend.dto.*;
 import sp.backend.exception.ExceptionMessage;
-import sp.backend.item.ItemRepository;
-import sp.backend.item.ItemStatus;
-import sp.backend.item_category.Category;
-import sp.backend.item_category.CategoryRepository;
-import sp.backend.item_image.ItemImage;
-import sp.backend.item_image.ItemImageRepository;
-import sp.backend.location.GeodbLocation;
-import sp.backend.location.GeodbLocationRepository;
-import sp.backend.user.User;
-import sp.backend.user.UserRepository;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,41 +29,256 @@ public class ItemFavoriteControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ItemFavoriteRepository itemFavoriteRepository;
 
-    @Autowired
-    private ChatRepository chatRepository;
-    @Autowired
-    private MessageRepository messageRepository;
+    // ---------------------------------------------------------
+    // findById()
+    // ---------------------------------------------------------
 
-    
+    @Nested
+    class FindByIdTests {
+        @Test
+        void findById_unauthenticated_shouldThrow() {
+            TestRestTemplate template = tRTemplate();
 
-    private void assertItemFavorite(MessageResponse messageResponse, Object[] expected) {
-        assertThat(messageResponse).isNotNull().extracting(
-                        MessageResponse::getId,
-                        MessageResponse::getSenderId,
-                        MessageResponse::getContent,
-                        MessageResponse::getRead,
-                        m -> m.getCreatedAt().toInstant())
-                .containsExactly(expected);
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites/{itemFavoriteId}",
+                            HttpMethod.GET,
+                            requestEntity(template),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void findById_itemFavoriteDoesNotExist_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites/{itemFavoriteId}",
+                            HttpMethod.GET,
+                            requestEntity(template),
+                            ErrorResponse.class,
+                            99);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND);
+        }
+
+        @Test
+        void findById_notOwner_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites/{itemFavoriteId}",
+                            HttpMethod.GET,
+                            requestEntity(template),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ACCESS_DENIED);
+        }
+
+        @Test
+        void findById_shouldReturnItemFavoriteResponse() {
+            TestRestTemplate template = tRTemplate(UserEnum.FRODO);
+
+            ResponseEntity<ItemFavoriteResponse> response = template
+                    .exchange("/api/item-favorites/{itemFavoriteId}",
+                            HttpMethod.GET,
+                            requestEntity(template),
+                            ItemFavoriteResponse.class,
+                            3);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).isNotNull().extracting(ItemFavoriteResponse::getItemId)
+                    .isEqualTo(4L);
+        }
     }
 
-    private <T> List<T> findMessages(UserEnum user, URI uri, Class<T> responseType) {
-        TestRestTemplate template = tRTemplate(user);
 
-        ResponseEntity<JsonNode> response = tRTemplate(user)
-                .exchange(uri,
-                        HttpMethod.GET,
-                        requestEntity(template),
-                        JsonNode.class);
+    // ---------------------------------------------------------
+    // createItemFavorite()
+    // ---------------------------------------------------------
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        JsonNode body = response.getBody();
-        assertNotNull(body);
+    @Nested
+    class CreateItemFavoriteTests {
+        private ItemFavoriteCreateRequest requestBody;
 
-        return objectMapper.readerForListOf(responseType)
-                .readValue(body.get("content"));
+        @BeforeEach
+        void setUp() {
+            requestBody = new ItemFavoriteCreateRequest();
+            requestBody.setItemId(1L);
+        }
+
+        @Test
+        void createItemFavorite_unauthenticated_shouldThrow() {
+            TestRestTemplate template = tRTemplate();
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void createItemFavorite_itemDoesNotExist_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.setItemId(9L);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
+        }
+
+        @Test
+        void createItemFavorite_favorOwnItem_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            requestBody.setItemId(1L);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.POSTER_CANNOT_FAVOR_OWN_ITEM);
+        }
+
+        @Test
+        void createItemFavorite_itemIsDeleted_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.FRODO);
+
+            requestBody.setItemId(7L);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.CANNOT_FAVOR_DELETED_ITEM);
+        }
+
+        @Test
+        void createItemFavorite_itemFavoriteAlreadyExists_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.FRODO);
+
+            requestBody.setItemId(1L);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            ErrorResponse.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.FAVORITE_ITEM_ALREADY_EXISTS);
+        }
+
+        @Test
+        @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        void createItemFavorite_shouldCreateItemFavorite() {
+            TestRestTemplate template = tRTemplate(UserEnum.FRODO);
+
+            requestBody.setItemId(6L);
+
+            ResponseEntity<Void> response = template
+                    .exchange("/api/item-favorites",
+                            HttpMethod.POST,
+                            requestEntity(template, requestBody, MediaType.APPLICATION_JSON),
+                            Void.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(response.getHeaders().getLocation()).isNotNull().hasPath("/api/item-favorites/10");
+
+            ItemFavorite itemFavorite = itemFavoriteRepository.findById(10L).orElseThrow();
+            assertEquals(4L, itemFavorite.getUser().getId());
+            assertEquals(6L, itemFavorite.getItem().getId());
+
+        }
     }
+
+    // ---------------------------------------------------------
+    // deleteItemFavorite()
+    // ---------------------------------------------------------
+
+    @Nested
+    class DeleteItemFavoriteTests {
+        @Test
+        void deleteItemFavorite_unauthenticated_shouldThrow() {
+            TestRestTemplate template = tRTemplate();
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites/item/{itemId}",
+                            HttpMethod.DELETE,
+                            requestEntity(template),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
+        }
+
+        @Test
+        void deleteItemFavorite_itemFavoriteDoesNotExist_shouldThrow() {
+            TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
+
+            ResponseEntity<ErrorResponse> response = template
+                    .exchange("/api/item-favorites/item/{itemId}",
+                            HttpMethod.DELETE,
+                            requestEntity(template),
+                            ErrorResponse.class,
+                            1);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
+                    .isEqualTo(ExceptionMessage.FAVORITE_ITEM_NOT_FOUND);
+        }
+
+        @Test
+        @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        void deleteItemFavorite_shouldDeleteItemFavorite() {
+            TestRestTemplate template = tRTemplate(UserEnum.FRODO);
+
+            ResponseEntity<Void> response = template
+                    .exchange("/api/item-favorites/item/{itemId}",
+                            HttpMethod.DELETE,
+                            requestEntity(template),
+                            Void.class,
+                            4);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+            ItemFavorite deletedItemFavorite = itemFavoriteRepository.findById(3L).orElse(null);
+            assertNull(deletedItemFavorite);
+        }
+    }
+
 
     private TestRestTemplate tRTemplate() {
         return TestUtils.tRTemplate(restTemplate);
