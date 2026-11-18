@@ -48,7 +48,7 @@ public class ItemImageController {
     }
 
     @GetMapping("/item/{itemId}")
-    private ResponseEntity<List<Long>> findByItemId(@PathVariable Long itemId) {
+    private ResponseEntity<List<Long>> findImageIdsByItemId(@PathVariable Long itemId) {
         List<Long> imageIds = itemImageService.findImageIdsByItemId(itemId);
 
         if (imageIds.isEmpty()) {
