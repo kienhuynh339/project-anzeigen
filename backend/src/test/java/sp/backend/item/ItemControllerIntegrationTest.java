@@ -1,3 +1,6 @@
+/**
+ * @author Trung Kien Huynh
+ */
 package sp.backend.item;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,14 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sp.backend.TestUtils;
 import sp.backend.dto.*;
 import sp.backend.exception.ExceptionMessage;
-import sp.backend.item_category.Category;
-import sp.backend.item_category.CategoryRepository;
 import sp.backend.item_image.ItemImage;
 import sp.backend.item_image.ItemImageRepository;
-import sp.backend.location.GeodbLocation;
-import sp.backend.location.GeodbLocationRepository;
-import sp.backend.user.User;
-import sp.backend.user.UserRepository;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
