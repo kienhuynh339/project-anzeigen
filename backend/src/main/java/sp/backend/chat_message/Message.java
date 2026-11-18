@@ -27,7 +27,7 @@ public class Message {
     private String content;
 
     @Column(name = "is_read")
-    private boolean isRead;
+    private Boolean isRead;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
@@ -35,7 +35,7 @@ public class Message {
     protected Message() {
     }
 
-    public Message(Chat chat, User sender, String content, boolean isRead) {
+    public Message(Chat chat, User sender, String content, Boolean isRead) {
         this.chat = chat;
         this.sender = sender;
         this.content = content;
@@ -74,11 +74,11 @@ public class Message {
         this.content = content;
     }
 
-    public boolean isRead() {
+    public Boolean getRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(Boolean read) {
         isRead = read;
     }
 
