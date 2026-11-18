@@ -98,7 +98,7 @@ class ChatServiceTest {
         when(lastMessage.getId()).thenReturn(1L);
         when(lastMessage.getSender()).thenReturn(interestedUser);
         when(lastMessage.getContent()).thenReturn("test message");
-        when(lastMessage.isRead()).thenReturn(false);
+        when(lastMessage.getRead()).thenReturn(false);
         when(lastMessage.getCreatedAt()).thenReturn(OffsetDateTime.now());
     }
 
@@ -444,20 +444,20 @@ class ChatServiceTest {
                     .thenReturn(Optional.of(lastMessage));
 
             when(lastMessage.getSender()).thenReturn(interestedUser);
-            when(lastMessage.isRead()).thenReturn(false);
+            when(lastMessage.getRead()).thenReturn(false);
 
             assertTrue(chatService.existsUnreadMessage(authentication));
         }
 
         @Test
-        void existsUnreadMessage_shouldReturnFalseWhenMessageIsRead() {
+        void existsUnreadMessage_shouldReturnFalseWhenMessagegetRead() {
             when(chatRepository.findIdsByUserId(userId)).thenReturn(List.of(1L));
 
             when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(1L))
                     .thenReturn(Optional.of(lastMessage));
 
             when(lastMessage.getSender()).thenReturn(interestedUser);
-            when(lastMessage.isRead()).thenReturn(true);
+            when(lastMessage.getRead()).thenReturn(true);
 
             assertFalse(chatService.existsUnreadMessage(authentication));
         }
@@ -473,7 +473,7 @@ class ChatServiceTest {
 
             assertFalse(chatService.existsUnreadMessage(authentication));
 
-            verify(lastMessage, never()).isRead();
+            verify(lastMessage, never()).getRead();
         }
 
 
@@ -488,13 +488,13 @@ class ChatServiceTest {
                     .thenReturn(Optional.of(readMessage));
 
             when(readMessage.getSender()).thenReturn(interestedUser);
-            when(readMessage.isRead()).thenReturn(true);
+            when(readMessage.getRead()).thenReturn(true);
 
             when(messageRepository.findFirstByChat_IdOrderByCreatedAtDesc(2L))
                     .thenReturn(Optional.of(unreadMessage));
 
             when(unreadMessage.getSender()).thenReturn(interestedUser);
-            when(unreadMessage.isRead()).thenReturn(false);
+            when(unreadMessage.getRead()).thenReturn(false);
 
             assertTrue(chatService.existsUnreadMessage(authentication));
         }
