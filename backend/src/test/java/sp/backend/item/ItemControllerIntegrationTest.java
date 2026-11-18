@@ -9,16 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
+import sp.backend.TestUtils;
 import sp.backend.dto.*;
 import sp.backend.exception.ExceptionMessage;
 import sp.backend.item_category.Category;
@@ -32,7 +30,6 @@ import sp.backend.user.UserRepository;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -41,13 +38,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.*;
+import static sp.backend.TestUtils.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ItemControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -59,34 +54,10 @@ public class ItemControllerIntegrationTest {
     private ItemRepository itemRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private GeodbLocationRepository geodbLocationRepository;
-
-    @Autowired
     private ItemImageRepository itemImageRepository;
-
-//    @Autowired
-//    private TestEntityManager entityManager;
-
-    private User user;
-    private User anotherUser;
-    private Category category;
-    private GeodbLocation location;
-
-    private Long itemId;
 
     private final Object[] ITEM_RESPONSE_1_FAVORITE = {1L, (short) 2, 1L, "Anzeige 1", "Beschreibung...", 100, 26488, ItemStatus.RESERVED, OffsetDateTime.parse("2026-09-01T08:00:00+02").toInstant(), true};
     private final Object[] ITEM_RESPONSE_1_NOT_FAVORITE = {1L, (short) 2, 1L, "Anzeige 1", "Beschreibung...", 100, 26488, ItemStatus.RESERVED, OffsetDateTime.parse("2026-09-01T08:00:00+02").toInstant(), false};
-
-    @BeforeEach
-    void setUp() {
-
-    }
 
     // ---------------------------------------------------------
     // findById()
@@ -100,7 +71,6 @@ public class ItemControllerIntegrationTest {
                     .getForEntity("/api/items/{itemId}", ErrorResponse.class, 99);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
         }
@@ -143,7 +113,6 @@ public class ItemControllerIntegrationTest {
                     .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 1);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
         }
@@ -154,7 +123,6 @@ public class ItemControllerIntegrationTest {
                     .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 99);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
         }
@@ -165,7 +133,6 @@ public class ItemControllerIntegrationTest {
                     .getForEntity("/api/items/{itemId}/edit", ErrorResponse.class, 1);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.ACCESS_DENIED);
         }
@@ -204,7 +171,7 @@ public class ItemControllerIntegrationTest {
 
             List<ItemWithDistanceResponse> items = findItems(null, uri, ItemWithDistanceResponse.class);
 
-            // 5, da "Anzeige 1" reserviert ist
+            // 5, da Anzeige 1 reserviert, Anzeige 7 gelöscht und Anzeige 8 ein Entwurf ist
             assertEquals(5, items.size());
         }
 
@@ -274,6 +241,7 @@ public class ItemControllerIntegrationTest {
             assertEquals(3, items.size());
             assertEquals(2L, items.get(0).getId());
             assertEquals(3L, items.get(1).getId());
+
             // Entfernung zu 26488 = 29,5
             assertEquals(4L, items.get(2).getId());
 
@@ -290,6 +258,7 @@ public class ItemControllerIntegrationTest {
             assertEquals(3, items.size());
             assertEquals(2L, items.get(0).getId());
             assertEquals(3L, items.get(1).getId());
+
             // Entfernung zu 26488 = 29,5
             assertEquals(4L, items.get(2).getId());
         }
@@ -361,7 +330,6 @@ public class ItemControllerIntegrationTest {
                     .getForEntity("/api/items/user/favorites", ErrorResponse.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
         }
@@ -395,7 +363,6 @@ public class ItemControllerIntegrationTest {
                     .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), ErrorResponse.class, itemId);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.USER_NOT_AUTHENTICATED);
         }
@@ -408,7 +375,6 @@ public class ItemControllerIntegrationTest {
                     .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), ErrorResponse.class, 99);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.ITEM_NOT_FOUND);
         }
@@ -421,7 +387,6 @@ public class ItemControllerIntegrationTest {
                     .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), ErrorResponse.class, itemId);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-
             assertThat(response.getBody()).isNotNull().extracting(ErrorResponse::getMessage)
                     .isEqualTo(ExceptionMessage.ACCESS_DENIED);
         }
@@ -435,7 +400,6 @@ public class ItemControllerIntegrationTest {
                     .exchange("/api/items/{itemId}", HttpMethod.DELETE, requestEntity(template), Void.class, itemId);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-
             Item deletedItem = itemRepository.findById(itemId).orElseThrow();
             assertThat(deletedItem.getStatus()).isEqualTo(ItemStatus.DELETED);
         }
@@ -447,10 +411,15 @@ public class ItemControllerIntegrationTest {
 
     @Nested
     class UpdateItemStatusTests {
+        private ItemStatusUpdateRequest requestBody;
+
+        @BeforeEach
+        void setUp() {
+            requestBody = new ItemStatusUpdateRequest();
+        }
 
         @Test
         void updateItemStatus_unauthenticated_shouldThrow() {
-            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
             requestBody.setStatus(ItemStatus.DELETED);
 
             TestRestTemplate template = tRTemplate();
@@ -469,7 +438,6 @@ public class ItemControllerIntegrationTest {
 
         @Test
         void updateItemStatus_itemDoesNotExist_shouldThrow() {
-            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
             requestBody.setStatus(ItemStatus.DELETED);
 
             TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
@@ -488,7 +456,6 @@ public class ItemControllerIntegrationTest {
 
         @Test
         void updateItemStatus_notOwner_shouldThrow() {
-            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
             requestBody.setStatus(ItemStatus.DELETED);
 
             TestRestTemplate template = tRTemplate(UserEnum.PIPPIN);
@@ -507,7 +474,6 @@ public class ItemControllerIntegrationTest {
 
         @Test
         void updateItemStatus_requestItemStatus_draft_shouldThrow() {
-            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
             requestBody.setStatus(ItemStatus.DRAFT);
 
             TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
@@ -526,7 +492,6 @@ public class ItemControllerIntegrationTest {
 
         @Test
         void updateItemStatus_itemIsDeleted_shouldThrow() {
-            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
             requestBody.setStatus(ItemStatus.ACTIVE);
 
             TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
@@ -546,7 +511,6 @@ public class ItemControllerIntegrationTest {
         @Test
         @Sql(scripts = "/reset-test-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
         void updateItemStatus_shouldUpdateItemStatus() {
-            ItemStatusUpdateRequest requestBody = new ItemStatusUpdateRequest();
             requestBody.setStatus(ItemStatus.ACTIVE);
 
             TestRestTemplate template = tRTemplate(UserEnum.SAMWISE);
@@ -1090,39 +1054,12 @@ public class ItemControllerIntegrationTest {
 
     }
 
-
-    private HttpEntity<Void> requestEntity(TestRestTemplate template) {
-        return requestEntity(template, null, null);
+    private TestRestTemplate tRTemplate() {
+        return TestUtils.tRTemplate(restTemplate);
     }
 
-    private <T> HttpEntity<T> requestEntity(TestRestTemplate template, T body, MediaType contentType) {
-        ResponseEntity<String> response = template.getForEntity(
-                "/api/auth/csrf",
-                String.class
-        );
-
-        List<String> cookies = response.getHeaders().get(HttpHeaders.SET_COOKIE);
-
-        String csrfCookie = cookies.stream()
-                .filter(cookie -> cookie.startsWith("XSRF-TOKEN="))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("CSRF-Cookie fehlt"));
-
-        // Cookie inklusive Name und Wert
-        String cookieValue = csrfCookie.split(";")[0];
-
-        // Den rohen Token aus dem Cookie auslesen
-        String token = cookieValue.substring("XSRF-TOKEN=".length());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.COOKIE, cookieValue);
-        headers.add("X-XSRF-TOKEN", token);
-
-        if (contentType != null) {
-            headers.setContentType(contentType);
-        }
-
-        return new HttpEntity<>(body, headers);
+    private TestRestTemplate tRTemplate(UserEnum userEnum) {
+        return TestUtils.tRTemplate(restTemplate, userEnum);
     }
 
     private <T> List<T> findItems(UserEnum user, URI uri, Class<T> responseType) {
@@ -1165,22 +1102,5 @@ public class ItemControllerIntegrationTest {
                         ItemWithDistanceResponse::getDistance,
                         ItemWithDistanceResponse::getFavorite)
                 .containsExactly(expected);
-    }
-
-    enum UserEnum {SAMWISE, MERRY, PIPPIN, FRODO,}
-
-    private TestRestTemplate tRTemplate() {
-        return restTemplate;
-    }
-
-    private TestRestTemplate tRTemplate(UserEnum userEnum) {
-        if (userEnum == null) return restTemplate;
-        return switch (userEnum) {
-            case SAMWISE -> restTemplate.withBasicAuth("samwise", "sam123456");
-            case MERRY -> restTemplate.withBasicAuth("merry", "mer123456");
-            case PIPPIN -> restTemplate.withBasicAuth("pippin", "pip123456");
-            case FRODO -> restTemplate.withBasicAuth("frodo", "fro123456");
-            default -> restTemplate;
-        };
     }
 }
