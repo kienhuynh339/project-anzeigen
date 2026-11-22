@@ -35,7 +35,7 @@ export default function MessageInputDialog({ item, closeDialog }) {
       setNotification(e.message);
     }
 
-    //   setIsSubmitting(false);
+    setIsSending(false);
   };
 
   return (
