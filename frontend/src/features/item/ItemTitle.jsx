@@ -2,7 +2,7 @@
  * @author Trung Kien Huynh
  */
 import { translateItemStatus } from "../../utils/translateItemStatus";
-import { truncateText } from "../../utils/truncatetext";
+import { truncateText } from "../../utils/truncateText";
 
 export default function ItemTitle({
   itemStatus,
