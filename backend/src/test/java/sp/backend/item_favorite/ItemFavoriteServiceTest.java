@@ -86,7 +86,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void findById_shouldThrowWhenUserIsUnauthenticated() {
+        void findById_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemFavoriteService.findById(itemFavoriteId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -95,7 +95,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void findById_shouldThrowWhenItemFavoriteDoesNotExist() {
+        void findById_itemFavoriteDoesNotExist_shouldThrow() {
             when(itemFavoriteRepository.findById(itemFavoriteId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -106,7 +106,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void findById_shouldThrowWhenUserIsNotTheOwner() {
+        void findById_userIsNotTheOwner_shouldThrow() {
             when(itemFavoriteRepository.findById(itemFavoriteId)).thenReturn(Optional.of(itemFavorite));
 
             when(itemFavorite.getUser()).thenReturn(otherUser);
@@ -145,7 +145,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void createItemFavorite_shouldThrowWhenUserIsNotAuthenticated() {
+        void createItemFavorite_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemFavoriteService.createItemFavorite(itemId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -154,7 +154,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void createItemFavorite_shouldThrowWhenItemDoesNotExist() {
+        void createItemFavorite_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -165,7 +165,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void createItemFavorite_shouldThrowWhenUserIsTheOwnerOfTheItem() {
+        void createItemFavorite_userIsTheOwnerOfTheItem_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(loggedInUser);
@@ -178,7 +178,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void createItemFavorite_shouldThrowWhenItemIsDeleted() {
+        void createItemFavorite_itemIsDeleted_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(otherUser);
@@ -193,7 +193,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void createItemFavorite_shouldThrowWhenFavoriteItemAlreadyExists() {
+        void createItemFavorite_itemFavoriteAlreadyExists_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(otherUser);
@@ -246,7 +246,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void deleteItemFavorite_shouldThrowWhenUserIsNotUnauthenticated() {
+        void deleteItemFavorite_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemFavoriteService.deleteItemFavorite(itemId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -255,7 +255,7 @@ public class ItemFavoriteServiceTest {
         }
 
         @Test
-        void deleteItemFavorite_shouldThrowWhenItemFavoriteDoesNotExist() {
+        void deleteItemFavorite_itemFavoriteDoesNotExist_shouldThrow() {
             when(itemFavoriteRepository.findByUser_IdAndItem_Id(loggedInUser.getId(), itemId))
                     .thenReturn(Optional.empty());
 

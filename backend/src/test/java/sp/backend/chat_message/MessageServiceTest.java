@@ -89,7 +89,7 @@ public class MessageServiceTest {
         private final Long messageId = 1L;
 
         @Test
-        void findById_shouldThrowWhenMessageDoesNotExist() {
+        void findById_messageDoesNotExist_shouldThrow() {
             when(messageRepository.findById(messageId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -100,7 +100,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void findById_shouldThrowWhenUserIsNotAuthenticated() {
+        void findById_unauthenticated_shouldThrow() {
             when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
             AuthenticationException exception = assertThrows(AuthenticationException.class,
@@ -111,7 +111,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void findById_shouldThrowWhenChatDoesNotExist() {
+        void findById_chatDoesNotExist_shouldThrow() {
             when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
             when(chatRepository.findById(1L)).thenReturn(Optional.empty());
@@ -124,7 +124,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void findById_shouldThrowWhenUserIsNotParticipant() {
+        void findById_userIsNotParticipant_shouldThrow() {
             when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
 
             when(chatRepository.findById(1L)).thenReturn(Optional.of(chat));
@@ -162,7 +162,7 @@ public class MessageServiceTest {
         private final Long chatId = 1L;
 
         @Test
-        void findByChatId_shouldThrowWhenUserIsNotAuthenticated() {
+        void findByChatId_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> messageService.findByChatId(chatId, null, pageable));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -171,7 +171,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void findByChatId_shouldThrowWhenChatDoesNotExist() {
+        void findByChatId_chatDoesNotExist_shouldThrow() {
             when(chatRepository.findById(chatId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -182,7 +182,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void findByChatId_shouldThrowWhenUserIsNotParticipant() {
+        void findByChatId_userIsNotParticipant_shouldThrow() {
             when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
             when(chat.isParticipant(sender)).thenReturn(false);
@@ -222,7 +222,7 @@ public class MessageServiceTest {
         private final Long chatId = 1L;
 
         @Test
-        void markMessagesAsRead_shouldThrowWhenUserIsNotAuthenticated() {
+        void markMessagesAsRead_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> messageService.markMessagesAsRead(chatId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -231,7 +231,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void markMessagesAsRead_shouldThrowWhenChatDoesNotExist() {
+        void markMessagesAsRead_chatDoesNotExist_shouldThrow() {
             when(chatRepository.findById(chatId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -242,7 +242,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void markMessagesAsRead_shouldThrowWhenUserIsNotParticipant() {
+        void markMessagesAsRead_userIsNotParticipant_shouldThrow() {
             when(chatRepository.findById(chatId)).thenReturn(Optional.of(chat));
 
             when(chat.isParticipant(sender)).thenReturn(false);
@@ -299,7 +299,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldThrowWhenUserIsNotAuthenticated() {
+        void createMessage_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> messageService.createMessage(request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -308,7 +308,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldThrowWhenItemDoesNotExist() {
+        void createMessage_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findById(request.getItemId())).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -319,7 +319,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldThrowWhenInterestedUserDoesNotExist() {
+        void createMessage_interestedUserDoesNotExist_shouldThrow() {
             when(itemRepository.findById(request.getItemId())).thenReturn(Optional.of(item));
 
             when(userRepository.findById(request.getInterestedUserId())).thenReturn(Optional.empty());
@@ -332,7 +332,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldThrowWhenChatDoesNotExistAndItemIsDeleted() {
+        void createMessage_chatDoesNotExist_andItemIsDeleted_shouldThrow() {
             when(itemRepository.findById(request.getItemId())).thenReturn(Optional.of(item));
 
             when(userRepository.findById(request.getInterestedUserId())).thenReturn(Optional.of(interestedUser));
@@ -350,7 +350,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldThrowWhenCreateNewChatAndItemIsDeleted() {
+        void createMessage_createNewChat_andItemIsDeleted_shouldThrow() {
             when(itemRepository.findById(request.getItemId())).thenReturn(Optional.of(item));
 
             when(userRepository.findById(request.getInterestedUserId())).thenReturn(Optional.of(interestedUser));
@@ -419,7 +419,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldCreateNewMessageAndSetFirstDeletedByUserToNull() {
+        void createMessage_shouldCreateNewMessage_andSetFirstDeletedByUserToNull() {
             when(itemRepository.findById(request.getItemId())).thenReturn(Optional.of(item));
 
             when(userRepository.findById(request.getInterestedUserId())).thenReturn(Optional.of(interestedUser));
@@ -443,7 +443,7 @@ public class MessageServiceTest {
         }
 
         @Test
-        void createMessage_shouldCreateNewMessageAndRetainFirstDeletedByUser() {
+        void createMessage_shouldCreateNewMessage_andRetainFirstDeletedByUser() {
             when(itemRepository.findById(request.getItemId())).thenReturn(Optional.of(item));
 
             when(userRepository.findById(request.getInterestedUserId())).thenReturn(Optional.of(interestedUser));

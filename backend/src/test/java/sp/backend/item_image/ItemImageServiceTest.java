@@ -35,7 +35,7 @@ public class ItemImageServiceTest {
         private final Long imageId = 1L;
 
         @Test
-        void findById_shouldThrowWhenImageDoesNotExist() {
+        void findById_imageDoesNotExist_shouldThrow() {
             when(itemImageRepository.findById(imageId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,

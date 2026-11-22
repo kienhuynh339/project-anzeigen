@@ -102,7 +102,7 @@ public class ItemServiceTest {
         private final Long itemId = 1L;
 
         @Test
-        void findById_shouldThrowWhenItemDoesNotExist() {
+        void findById_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -130,7 +130,7 @@ public class ItemServiceTest {
         private final Long itemId = 1L;
 
         @Test
-        void findByIdToEdit_shouldThrowWhenUserIsNotAuthenticated() {
+        void findByIdToEdit_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemService.findByIdToEdit(itemId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -139,7 +139,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void findByIdToEdit_shouldThrowWhenItemDoesNotExist() {
+        void findByIdToEdit_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findItemById(itemId, loggedInUser.getId())).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -150,7 +150,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void findByIdToEdit_shouldThrowWhenUserIsNotTheOwner() {
+        void findByIdToEdit_userIsNotTheOwner_shouldThrow() {
             ItemResponse itemResponse = mock(ItemResponse.class);
 
             UserPublicResponse poster = new UserPublicResponse(otherUser);
@@ -212,7 +212,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void search_shouldCallItemRepositorySearchWithoutCoordinatesWhenLocationIdIsNull() {
+        void search_locationIdIsNull_shouldCallItemRepositorySearch_withoutCoordinates() {
             Integer locationId = null;
             Integer radiusKm = 10;
 
@@ -246,7 +246,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void search_shouldCallItemRepositorySearchWithoutCoordinatesWhenRadiusKmIsNull() {
+        void search_radiusKmIsNull_shouldCallItemRepositorySearch_withoutCoordinates() {
             Integer locationId = 111;
             Integer radiusKm = null;
 
@@ -279,7 +279,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void search_shouldCallItemRepositorySearchWithoutCoordinatesWhenRadiusKmAndLocationIdAreNotNullAndLocationDoesNotExist() {
+        void search_radiusKmAndLocationIdAreNotNull_andLocationDoesNotExist_shouldCallItemRepositorySearch_withoutCoordinates() {
             Integer locationId = 111;
             Integer radiusKm = 10;
 
@@ -314,7 +314,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void search_shouldCallItemRepositorySearchWithCoordinatesWhenRadiusKmAndLocationIdAreNotNull() {
+        void search_radiusKmAndLocationIdAreNotNull_shouldCallItemRepositorySearch_withCoordinates() {
             Integer locationId = 111;
             Integer radiusKm = 10;
 
@@ -357,7 +357,7 @@ public class ItemServiceTest {
     class FindByUserIdTests {
 
         @Test
-        void findByUserId_shouldThrowWhenUserDoesNotExist() {
+        void findByUserId_userDoesNotExist_shouldThrow() {
             when(userRepository.findById(3L)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -396,7 +396,7 @@ public class ItemServiceTest {
     class FindFavoriteItemsTests {
 
         @Test
-        void findFavoriteItems_shouldThrowWhenUserIsNotAuthenticated() {
+        void findFavoriteItems_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemService.findFavoriteItems(null, pageable));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -432,7 +432,7 @@ public class ItemServiceTest {
         private final Long itemId = 1L;
 
         @Test
-        void markItemAsDeleted_shouldThrowWhenUserIsNotAuthenticated() {
+        void markItemAsDeleted_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemService.markItemAsDeleted(itemId, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -441,7 +441,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void markItemAsDeleted_shouldThrowWhenItemDoesNotExist() {
+        void markItemAsDeleted_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -452,7 +452,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void markItemAsDeleted_shouldThrowWhenUserIsNotTheOwner() {
+        void markItemAsDeleted_userIsNotTheOwner_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(otherUser);
@@ -490,7 +490,7 @@ public class ItemServiceTest {
         private final Long itemId = 1L;
 
         @Test
-        void updateItemStatus_shouldThrowWhenUserIsNotAuthenticated() {
+        void updateItemStatus_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemService.updateItemStatus(itemId, ItemStatus.ACTIVE, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -499,7 +499,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItemStatus_shouldThrowWhenItemDoesNotExist() {
+        void updateItemStatus_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -510,7 +510,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItemStatus_shouldThrowWhenUserIsNotTheOwner() {
+        void updateItemStatus_userIsNotTheOwner_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(otherUser);
@@ -523,7 +523,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItemStatus_shouldThrowWhenStatusIsDraft() {
+        void updateItemStatus_statusIsDraft_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(loggedInUser);
@@ -536,7 +536,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItemStatus_shouldThrowWhenItemIsDeleted() {
+        void updateItemStatus_itemIsDeleted_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(loggedInUser);
@@ -580,7 +580,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void createItem_shouldThrowWhenUserIsNotAuthenticated() {
+        void createItem_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemService.createItem(request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -590,7 +590,7 @@ public class ItemServiceTest {
 
         @ParameterizedTest
         @EnumSource(value = ItemStatus.class, names = {"DELETED", "RESERVED"})
-        void createItem_shouldThrowWhenRequestItemStatusIsInvalid(ItemStatus status) {
+        void createItem_requestItemStatusIsInvalid_shouldThrow(ItemStatus status) {
             request.setStatus(status);
 
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -601,7 +601,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void createItem_shouldThrowWhenRequestItemStatusIsReserved() {
+        void createItem_requestItemStatusIsReserved_shouldThrow() {
             request.setStatus(ItemStatus.RESERVED);
 
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -612,7 +612,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void createItem_shouldThrowWhenTotalImageSizeExceedsLimit() {
+        void createItem_totalImageSizeExceedsLimit_shouldThrow() {
             MultipartFile image1 = mock(MultipartFile.class);
             MultipartFile image2 = mock(MultipartFile.class);
 
@@ -633,7 +633,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void createItem_shouldThrowWhenCategoryDoesNotExist() {
+        void createItem_categoryDoesNotExist_shouldThrow() {
             MultipartFile image1 = mock(MultipartFile.class);
             MultipartFile image2 = mock(MultipartFile.class);
 
@@ -657,7 +657,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void createItem_shouldThrowWhenLocationDoesNotExist() {
+        void createItem_locationDoesNotExist_shouldThrow() {
             request.setImages(List.of());
             request.setStatus(ItemStatus.ACTIVE);
             request.setCategoryId((short) 50);
@@ -677,7 +677,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void createItem_shouldThrowWhenImageSavingFails() throws IOException {
+        void createItem_imageSavingFails_shouldThrow() throws IOException {
             request.setStatus(ItemStatus.ACTIVE);
             request.setCategoryId((short) 50);
             request.setLocationId(111);
@@ -750,7 +750,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenUserIsNotAuthenticated() {
+        void updateItem_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> itemService.updateItem(itemId, request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -759,7 +759,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenItemDoesNotExist() {
+        void updateItem_itemDoesNotExist_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -770,7 +770,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenUserIsNotTheOwner() {
+        void updateItem_userIsNotTheOwner_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(otherUser);
@@ -783,7 +783,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenTotalImageSizeExceedsLimit() {
+        void updateItem_totalImageSizeExceedsLimit_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(loggedInUser);
@@ -807,7 +807,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenItemIsDeleted() {
+        void updateItem_itemIsDeleted_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             when(item.getPoster()).thenReturn(loggedInUser);
@@ -825,7 +825,7 @@ public class ItemServiceTest {
 
         @ParameterizedTest
         @EnumSource(value = ItemStatus.class, names = {"DELETED", "RESERVED"})
-        void updateItem_shouldThrowWhenItemStatusIsDraftAndRequestItemStatusIsInvalid(ItemStatus status) {
+        void updateItem_itemStatusIsDraft_andRequestItemStatusIsInvalid_shouldThrow(ItemStatus status) {
             request.setStatus(status);
             request.setImages(List.of());
 
@@ -844,7 +844,7 @@ public class ItemServiceTest {
 
         @ParameterizedTest
         @EnumSource(value = ItemStatus.class, names = {"DELETED", "RESERVED", "DRAFT"})
-        void updateItem_shouldThrowWhenItemStatusIsActiveAndRequestItemStatusIsInvalid(ItemStatus status) {
+        void updateItem_itemStatusIsActive_andRequestItemStatusIsInvalid_shouldThrow(ItemStatus status) {
             request.setStatus(status);
             request.setImages(List.of());
 
@@ -862,7 +862,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenCategoryDoesNotExist() {
+        void updateItem_categoryDoesNotExist_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             request.setImages(List.of());
@@ -884,7 +884,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenLocationDoesNotExist() {
+        void updateItem_locationDoesNotExist_shouldThrow() {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             request.setImages(List.of());
@@ -910,7 +910,7 @@ public class ItemServiceTest {
         }
 
         @Test
-        void updateItem_shouldThrowWhenImageSavingFails() throws IOException {
+        void updateItem_imageSavingFails_shouldThrow() throws IOException {
             when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
             request.setStatus(ItemStatus.ACTIVE);

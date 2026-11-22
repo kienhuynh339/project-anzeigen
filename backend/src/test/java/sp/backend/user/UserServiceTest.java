@@ -60,7 +60,7 @@ public class UserServiceTest {
         private final Long userId = 1L;
 
         @Test
-        void findPublicById_shouldThrowWhenUserDoesNotExist() {
+        void findPublicById_userDoesNotExist_shouldThrow() {
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -98,7 +98,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void createUser_shouldThrowWhenAccountNameAlreadyExists() {
+        void createUser_accountNameAlreadyExists_shouldThrow() {
             when(userRepository.existsByAccountName(request.getAccountName())).thenReturn(true);
 
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -134,7 +134,7 @@ public class UserServiceTest {
         private final String accountName = "samwise";
 
         @Test
-        void findByAccountName_shouldThrowWhenUserDoesNotExist() {
+        void findByAccountName_userDoesNotExist_shouldThrow() {
             when(userRepository.findByAccountName(accountName)).thenReturn(Optional.empty());
 
             EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -172,7 +172,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void updateProfileName_shouldThrowWhenUserIsNotAuthenticated() {
+        void updateProfileName_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> userService.updateProfileName(request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -207,7 +207,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void updateAccountName_shouldThrowWhenUserIsNotAuthenticated() {
+        void updateAccountName_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> userService.updateAccountName(request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());
@@ -216,7 +216,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void updateAccountName_shouldThrowWhenAccountNameAlreadyExists() {
+        void updateAccountName_accountNameAlreadyExists_shouldThrow() {
             when(userRepository.existsByAccountName(request.getAccountName())).thenReturn(true);
 
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -255,7 +255,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void updatePassword_shouldThrowWhenUserIsNotAuthenticated() {
+        void updatePassword_unauthenticated_shouldThrow() {
             AuthenticationException exception = assertThrows(AuthenticationException.class,
                     () -> userService.updatePassword(request, null));
             assertEquals(ExceptionMessage.USER_NOT_AUTHENTICATED, exception.getMessage());

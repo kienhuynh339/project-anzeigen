@@ -34,7 +34,7 @@ public class CustomUserDetailsServiceTest {
     // ---------------------------------------------------------
 
     @Test
-    void loadUserByUsername_shouldThrowWhenUserDoesNotExist() {
+    void loadUserByUsername_userDoesNotExist_shouldThrow() {
         when(userRepository.findByAccountName(accountName)).thenReturn(Optional.empty());
 
         UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class,
