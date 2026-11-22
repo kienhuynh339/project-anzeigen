@@ -11,7 +11,7 @@ import FavoriteItemDeleteButton from "./buttons/FavoriteItemDeleteButton";
 import MessageButton from "../chat/buttons/MessageButton";
 import ItemTitle from "./ItemTitle";
 import { translateItemStatus } from "../../utils/translateItemStatus";
-import { truncateText } from "../../utils/truncatetext";
+import { truncateText } from "../../utils/truncateText";
 import noImage from "../../assets/noImage.jpg";
 import ItemEditButton from "./buttons/ItemEditButton";
 import { useAuthContext } from "../../contexts/AuthContext";
