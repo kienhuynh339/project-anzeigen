@@ -13,6 +13,7 @@ export function AuthContextProvider({ children }) {
   // aktueller User
   const [user, setUser] = useState(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [loadCurrentUserTrigger, setLoadCurrentUserTrigger] = useState(false);
 
   useEffect(() => {
     async function loadCurrentUser() {
@@ -28,7 +29,7 @@ export function AuthContextProvider({ children }) {
     }
 
     loadCurrentUser();
-  }, []);
+  }, [loadCurrentUserTrigger]);
 
   async function login(accountName, password) {
     await authApi.login(accountName, password);
@@ -45,6 +46,10 @@ export function AuthContextProvider({ children }) {
     setUser(null);
   }
 
+  const triggerLoadCurrentUser = () => {
+    setLoadCurrentUserTrigger((prev) => !prev);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -54,6 +59,7 @@ export function AuthContextProvider({ children }) {
         login,
         register,
         logout,
+        triggerLoadCurrentUser,
       }}
     >
       {children}
