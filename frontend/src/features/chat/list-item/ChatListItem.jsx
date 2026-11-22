@@ -4,7 +4,7 @@
 import ProfileImage from "../../../components/ProfileImage";
 import { useAuthContext } from "../../../contexts/AuthContext";
 import { useChatContext } from "../../../contexts/ChatContext";
-import { truncateText } from "../../../utils/truncatetext";
+import { truncateText } from "../../../utils/truncateText";
 
 export default function ChatListItem({ chat }) {
   const { user } = useAuthContext();
