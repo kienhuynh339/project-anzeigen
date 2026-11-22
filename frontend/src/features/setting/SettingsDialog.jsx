@@ -9,6 +9,7 @@ import {
   INPUT_NOTICES,
   validateInput,
 } from "../../utils/inputValidation";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const fields = {
   [FIELD_KEYS.PROFILE_NAME]: {
@@ -30,6 +31,8 @@ export default function SettingsDialog({
   fieldKey,
   closeDialog,
 }) {
+  const { triggerLoadCurrentUser } = useAuthContext();
+
   const [inputValue, setInputValue] = useState(initialValue);
   // Für "Passwort wiederholen"
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -65,6 +68,7 @@ export default function SettingsDialog({
           await userApi.updatePassword(inputValue);
           break;
       }
+      triggerLoadCurrentUser();
       setNotification("");
       closeDialog();
     } catch (e) {
