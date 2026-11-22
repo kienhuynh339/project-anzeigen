@@ -1,0 +1,73 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: spring-backend
+
+    expose:
+      - "8080"
+
+    restart: unless-stopped
+
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: react-frontend
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+# services:
+#   # ========================================
+#   # BACKEND
+#   # ========================================
+
+#   backend:
+#     build:
+#       context: ./backend
+#       dockerfile: Dockerfile
+
+#     container_name: spring-backend
+
+#     ports:
+#       - "8081:8080"
+
+#     restart: unless-stopped
+
+#   # ========================================
+#   # FRONTEND
+#   # ========================================
+
+#   frontend:
+#     build:
+#       context: ./frontend
+#       dockerfile: Dockerfile
+
+#     container_name: react-frontend
+
+#     ports:
+#       - "8080:80"
+
+#     depends_on:
+#       - backend
+
+#     restart: unless-stopped
