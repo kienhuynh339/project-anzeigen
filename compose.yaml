@@ -1,19 +1,28 @@
+# Ein Service beschreibt, wie ein Container erstellt und betrieben werden soll.
+# 2 Services: backend und frontend
 services:
+  # backend-Service
   backend:
     build:
+      # Der Build-Kontext bestimmt das Verzeichnis, dessen Dateien Docker beim Erstellen des Images verwenden darf
       context: ./backend
+      # welche Dockerfile für den Image-Build verwendet werden soll ("./backend/Dockerfile")
       dockerfile: Dockerfile
 
     container_name: spring-backend
 
+    # Der Container lauscht auf Port 8080
     expose:
       - "8080"
 
+    # Neustart bei Fehlern oder Docker-Neustart, außer wenn der Container bewusst gestoppt wurde
     restart: unless-stopped
 
+    # Den backend-Container mit dem Docker-Netzwerk app-network verbinden
     networks:
       - app-network
 
+  # frontend-Service
   frontend:
     build:
       context: ./frontend
@@ -21,9 +30,12 @@ services:
 
     container_name: react-frontend
 
+    # Portweiterleitung zwischen Host und Container
+    # Browser ruft http://localhost:8080 auf -> Docker leitet sie an Port 80 des frontend-Containers weiter
     ports:
       - "8080:80"
 
+    # Docker Compose startet zuerst den backend-Service und anschließend den frontend-Service
     depends_on:
       - backend
 
@@ -32,42 +44,9 @@ services:
     networks:
       - app-network
 
+# Docker-Netzwerk definieren
 networks:
+  # Name des Netzwerks
   app-network:
+    # Der Bridge-Treiber erstellt ein virtuelles Netzwerk, über das Docker-Container miteinander kommunizieren können (wie ein internes lokales Netzwerk)
     driver: bridge
-
-# services:
-#   # ========================================
-#   # BACKEND
-#   # ========================================
-
-#   backend:
-#     build:
-#       context: ./backend
-#       dockerfile: Dockerfile
-
-#     container_name: spring-backend
-
-#     ports:
-#       - "8081:8080"
-
-#     restart: unless-stopped
-
-#   # ========================================
-#   # FRONTEND
-#   # ========================================
-
-#   frontend:
-#     build:
-#       context: ./frontend
-#       dockerfile: Dockerfile
-
-#     container_name: react-frontend
-
-#     ports:
-#       - "8080:80"
-
-#     depends_on:
-#       - backend
-
-#     restart: unless-stopped
