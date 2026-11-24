@@ -38,6 +38,14 @@ anzeigen ist eine Online-Plattform, auf der Nutzer Gegenstände anbieten und suc
     3.	"docker compose up -d" ausführen. (und warten, bis der Container vollständig gestartet ist. Es dauert etwa 30 Sekunden)
 4.	Anwendung in einem Browser öffnen: http://localhost:8080/
 
+## Konten
+| Profilname     | Benutzername | Passwort  |
+|----------|-----------------|-----------|
+| Samwise  | samwise         | sam123456 |
+| Merry    | merry           | mer123456 |
+| Pippin   | pippin          | pip123456 |
+| Frodo    | frodo           | fro123456 |
+
 ## Screenshots
 
 <img width="1920" height="1080" alt="allitems" src="https://github.com/user-attachments/assets/41123876-ffe8-4444-bab5-f61e9260e2f7" />
