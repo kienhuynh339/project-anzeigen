@@ -35,7 +35,7 @@ anzeigen ist eine Online-Plattform, auf der Nutzer Gegenstände anbieten und suc
 3.	Docker Desktop öffnen.
 4.	Eingabeaufforderung (Command Prompt / CMD) öffnen. 
     1.	Zum Projektverzeichnis navigieren.
-    2.	"docker compose build" ausführen. (und warten, bis der Vorgang vollständig abgeschlossen ist)
+    2.	"docker compose build" ausführen. (und warten, bis der Vorgang vollständig abgeschlossen ist. Es dauert ein paar Minuten)
     3.	"docker compose up -d" ausführen. (und warten, bis der Container vollständig gestartet ist. Es dauert etwa 30 Sekunden)
 5.	Anwendung in einem Browser öffnen: http://localhost:8080/
 
